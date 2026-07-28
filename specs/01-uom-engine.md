@@ -1,8 +1,7 @@
 # Spec S1 — UOM Conversion Engine (`lib/uom.ts`)
 
-**Status:** Built — `lib/uom.ts` + `tests/uom.test.ts` (31 tests). Toolchain: a minimal
-TS + Vitest + decimal.js slice; full S0 scaffold (Next.js/Prisma/Auth) remains its own
-session.
+**Status:** Built — `lib/uom.ts` + `tests/uom.test.ts` (31 tests). The full S0 scaffold
+(Next.js/Prisma/Auth) now wraps this module.
 
 ## Purpose
 
@@ -31,14 +30,14 @@ laminates first-class instead of a special case bolted onto a single-sheet formu
 
 ```ts
 interface Layer {
-  thickness_mm: Decimal;      // > 0
-  density_kg_m3: Decimal;     // > 0, typically 15–45 for EPE
+  thickness_mm: Decimal; // > 0
+  density_kg_m3: Decimal; // > 0, typically 15–45 for EPE
 }
 
 interface Dimensions {
-  length_m: Decimal;          // > 0
-  width_m: Decimal;           // > 0
-  layers: Layer[];            // length >= 1
+  length_m: Decimal; // > 0
+  width_m: Decimal; // > 0
+  layers: Layer[]; // length >= 1
 }
 ```
 
@@ -61,14 +60,16 @@ For a single-layer input these reduce exactly to the brief's §5 formulas.
 
 ```ts
 export function weightKg(dims: Dimensions): Decimal;
-export function areaM2(dims: Dimensions): Decimal;              // face area
-export function inputAreaM2(dims: Dimensions): Decimal;         // Σ per-layer area, for yield calcs
+export function areaM2(dims: Dimensions): Decimal; // face area
+export function inputAreaM2(dims: Dimensions): Decimal; // Σ per-layer area, for yield calcs
 export function compositeDensity(dims: Dimensions): Decimal;
 export function gsm(dims: Dimensions): Decimal;
 
 // Given a target weight and fixed cross-section, solve for length (production planning):
 export function lengthForWeightKg(
-  targetKg: Decimal, width_m: Decimal, layers: Layer[],
+  targetKg: Decimal,
+  width_m: Decimal,
+  layers: Layer[],
 ): Decimal;
 
 // Quality KPI: how far actual (weighed) deviates from theoretical (calculated).

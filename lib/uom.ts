@@ -15,11 +15,11 @@
 //   composite_density = weight_kg / (area_m2 × total_thickness_mm/1000)
 // For a single-layer input these reduce exactly to the brief §5 formulas.
 
-import { Decimal, type DecimalInput } from './decimal.js';
+import { Decimal, type DecimalInput } from "./decimal.js";
 
 /** Thrown for any invalid input. We never let a bad value become a silent NaN. */
 export class UomError extends Error {
-  override name = 'UomError';
+  override name = "UomError";
 }
 
 export interface Layer {
@@ -42,7 +42,7 @@ const HUNDRED = new Decimal(100);
 /** Coerce accepted input to Decimal. Rejects `number` (float-imprecision guard) and any
  *  non-finite value, so no invalid quantity can enter the maths. */
 function toDecimal(value: DecimalInput, label: string): Decimal {
-  if (typeof value === 'number') {
+  if (typeof value === "number") {
     throw new UomError(
       `${label}: pass a Decimal or string, not a JS number (float imprecision is not allowed for quantities)`,
     );
@@ -60,7 +60,8 @@ function toDecimal(value: DecimalInput, label: string): Decimal {
 /** Coerce and require strictly positive. */
 function positive(value: DecimalInput, label: string): Decimal {
   const d = toDecimal(value, label);
-  if (d.lte(0)) throw new UomError(`${label}: must be greater than zero (got ${d.toString()})`);
+  if (d.lte(0))
+    throw new UomError(`${label}: must be greater than zero (got ${d.toString()})`);
   return d;
 }
 
@@ -76,11 +77,11 @@ interface Normalised {
 
 function normalise(dims: Dimensions): Normalised {
   if (!dims || !Array.isArray(dims.layers) || dims.layers.length === 0) {
-    throw new UomError('dimensions.layers: at least one layer is required');
+    throw new UomError("dimensions.layers: at least one layer is required");
   }
   return {
-    length_m: positive(dims.length_m, 'length_m'),
-    width_m: positive(dims.width_m, 'width_m'),
+    length_m: positive(dims.length_m, "length_m"),
+    width_m: positive(dims.width_m, "width_m"),
     layers: dims.layers.map((l, i) => ({
       thickness_mm: positive(l.thickness_mm, `layers[${i}].thickness_mm`),
       density_kg_m3: positive(l.density_kg_m3, `layers[${i}].density_kg_m3`),
@@ -144,10 +145,10 @@ export function lengthForWeightKg(
   width_m: DecimalInput,
   layers: Layer[],
 ): Decimal {
-  const target = positive(targetKg, 'targetKg');
-  const width = positive(width_m, 'width_m');
+  const target = positive(targetKg, "targetKg");
+  const width = positive(width_m, "width_m");
   if (!Array.isArray(layers) || layers.length === 0) {
-    throw new UomError('layers: at least one layer is required');
+    throw new UomError("layers: at least one layer is required");
   }
   // weight per metre of length = width × Σ(thickness/1000 × density)
   const perMetre = layers.reduce((sum, l, i) => {
@@ -165,10 +166,10 @@ export function weightVariancePct(
   theoreticalKg: DecimalInput,
   actualKg: DecimalInput,
 ): Decimal {
-  const theoretical = toDecimal(theoreticalKg, 'theoreticalKg');
-  const actual = toDecimal(actualKg, 'actualKg');
+  const theoretical = toDecimal(theoreticalKg, "theoreticalKg");
+  const actual = toDecimal(actualKg, "actualKg");
   if (theoretical.lte(0)) {
-    throw new UomError('theoreticalKg: must be greater than zero to compute a variance');
+    throw new UomError("theoreticalKg: must be greater than zero to compute a variance");
   }
   return actual.minus(theoretical).div(theoretical).times(HUNDRED);
 }

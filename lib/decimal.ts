@@ -5,7 +5,7 @@
 // configured and the single source of the storage scales, so no other file re-decides
 // precision or rounding. (Spec S2 owns the full scale set; S1 uses a subset.)
 
-import Decimal from 'decimal.js';
+import Decimal from "decimal.js";
 
 // Generous internal precision so multi-step maths (round-trips, laminate sums) never
 // loses significance; rounding is half-up (spec S1 §Rules 3). Callers round to the

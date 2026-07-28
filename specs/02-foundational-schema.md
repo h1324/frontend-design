@@ -23,14 +23,17 @@ separate sessions.
 ## Data model
 
 ### Company / Plant
+
 ```
 Company  id, name, gstin, legalName, createdAt
 Plant    id, companyId → Company, name, code, addressJson
 ```
+
 Single company + single plant at launch, but the tables and the `companyId` FK exist
 from day one (cross-cutting decision #3). Every downstream table carries `companyId`.
 
 ### Shared enums
+
 ```
 Role            ADMIN | PRODUCTION | STORES | SALES | DISPATCH | ACCOUNTS | VIEWER
 ItemType        RAW_MATERIAL | WIP_ROLL | FINISHED_GOOD | CONSUMABLE | PACKING
@@ -38,26 +41,32 @@ RollState       CURING | AVAILABLE | ALLOCATED | DISPATCHED | CONSUMED | CANCELL
 SurfaceTreatment PLAIN | ANTI_STATIC | LAMINATED | PERFORATED
 StockDirection  IN | OUT            // for ledger postings (S3)
 ```
+
 `RollState` is the roll lifecycle the ledger (S3), aging queue (Phase 1) and dispatch
 (Phase 2) all key off. Transitions and who may make them are defined in their own specs;
 this spec only owns the enum.
 
 ### Audit log (append-only)
+
 ```
 AuditLog  id, companyId, entity (string), entityId, action, actorUserId,
           beforeJson, afterJson, at (timestamp)
 ```
+
 - **Append-only**: rows are inserted, never updated or deleted.
 - Written for every stock and financial movement (enforced by the modules that make
   those movements, not by this table).
 - `before/after` capture the changed values so "previous value" is always recoverable.
 
 ### Document numbering
+
 ```
 DocSeries  id, companyId, docType, financialYear (e.g. "2026-27"),
            prefix, nextSeq, unique(companyId, docType, financialYear)
 ```
+
 `lib/doc-number.ts`:
+
 ```ts
 // Atomically allocates the next gapless number for a doc type in the current FY.
 export async function nextDocNumber(tx, companyId, docType): Promise<string>;

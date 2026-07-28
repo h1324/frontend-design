@@ -19,16 +19,16 @@ requirement changes, change the spec in the same commit as the code.
 
 Each session ends in something committable (tests green + migration applied).
 
-| # | Spec | Module |
-|---|---|---|
-| S0 | [00-scaffold.md](00-scaffold.md) | Project scaffold & toolchain |
-| S1 | [01-uom-engine.md](01-uom-engine.md) | UOM conversion engine (`lib/uom.ts`) |
-| S2 | [02-foundational-schema.md](02-foundational-schema.md) | Enums, audit log, doc numbering, conventions |
-| S3 | [03-stock-ledger.md](03-stock-ledger.md) | Append-only stock ledger (`lib/stock-ledger.ts`) |
-| S4 | [04-auth-rbac.md](04-auth-rbac.md) | Authentication & role-based access |
-| S5 | [05-item-master.md](05-item-master.md) | Item master |
-| S6 | [06-supplier-master.md](06-supplier-master.md) | Supplier master |
-| S7 | [07-customer-master.md](07-customer-master.md) | Customer master |
+| #   | Spec                                                   | Module                                           |
+| --- | ------------------------------------------------------ | ------------------------------------------------ |
+| S0  | [00-scaffold.md](00-scaffold.md)                       | Project scaffold & toolchain                     |
+| S1  | [01-uom-engine.md](01-uom-engine.md)                   | UOM conversion engine (`lib/uom.ts`)             |
+| S2  | [02-foundational-schema.md](02-foundational-schema.md) | Enums, audit log, doc numbering, conventions     |
+| S3  | [03-stock-ledger.md](03-stock-ledger.md)               | Append-only stock ledger (`lib/stock-ledger.ts`) |
+| S4  | [04-auth-rbac.md](04-auth-rbac.md)                     | Authentication & role-based access               |
+| S5  | [05-item-master.md](05-item-master.md)                 | Item master                                      |
+| S6  | [06-supplier-master.md](06-supplier-master.md)         | Supplier master                                  |
+| S7  | [07-customer-master.md](07-customer-master.md)         | Customer master                                  |
 
 Later phases (production, converting, stores, dispatch, quality, costing) get their own
 specs when Phase 0 is complete. See `docs/brief.md` §8 for the full phasing.

@@ -1,6 +1,9 @@
 # Spec S0 — Project Scaffold & Toolchain
 
-**Status:** Ready
+**Status:** Built — Next.js 15 + React 19, Prisma 6 + PostgreSQL, Tailwind + shadcn/ui,
+Auth.js v5 (credentials, JWT), Vitest, ESLint + Prettier. Verified: migration applies,
+seed loads, `/` redirects when logged out, admin login round-trips, `npm run check` green,
+`npm run build` succeeds.
 
 ## Purpose
 

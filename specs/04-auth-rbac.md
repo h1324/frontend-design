@@ -12,7 +12,7 @@ built afterwards is gated as it's created rather than retrofitted.
 **In:** Auth.js wired end to end, the seven roles, route + action authorization, a user
 admin screen (Admin only), password handling, session management.
 
-**Out:** per-module permission *details* (each module spec states which roles may do
+**Out:** per-module permission _details_ (each module spec states which roles may do
 what) — S4 provides the enforcement mechanism and the default role→area map.
 
 ## Dependencies
@@ -26,15 +26,15 @@ what) — S4 provides the enforcement mechanism and the default role→area map.
 
 Default area access (a starting matrix; individual specs refine):
 
-| Area | ADMIN | PRODUCTION | STORES | SALES | DISPATCH | ACCOUNTS | VIEWER |
-|---|---|---|---|---|---|---|---|
-| Masters (item/customer/supplier) | RW | R | R | R | R | R | R |
-| Production / rolls | RW | RW | R | R | R | R | R |
-| Stores / GRN | RW | R | RW | R | R | R | R |
-| Sales orders | RW | R | R | RW | R | R | R |
-| Dispatch / invoice | RW | R | R | R | RW | RW | R |
-| Costing / reports | RW | R | R | R | R | RW | R |
-| User admin | RW | – | – | – | – | – | – |
+| Area                             | ADMIN | PRODUCTION | STORES | SALES | DISPATCH | ACCOUNTS | VIEWER |
+| -------------------------------- | ----- | ---------- | ------ | ----- | -------- | -------- | ------ |
+| Masters (item/customer/supplier) | RW    | R          | R      | R     | R        | R        | R      |
+| Production / rolls               | RW    | RW         | R      | R     | R        | R        | R      |
+| Stores / GRN                     | RW    | R          | RW     | R     | R        | R        | R      |
+| Sales orders                     | RW    | R          | R      | RW    | R        | R        | R      |
+| Dispatch / invoice               | RW    | R          | R      | R     | RW       | RW       | R      |
+| Costing / reports                | RW    | R          | R      | R     | R        | RW       | R      |
+| User admin                       | RW    | –          | –      | –     | –        | –        | –      |
 
 VIEWER is read-only everywhere. Only ADMIN edits masters in Phase 0 (write access for
 other roles can widen later).
@@ -66,7 +66,7 @@ isActive, lastLoginAt, createdAt`.
 ## Acceptance criteria
 
 1. Unauthenticated access to any protected route redirects to `/login`.
-2. A `SALES` user is denied (server-side 403, not just hidden UI) on a masters *write*
+2. A `SALES` user is denied (server-side 403, not just hidden UI) on a masters _write_
    action; a `VIEWER` is denied all writes.
 3. Only `ADMIN` can reach `/admin/users`.
 4. Creating/changing/deactivating a user writes an audit row.

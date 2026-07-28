@@ -23,16 +23,16 @@ Trying to build a full accounting stack would triple the scope, create audit ris
 
 Lock these before the first line of code — several change the data model materially.
 
-| # | Assumption | Impact if wrong |
-|---|---|---|
-| 1 | Single plant, single extrusion line (FLY-250) at commissioning, with a converting section (lamination/slitting) | Multi-line needs machine dimension on every batch |
-| 2 | Primary customers = mattress manufacturers buying wide rolls for wrap/protection packaging; secondary = general packaging | Changes SKU cardinality — few high-volume SKUs vs. hundreds |
-| 3 | Sales are wholesale/B2B on credit, similar dealer dynamics to Diamond | Drives credit-limit and receivables design |
-| 4 | Output sold **by weight (kg)**, specified **by dimensions** (thickness × width × length × density) | This is the core UOM problem — see §5 |
-| 5 | Scrap/trim is ground and re-pelletised in-house and blended back as regrind | Needs a closed-loop material flow, not just a scrap write-off |
-| 6 | Aging/curing period required before dispatch or lamination (butane diffusion) — ⚠️ confirm days from machine supplier | Determines whether "available stock" ≠ "physical stock" |
-| 7 | 15–25 users max, mix of office desktops and shop-floor tablets | Under 50 users means no need for heavy infra |
-| 8 | Turnover will cross the e-invoicing threshold — build for IRN from day one | Retrofitting e-invoice later is painful |
+| #   | Assumption                                                                                                                | Impact if wrong                                               |
+| --- | ------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| 1   | Single plant, single extrusion line (FLY-250) at commissioning, with a converting section (lamination/slitting)           | Multi-line needs machine dimension on every batch             |
+| 2   | Primary customers = mattress manufacturers buying wide rolls for wrap/protection packaging; secondary = general packaging | Changes SKU cardinality — few high-volume SKUs vs. hundreds   |
+| 3   | Sales are wholesale/B2B on credit, similar dealer dynamics to Diamond                                                     | Drives credit-limit and receivables design                    |
+| 4   | Output sold **by weight (kg)**, specified **by dimensions** (thickness × width × length × density)                        | This is the core UOM problem — see §5                         |
+| 5   | Scrap/trim is ground and re-pelletised in-house and blended back as regrind                                               | Needs a closed-loop material flow, not just a scrap write-off |
+| 6   | Aging/curing period required before dispatch or lamination (butane diffusion) — ⚠️ confirm days from machine supplier     | Determines whether "available stock" ≠ "physical stock"       |
+| 7   | 15–25 users max, mix of office desktops and shop-floor tablets                                                            | Under 50 users means no need for heavy infra                  |
+| 8   | Turnover will cross the e-invoicing threshold — build for IRN from day one                                                | Retrofitting e-invoice later is painful                       |
 
 ---
 
@@ -42,7 +42,7 @@ Generic ERP templates fail here for three specific reasons. Solve these well and
 
 **a) Dual unit of measure.** Production is measured in kg. Customers order in metres or square metres, and quality is judged by density. Every single transaction — production, stock, sale, invoice — must carry both weight and area, reconciled by a single conversion formula. If this leaks (one screen storing only kg, another only metres) the stock ledger becomes unreconcilable within a month.
 
-**b) Time-gated inventory.** Freshly extruded foam is physically in the warehouse but not sellable until cured. Stock therefore has three states — *curing*, *available*, *allocated* — and availability is a function of the clock, not just quantity. Standard inventory modules have no concept of this.
+**b) Time-gated inventory.** Freshly extruded foam is physically in the warehouse but not sellable until cured. Stock therefore has three states — _curing_, _available_, _allocated_ — and availability is a function of the clock, not just quantity. Standard inventory modules have no concept of this.
 
 **c) Closed-loop scrap.** Edge trim and startup waste return to the process as regrind. Regrind percentage in the blend affects density consistency and customer-visible quality, so it must be tracked as an input attribute of each batch, not written off as loss.
 
@@ -52,18 +52,18 @@ Generic ERP templates fail here for three specific reasons. Solve these well and
 
 Chosen for Claude Code fluency (dense training data = far fewer iterations) and for a factory environment with unreliable internet.
 
-| Layer | Choice | Rationale |
-|---|---|---|
-| Framework | **Next.js (App Router) + TypeScript** | One codebase for UI and API; Claude Code is strongest here |
-| Database | **PostgreSQL** | Transactional integrity for stock ledgers; free |
-| ORM | **Prisma** | Schema-as-code, versioned migrations, readable diffs |
-| UI | **Tailwind + shadcn/ui** | Dense data tables, fast to build, accessible defaults |
-| Auth | **Auth.js**, role-based | Roles: Admin, Production, Stores, Sales, Dispatch, Accounts, Viewer |
-| Hosting | **Mini-PC / NUC at the plant, Docker Compose** | Works when the internet drops; the plant floor cannot stop because a link is down |
-| Remote access | **Cloudflare Tunnel** | Office and your phone reach the plant server without a static IP |
-| Backup | Nightly `pg_dump` → cloud object storage + weekly offsite copy | Non-negotiable |
-| Labels | Thermal printer (TSC/Zebra), ZPL or PDF | Roll barcode labels |
-| Scanning | PWA on Android tablets using the camera | Avoids buying dedicated scanners initially |
+| Layer         | Choice                                                         | Rationale                                                                         |
+| ------------- | -------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| Framework     | **Next.js (App Router) + TypeScript**                          | One codebase for UI and API; Claude Code is strongest here                        |
+| Database      | **PostgreSQL**                                                 | Transactional integrity for stock ledgers; free                                   |
+| ORM           | **Prisma**                                                     | Schema-as-code, versioned migrations, readable diffs                              |
+| UI            | **Tailwind + shadcn/ui**                                       | Dense data tables, fast to build, accessible defaults                             |
+| Auth          | **Auth.js**, role-based                                        | Roles: Admin, Production, Stores, Sales, Dispatch, Accounts, Viewer               |
+| Hosting       | **Mini-PC / NUC at the plant, Docker Compose**                 | Works when the internet drops; the plant floor cannot stop because a link is down |
+| Remote access | **Cloudflare Tunnel**                                          | Office and your phone reach the plant server without a static IP                  |
+| Backup        | Nightly `pg_dump` → cloud object storage + weekly offsite copy | Non-negotiable                                                                    |
+| Labels        | Thermal printer (TSC/Zebra), ZPL or PDF                        | Roll barcode labels                                                               |
+| Scanning      | PWA on Android tablets using the camera                        | Avoids buying dedicated scanners initially                                        |
 
 Deliberately avoided: microservices, Kubernetes, GraphQL, a separate mobile app. All add ceremony without benefit at this size.
 
@@ -82,7 +82,7 @@ area_m2   = length_m × width_m
 
 **Non-negotiable rules for the implementation:**
 
-1. One module, e.g. `lib/uom.ts`, is the *only* place this maths exists. No inline calculation anywhere else in the codebase.
+1. One module, e.g. `lib/uom.ts`, is the _only_ place this maths exists. No inline calculation anywhere else in the codebase.
 2. Every stock and transaction row stores **both** `qty_kg` and `qty_m2`, plus the dimensional attributes used to derive them.
 3. Store weights and dimensions as integers in base units (grams, millimetres) or as `Decimal`. **Never `float`** — floating-point drift across thousands of rows will silently corrupt the stock ledger.
 4. **Theoretical vs. actual weight**: the calculated weight will differ from the weighbridge/scale reading because of density variance. Store both. The variance percentage is one of your most useful quality KPIs — persistent drift means the line is running off-spec.
@@ -95,32 +95,39 @@ area_m2   = length_m × width_m
 Grouped roughly in dependency order.
 
 ### 6.1 Masters
+
 - **Item master.** Distinct types: raw material, WIP roll, finished good, consumable, packing material. Foam attributes: grade, thickness (mm), width (mm), density (kg/m³), colour, layer count, surface treatment (plain / anti-static / laminated / perforated), HSN code.
-- **Customer master.** GSTIN, billing & multiple ship-to addresses, credit limit, credit days, payment terms, transporter preference, tier. *Port the tiering logic from the Diamond framework — same scoring dimensions, different weights.*
+- **Customer master.** GSTIN, billing & multiple ship-to addresses, credit limit, credit days, payment terms, transporter preference, tier. _Port the tiering logic from the Diamond framework — same scoring dimensions, different weights._
 - **Supplier master.** LDPE suppliers, butane, talc, GMS, masterbatch, packing.
 - **Machine, shift, operator, warehouse/location masters.**
 
 ### 6.2 Production
+
 - **Batch / lot.** Machine, shift, date, operator, start/end time, target SKU, RM issued (with regrind %), output, scrap, downtime reason codes.
 - **Roll registry.** Every roll gets a unique ID and printed barcode label carrying: roll no, lot, SKU, gross/net weight, length, thickness, width, density, production date, **aging-ready date**.
 - **Downtime log.** Reason-coded — die change, RM changeover, breakdown, power cut, no orders. Feeds OEE.
-- **Aging queue.** Auto-transitions rolls from *curing* to *available* on the ready date. Dispatch and lamination both block against curing stock, with a supervisor override that is logged.
+- **Aging queue.** Auto-transitions rolls from _curing_ to _available_ on the ready date. Dispatch and lamination both block against curing stock, with a supervisor override that is logged.
 
 ### 6.3 Converting
+
 - **Lamination / slitting / bag-making orders.** Consume parent rolls, produce child rolls or finished goods, with full parent→child genealogy so any complaint traces back to an extrusion batch. Track yield and conversion loss per job.
 
 ### 6.4 Stores & purchase
+
 - Purchase order → GRN → quality check → stock. Landed cost per lot (LDPE price moves with polymer/crude cycles, so weighted-average valuation matters more than usual). Reorder-level alerts, especially for butane and masterbatch.
 
 ### 6.5 Sales & dispatch
+
 - Sales order → production allocation → picking → dispatch note → invoice → e-way bill → LR/transporter → delivery confirmation.
 - Credit-limit block at order entry, with a logged override path.
 - Receivables ageing — reuse the Diamond tracker logic rather than rebuilding it.
 
 ### 6.6 Quality
+
 - Per-lot QC record: density check, thickness, appearance, tensile if tested. Hold/release workflow. Customer complaint log linked back through roll genealogy to the originating batch.
 
 ### 6.7 Costing & analytics
+
 Per-batch cost roll-up: RM (dominant, typically the large majority of cost) + power + labour + consumables + overhead absorption.
 
 Dashboard KPIs worth having from day one:
@@ -155,13 +162,13 @@ Containers land at Mundra early-to-mid August; realistically commissioning falls
 
 **Do not attempt everything before day one.** Getting masters and dispatch right matters far more than having a costing dashboard on the first day of production.
 
-| Phase | Target | Deliverable |
-|---|---|---|
-| **0** | Pre-commissioning | UOM engine + test suite, DB schema, auth, item/customer/supplier masters, basic stock ledger |
+| Phase | Target            | Deliverable                                                                                               |
+| ----- | ----------------- | --------------------------------------------------------------------------------------------------------- |
+| **0** | Pre-commissioning | UOM engine + test suite, DB schema, auth, item/customer/supplier masters, basic stock ledger              |
 | **1** | Commissioning day | Production batch entry, roll registry + barcode labels, aging queue, dispatch + invoice, RM issue/receipt |
-| **2** | +4 weeks | Purchase & GRN, QC module, converting orders, receivables |
-| **3** | +8 weeks | Batch costing, KPI dashboards, Tally sync, e-invoice/e-way bill APIs |
-| **4** | Later | Customer portal, mobile order-taking, predictive reorder, cross-entity view with Diamond |
+| **2** | +4 weeks          | Purchase & GRN, QC module, converting orders, receivables                                                 |
+| **3** | +8 weeks          | Batch costing, KPI dashboards, Tally sync, e-invoice/e-way bill APIs                                      |
+| **4** | Later             | Customer portal, mobile order-taking, predictive reorder, cross-entity view with Diamond                  |
 
 Phase 1 is the hard deadline. Everything else can run on paper or in Excel for a few weeks without lasting damage — but if roll tracking isn't live from the first production run, that data is gone permanently.
 
@@ -171,7 +178,7 @@ Phase 1 is the hard deadline. Everything else can run on paper or in Excel for a
 
 The build's success depends more on how you set up the repo than on the code itself.
 
-**a) Write `CLAUDE.md` at the repo root first.** This is the highest-leverage file in the project. It must contain a domain glossary — *aging, curing, regrind, lamination, density, GSM, slitting, lot, roll, trim* — because these words mean something specific here and Claude Code will otherwise reach for generic manufacturing semantics. Also state the non-negotiables: never use float for weights, always write both kg and m², never bypass the UOM module.
+**a) Write `CLAUDE.md` at the repo root first.** This is the highest-leverage file in the project. It must contain a domain glossary — _aging, curing, regrind, lamination, density, GSM, slitting, lot, roll, trim_ — because these words mean something specific here and Claude Code will otherwise reach for generic manufacturing semantics. Also state the non-negotiables: never use float for weights, always write both kg and m², never bypass the UOM module.
 
 **b) Keep a `/specs` folder**, one markdown file per module. Point Claude Code at a single spec per session rather than describing requirements conversationally. Specs are versioned, conversations aren't.
 

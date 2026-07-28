@@ -13,8 +13,8 @@ and stock ledger depend on.
 **In:** item schema, CRUD, validation, aging configuration, and seed data with real SKUs
 including edge cases.
 
-**Out:** stock quantities (that's the ledger, S3) — the item master defines *what a thing
-is*, not *how much is on hand*.
+**Out:** stock quantities (that's the ledger, S3) — the item master defines _what a thing
+is_, not _how much is on hand_.
 
 ## Dependencies
 
@@ -55,6 +55,7 @@ Item  id, companyId, code (unique per company), name, type (ItemType),
 ## Seed data (CLAUDE.md §d — real, not synthetic)
 
 Seed must include, using **real SKUs and grades**, at minimum these edge cases:
+
 - a 0.5 mm ultra-thin foam,
 - a multi-layer (e.g. 8-layer) laminate,
 - an odd-width customer special,

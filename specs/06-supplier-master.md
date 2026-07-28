@@ -11,7 +11,7 @@ The register of parties the plant buys from — polymer, blowing agent, additive
 
 **In:** supplier schema, CRUD, GSTIN validation, seed data.
 
-**Out:** purchase orders, GRN, landed cost — Phase 2, they *reference* this master.
+**Out:** purchase orders, GRN, landed cost — Phase 2, they _reference_ this master.
 
 ## Dependencies
 
@@ -39,6 +39,7 @@ Supplier  id, companyId, code (unique per company), name, legalName,
 ## Seed data
 
 Real supplier names for the actual material categories:
+
 - LDPE supplier(s), butane, talc, GMS, masterbatch, packing.
 
 ⚠️ Real supplier names to be supplied — placeholders until then.

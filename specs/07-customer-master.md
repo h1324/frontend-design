@@ -12,8 +12,8 @@ that sales orders, dispatch, invoicing, and receivables (Phase 2) all depend on.
 **In:** customer schema, CRUD, GSTIN validation, multiple ship-to addresses, credit
 fields, a placeholder tier.
 
-**Out:** the tier *scoring* logic and receivables ageing — both flagged as "port from
-Diamond" in the brief and deferred (see open questions). Credit-limit *enforcement*
+**Out:** the tier _scoring_ logic and receivables ageing — both flagged as "port from
+Diamond" in the brief and deferred (see open questions). Credit-limit _enforcement_
 happens at order entry (Phase 2), not here; this master just stores the limit.
 
 ## Dependencies

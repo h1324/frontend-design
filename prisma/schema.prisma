@@ -1,0 +1,49 @@
+// EPE Foam ERP — schema. Migrations only; never hand-edit a live DB (CLAUDE.md).
+// S0 defines just enough to authenticate: Company + User + Role. Spec S2 extends this
+// (Plant, audit log, document series) via its own migration.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// Roles gate access across the system (spec S4). Enum lives here from S0 so User can
+/// reference it; the authorization matrix is built in S4.
+enum Role {
+  ADMIN
+  PRODUCTION
+  STORES
+  SALES
+  DISPATCH
+  ACCOUNTS
+  VIEWER
+}
+
+/// The operating entity. Single company at launch, but every table carries companyId
+/// from day one to avoid a painful multi-entity retrofit (specs/README cross-cutting #3).
+model Company {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
+
+  users User[]
+}
+
+model User {
+  id           String   @id @default(cuid())
+  companyId    String
+  company      Company  @relation(fields: [companyId], references: [id])
+  email        String   @unique
+  name         String
+  passwordHash String
+  role         Role     @default(VIEWER)
+  isActive     Boolean  @default(true)
+  lastLoginAt  DateTime?
+  createdAt    DateTime @default(now())
+
+  @@index([companyId])
+}

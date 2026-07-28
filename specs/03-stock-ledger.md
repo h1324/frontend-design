@@ -13,8 +13,8 @@ it leaks, the whole system's inventory becomes untrustworthy.
 **In:** the ledger schema, the posting function, and balance queries. Two stock grains:
 **serial (rolls)** and **bulk (raw materials/consumables)**.
 
-**Out:** the movements that *cause* postings (production, dispatch, GRN, converting) —
-those live in their own specs and *call* this module. S3 provides the primitive; it does
+**Out:** the movements that _cause_ postings (production, dispatch, GRN, converting) —
+those live in their own specs and _call_ this module. S3 provides the primitive; it does
 not know about invoices or batches.
 
 ## Dependencies
@@ -76,7 +76,7 @@ StockLedger id, companyId, at, direction (IN|OUT),
 export async function post(tx, entry: LedgerEntryInput): Promise<StockLedger>;
 export async function reverse(tx, ledgerId, actorUserId, reason): Promise<StockLedger>;
 
-export async function rollBalance(companyId, filter): Promise<Balance>;      // serial
+export async function rollBalance(companyId, filter): Promise<Balance>; // serial
 export async function itemBalance(companyId, itemId, locationId): Promise<Balance>;
 export async function availableRolls(companyId, itemId, asOf: Date): Promise<Roll[]>;
 ```

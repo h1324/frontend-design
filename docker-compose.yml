@@ -1,0 +1,16 @@
+# Local development database. Production runs Postgres on the plant mini-PC (brief §4).
+services:
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: epe
+      POSTGRES_PASSWORD: epe
+      POSTGRES_DB: epe_erp
+    ports:
+      - "5432:5432"
+    volumes:
+      - epe_pgdata:/var/lib/postgresql/data
+
+volumes:
+  epe_pgdata:

@@ -17,20 +17,20 @@ It handles production, inventory, dispatch and costing. It is **not** an account
 
 These terms have specific meanings in this business. Do not substitute generic manufacturing semantics.
 
-| Term | Meaning |
-|---|---|
-| **EPE** | Expanded polyethylene — closed-cell foam extruded from LDPE resin with butane as blowing agent |
-| **Density** | kg/m³. The defining quality spec of foam, typically 15–45. Two rolls of identical dimensions can differ in weight — that difference *is* the density variance |
-| **Aging / curing** | Mandatory rest period after extrusion while butane diffuses out and air replaces it. Foam is physically present but **not sellable** during this window |
-| **Lot / batch** | One continuous extrusion run on one machine, one shift, one SKU |
-| **Roll** | A single physical unit of output, individually barcoded and tracked. The atomic inventory unit |
-| **Trim** | Edge waste from the extrusion line |
-| **Regrind** | Trim and scrap that has been ground and re-pelletised, blended back into the input mix. An **input attribute** of a batch, not a write-off |
-| **Lamination** | Heat-bonding multiple thin sheets into a thicker product. Consumes parent rolls, produces child rolls |
-| **Slitting** | Cutting a wide roll into narrower rolls |
-| **Converting** | Umbrella term for lamination, slitting, bag-making — any post-extrusion operation |
-| **Genealogy** | The parent→child chain from extrusion lot through converting to the dispatched roll. Required for complaint tracing |
-| **GSM** | Grams per square metre — derived, sometimes how customers specify |
+| Term               | Meaning                                                                                                                                                       |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **EPE**            | Expanded polyethylene — closed-cell foam extruded from LDPE resin with butane as blowing agent                                                                |
+| **Density**        | kg/m³. The defining quality spec of foam, typically 15–45. Two rolls of identical dimensions can differ in weight — that difference _is_ the density variance |
+| **Aging / curing** | Mandatory rest period after extrusion while butane diffuses out and air replaces it. Foam is physically present but **not sellable** during this window       |
+| **Lot / batch**    | One continuous extrusion run on one machine, one shift, one SKU                                                                                               |
+| **Roll**           | A single physical unit of output, individually barcoded and tracked. The atomic inventory unit                                                                |
+| **Trim**           | Edge waste from the extrusion line                                                                                                                            |
+| **Regrind**        | Trim and scrap that has been ground and re-pelletised, blended back into the input mix. An **input attribute** of a batch, not a write-off                    |
+| **Lamination**     | Heat-bonding multiple thin sheets into a thicker product. Consumes parent rolls, produces child rolls                                                         |
+| **Slitting**       | Cutting a wide roll into narrower rolls                                                                                                                       |
+| **Converting**     | Umbrella term for lamination, slitting, bag-making — any post-extrusion operation                                                                             |
+| **Genealogy**      | The parent→child chain from extrusion lot through converting to the dispatched roll. Required for complaint tracing                                           |
+| **GSM**            | Grams per square metre — derived, sometimes how customers specify                                                                                             |
 
 ---
 

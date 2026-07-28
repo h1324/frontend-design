@@ -1,8 +1,20 @@
 node_modules/
 dist/
-.next/
 coverage/
 *.log
+
+# next.js
+.next/
+out/
+*.tsbuildinfo
+
+# env
 .env
 .env.local
+.env*.local
+
+# os
 .DS_Store
+
+# local throwaway postgres cluster used for verification
+.pgdata/
