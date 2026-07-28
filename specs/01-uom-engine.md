@@ -1,6 +1,8 @@
 # Spec S1 — UOM Conversion Engine (`lib/uom.ts`)
 
-**Status:** Ready
+**Status:** Built — `lib/uom.ts` + `tests/uom.test.ts` (31 tests). Toolchain: a minimal
+TS + Vitest + decimal.js slice; full S0 scaffold (Next.js/Prisma/Auth) remains its own
+session.
 
 ## Purpose
 
