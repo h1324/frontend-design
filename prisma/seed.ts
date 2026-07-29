@@ -1,7 +1,8 @@
-import { PrismaClient, Role } from "@prisma/client";
+import { Prisma, PrismaClient, Role } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { LAUNCH_CATALOGUE } from "../lib/catalogue.js";
 import { validateItemInput } from "../lib/items.js";
+import { SUPPLIER_SEED, validateSupplierInput } from "../lib/suppliers.js";
 
 const prisma = new PrismaClient();
 
@@ -61,8 +62,30 @@ async function main() {
     });
   }
 
+  for (const input of SUPPLIER_SEED) {
+    const errors = validateSupplierInput(input);
+    if (errors.length)
+      throw new Error(`Supplier ${input.code} invalid: ${errors.join("; ")}`);
+    await prisma.supplier.upsert({
+      where: { companyId_code: { companyId: company.id, code: input.code } },
+      update: {},
+      create: {
+        companyId: company.id,
+        code: input.code,
+        name: input.name,
+        legalName: input.legalName ?? null,
+        gstin: input.gstin ?? null,
+        paymentTerms: input.paymentTerms ?? null,
+        addressJson: input.address
+          ? (input.address as Prisma.InputJsonObject)
+          : undefined,
+        suppliesJson: input.supplies ?? undefined,
+      },
+    });
+  }
+
   console.log(
-    `Seeded company + admin (admin@epe.local / admin1234) + ${LAUNCH_CATALOGUE.length} catalogue items`,
+    `Seeded company + admin (admin@epe.local / admin1234) + ${LAUNCH_CATALOGUE.length} items + ${SUPPLIER_SEED.length} suppliers`,
   );
 }
 

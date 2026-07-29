@@ -96,6 +96,7 @@ model Company {
   docSeries     DocSeries[]
   locations     Location[]
   items         Item[]
+  suppliers     Supplier[]
   rolls         Roll[]
   stockLedger   StockLedger[]
   stockBalances StockBalance[]
@@ -228,6 +229,27 @@ model Item {
   @@unique([companyId, code])
   @@index([companyId])
   @@index([companyId, type])
+}
+
+/// Supplier master (spec S6). Parties the plant buys from — polymer, blowing agent,
+/// additives, packing. GSTIN is nullable (some small suppliers are unregistered).
+model Supplier {
+  id           String   @id @default(cuid())
+  companyId    String
+  company      Company  @relation(fields: [companyId], references: [id])
+  code         String
+  name         String
+  legalName    String?
+  gstin        String? // validated for 15-char format when present; null = unregistered
+  addressJson  Json? // { line1, city, state, pincode }
+  contactJson  Json? // { person, phone, email }
+  suppliesJson Json? // string[] tags: LDPE | BUTANE | TALC | GMS | MASTERBATCH | PACKING
+  paymentTerms String?
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+
+  @@unique([companyId, code])
+  @@index([companyId])
 }
 
 // --- stock: serial rolls -------------------------------------------------------------

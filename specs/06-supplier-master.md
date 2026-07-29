@@ -1,6 +1,11 @@
 # Spec S6 — Supplier Master
 
-**Status:** Ready
+**Status:** Built — `Supplier` model; `lib/gstin.ts` (shared format validator, also for
+S7); `lib/suppliers.ts` (validation + audited create/update/deactivate, `code` immutable,
+nullable GSTIN); `/masters/suppliers` list+create+edit gated (ADMIN writes, all read); 5
+placeholder suppliers seeded (one per material category). Verified: 11 tests, seed loads,
+page renders. GSTIN is **format-only** (Phase 0); supplier names/GSTIN are placeholders to
+replace via the UI.
 
 ## Purpose
 
