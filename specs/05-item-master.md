@@ -1,6 +1,13 @@
 # Spec S5 — Item Master
 
-**Status:** Draft — confirm aging-config and HSN handling
+**Status:** Built — `Item` extended (HSN, foam attrs, aging, reorder) + `Company.default
+AgingDays`; `lib/items.ts` (pure validation + `resolveAgingDays` + audited create/update/
+deactivate, `code`/`type` immutable); `lib/catalogue.ts` representative launch catalogue
+(16 items, incl. 0.5 mm ultra-thin, 8-layer laminate, odd-width special, LDPE/butane/talc/
+GMS/masterbatch); `/masters/items` list+create+edit, gated (ADMIN writes, all read).
+Verified: 17 tests, seed loads all 16, and the page renders the catalogue at runtime.
+Seed values are **representative placeholders** for a greenfield line — replace via the UI
+before go-live. Aging default = 7 days (placeholder); HSN kept free-text.
 
 ## Purpose
 

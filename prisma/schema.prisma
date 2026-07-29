@@ -85,7 +85,10 @@ model Company {
   name      String
   legalName String?
   gstin     String?
-  createdAt DateTime @default(now())
+  /// Plant-wide default aging/curing period (days). An item may override via agingDays;
+  /// resolution is Item.agingDays ?? Company.defaultAgingDays (spec S5, decision B4).
+  defaultAgingDays Int      @default(7)
+  createdAt        DateTime @default(now())
 
   users         User[]
   plants        Plant[]
@@ -189,8 +192,9 @@ model Location {
   @@index([companyId])
 }
 
-/// MINIMAL item stub — just enough for the ledger to reference. Spec S5 extends this with
-/// foam attributes, HSN, aging config, validation, CRUD and seed data (via migration).
+/// The item master (spec S5). Foam attributes are nullable and required only for the roll
+/// types (FINISHED_GOOD / WIP_ROLL); non-foam items (raw material, consumable, packing)
+/// leave them null. HSN is free text, never hardcoded.
 model Item {
   id        String   @id @default(cuid())
   companyId String
@@ -198,7 +202,22 @@ model Item {
   code      String
   name      String
   type      ItemType
-  uomBase   String // KG | M2 | NOS | LITRE — S5 may formalize as an enum
+  uomBase   String // KG | M2 | NOS | LITRE
+  hsnCode   String? // free text; validated for 2/4/6/8-digit format only
+
+  // foam attributes (nullable; required for FINISHED_GOOD / WIP_ROLL)
+  grade            String?
+  thickness_mm     Decimal?          @db.Decimal(9, 3)
+  width_mm         Decimal?          @db.Decimal(9, 2)
+  density_kg_m3    Decimal?          @db.Decimal(9, 3)
+  colour           String?
+  layerCount       Int?
+  surfaceTreatment SurfaceTreatment?
+
+  // aging: per-item override of Company.defaultAgingDays (decision B4)
+  agingDays    Int?
+  reorderLevel Decimal? @db.Decimal(16, 3)
+
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
 
@@ -208,6 +227,7 @@ model Item {
 
   @@unique([companyId, code])
   @@index([companyId])
+  @@index([companyId, type])
 }
 
 // --- stock: serial rolls -------------------------------------------------------------

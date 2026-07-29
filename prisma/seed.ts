@@ -1,10 +1,12 @@
 import { PrismaClient, Role } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import { LAUNCH_CATALOGUE } from "../lib/catalogue.js";
+import { validateItemInput } from "../lib/items.js";
 
 const prisma = new PrismaClient();
 
-// S0 seed: the single operating company and one admin so the app can be logged into.
-// Master/reference seed data (real SKUs, customers, suppliers) arrives with S5–S7.
+// Seed: the operating company, an admin, and the representative launch catalogue
+// (planned EPE items — replace with actuals via the item master before go-live).
 async function main() {
   const company = await prisma.company.upsert({
     where: { id: "seed-company" },
@@ -25,7 +27,43 @@ async function main() {
     },
   });
 
-  console.log("Seeded company + admin user (admin@epe.local / admin1234)");
+  // A default storage location so downstream modules have somewhere to place stock.
+  await prisma.location.upsert({
+    where: { companyId_code: { companyId: company.id, code: "MAIN" } },
+    update: {},
+    create: { companyId: company.id, name: "Main Warehouse", code: "MAIN" },
+  });
+
+  for (const input of LAUNCH_CATALOGUE) {
+    const errors = validateItemInput(input);
+    if (errors.length)
+      throw new Error(`Catalogue item ${input.code} invalid: ${errors.join("; ")}`);
+    await prisma.item.upsert({
+      where: { companyId_code: { companyId: company.id, code: input.code } },
+      update: {},
+      create: {
+        companyId: company.id,
+        code: input.code,
+        name: input.name,
+        type: input.type,
+        uomBase: input.uomBase,
+        hsnCode: input.hsnCode ?? null,
+        grade: input.grade ?? null,
+        thickness_mm: input.thickness_mm != null ? String(input.thickness_mm) : null,
+        width_mm: input.width_mm != null ? String(input.width_mm) : null,
+        density_kg_m3: input.density_kg_m3 != null ? String(input.density_kg_m3) : null,
+        colour: input.colour ?? null,
+        layerCount: input.layerCount ?? null,
+        surfaceTreatment: input.surfaceTreatment ?? null,
+        agingDays: input.agingDays ?? null,
+        reorderLevel: input.reorderLevel != null ? String(input.reorderLevel) : null,
+      },
+    });
+  }
+
+  console.log(
+    `Seeded company + admin (admin@epe.local / admin1234) + ${LAUNCH_CATALOGUE.length} catalogue items`,
+  );
 }
 
 main()
