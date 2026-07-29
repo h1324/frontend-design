@@ -11,12 +11,15 @@ export const authConfig = {
   pages: { signIn: "/login" },
   session: { strategy: "jwt" },
   callbacks: {
-    // Runs in middleware: allow the login page, protect everything else.
+    // Runs in middleware: allow the login page, gate /admin to ADMIN, protect the rest.
+    // Coarse route gating only — per-action authorization lives in lib/rbac.ts and is
+    // re-checked server-side in every action (defense in depth).
     authorized({ auth, request: { nextUrl } }) {
-      const isLoggedIn = !!auth?.user;
-      const isOnLogin = nextUrl.pathname.startsWith("/login");
-      if (isOnLogin) return true;
-      return isLoggedIn;
+      const path = nextUrl.pathname;
+      if (path.startsWith("/login")) return true;
+      if (!auth?.user) return false;
+      if (path.startsWith("/admin")) return auth.user.role === "ADMIN";
+      return true;
     },
     jwt({ token, user }) {
       if (user) {
@@ -27,6 +30,7 @@ export const authConfig = {
     },
     session({ session, token }) {
       if (session.user) {
+        if (token.sub) session.user.id = token.sub;
         session.user.role = token.role;
         session.user.companyId = token.companyId;
       }

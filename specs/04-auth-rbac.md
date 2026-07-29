@@ -1,6 +1,11 @@
 # Spec S4 — Authentication & Role-Based Access
 
-**Status:** Ready
+**Status:** Built — `lib/rbac.ts` (access matrix, `can`/`requireAccess`/`requireRole`),
+`lib/users.ts` (admin-only create/role/deactivate + `verifyCredentials`, all audited),
+`/admin/users` page + server actions, `/admin` gated to ADMIN in middleware. Verified:
+14 tests (pure RBAC + DB) and a runtime smoke test — ADMIN reaches `/admin/users` (200),
+SALES is redirected (307), wrong/inactive credentials rejected. Defaults taken:
+Admin-set passwords (no self-service reset), 12 h sessions, no 2FA.
 
 ## Purpose
 

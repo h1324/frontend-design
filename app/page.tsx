@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { auth, signOut } from "@/auth";
 import { Button } from "@/components/ui/button";
 import {
@@ -38,16 +39,23 @@ export default async function Home() {
               {session?.user?.email} · {session?.user?.role}
             </p>
           </div>
-          <form
-            action={async () => {
-              "use server";
-              await signOut({ redirectTo: "/login" });
-            }}
-          >
-            <Button type="submit" variant="outline" size="sm">
-              Sign out
-            </Button>
-          </form>
+          <div className="flex items-center gap-2">
+            {session?.user?.role === "ADMIN" ? (
+              <Button asChild variant="outline" size="sm">
+                <Link href="/admin/users">Users</Link>
+              </Button>
+            ) : null}
+            <form
+              action={async () => {
+                "use server";
+                await signOut({ redirectTo: "/login" });
+              }}
+            >
+              <Button type="submit" variant="outline" size="sm">
+                Sign out
+              </Button>
+            </form>
+          </div>
         </CardContent>
       </Card>
     </main>
