@@ -42,12 +42,14 @@ export async function nextDocNumber(
     companyId_docType_financialYear: { companyId, docType, financialYear: fy },
   } satisfies Prisma.DocSeriesWhereUniqueInput;
 
-  // Ensure the counter row exists for this (company, docType, FY). The unique constraint
-  // makes concurrent first-time creation safe — one wins, and both then increment below.
-  await tx.docSeries.upsert({
-    where,
-    create: { companyId, docType, financialYear: fy, prefix, nextSeq: 1 },
-    update: {},
+  // Ensure the counter row exists for this (company, docType, FY). createMany with
+  // skipDuplicates compiles to INSERT ... ON CONFLICT DO NOTHING — a single atomic
+  // statement that BLOCKS on a concurrent insert and then skips, rather than throwing a
+  // unique-constraint error (which a read-then-insert upsert does, aborting the whole
+  // transaction under concurrent first-time creation).
+  await tx.docSeries.createMany({
+    data: [{ companyId, docType, financialYear: fy, prefix, nextSeq: 1 }],
+    skipDuplicates: true,
   });
 
   // Atomic increment under a row lock; the pre-increment value is the allocated number.

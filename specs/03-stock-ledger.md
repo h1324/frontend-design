@@ -1,6 +1,10 @@
 # Spec S3 — Stock Ledger (`lib/stock-ledger.ts`)
 
-**Status:** Draft — resolve open questions before building
+**Status:** Built. Resolved: **block negative for bulk RM**; **`ALLOCATED` reserves
+specific rolls at picking**. Two build-forced refinements: (a) the reversal pointer lives
+on the _reversing_ row (`reversesLedgerId → original`), because the ledger is append-only
+and the original row can never be updated; (b) a **minimal `Item` stub** is introduced
+here (the ledger must FK to it) and extended by S5 — mirroring how S0 seeded `Company`.
 
 ## Purpose
 
