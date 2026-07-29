@@ -1,6 +1,7 @@
 // EPE Foam ERP — schema. Migrations only; never hand-edit a live DB (CLAUDE.md).
-// S0 defines just enough to authenticate: Company + User + Role. Spec S2 extends this
-// (Plant, audit log, document series) via its own migration.
+// S0 defined Company + User + Role (authentication). S2 adds the cross-cutting
+// primitives every module builds on: Plant, the append-only audit log, the
+// financial-year document-number series, and the shared enums.
 
 generator client {
   provider = "prisma-client-js"
@@ -11,8 +12,9 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-/// Roles gate access across the system (spec S4). Enum lives here from S0 so User can
-/// reference it; the authorization matrix is built in S4.
+// --- enums ---------------------------------------------------------------------------
+
+/// Roles gate access across the system (spec S4). The authorization matrix is built in S4.
 enum Role {
   ADMIN
   PRODUCTION
@@ -23,27 +25,125 @@ enum Role {
   VIEWER
 }
 
+/// Distinct kinds of tracked item (spec S5). Foam attributes apply only to the roll types.
+enum ItemType {
+  RAW_MATERIAL
+  WIP_ROLL
+  FINISHED_GOOD
+  CONSUMABLE
+  PACKING
+}
+
+/// Roll lifecycle. The aging queue (Phase 1), stock ledger (S3) and dispatch (Phase 2)
+/// all key off this. Transitions and who may make them belong to those specs; S2 only
+/// owns the enum.
+enum RollState {
+  CURING
+  AVAILABLE
+  ALLOCATED
+  DISPATCHED
+  CONSUMED
+  CANCELLED
+}
+
+/// Surface treatment of a foam item (spec S5).
+enum SurfaceTreatment {
+  PLAIN
+  ANTI_STATIC
+  LAMINATED
+  PERFORATED
+}
+
+/// Direction of a stock-ledger posting (spec S3).
+enum StockDirection {
+  IN
+  OUT
+}
+
+// --- company / plant -----------------------------------------------------------------
+
 /// The operating entity. Single company at launch, but every table carries companyId
 /// from day one to avoid a painful multi-entity retrofit (specs/README cross-cutting #3).
 model Company {
   id        String   @id @default(cuid())
   name      String
+  legalName String?
+  gstin     String?
   createdAt DateTime @default(now())
 
-  users User[]
+  users     User[]
+  plants    Plant[]
+  auditLogs AuditLog[]
+  docSeries DocSeries[]
+}
+
+model Plant {
+  id          String   @id @default(cuid())
+  companyId   String
+  company     Company  @relation(fields: [companyId], references: [id])
+  name        String
+  code        String
+  addressJson Json?
+  createdAt   DateTime @default(now())
+
+  @@unique([companyId, code])
+  @@index([companyId])
 }
 
 model User {
-  id           String   @id @default(cuid())
+  id           String    @id @default(cuid())
   companyId    String
-  company      Company  @relation(fields: [companyId], references: [id])
-  email        String   @unique
+  company      Company   @relation(fields: [companyId], references: [id])
+  email        String    @unique
   name         String
   passwordHash String
-  role         Role     @default(VIEWER)
-  isActive     Boolean  @default(true)
+  role         Role      @default(VIEWER)
+  isActive     Boolean   @default(true)
   lastLoginAt  DateTime?
-  createdAt    DateTime @default(now())
+  createdAt    DateTime  @default(now())
+
+  auditLogs AuditLog[]
 
   @@index([companyId])
+}
+
+// --- audit log (append-only) ---------------------------------------------------------
+
+/// Every stock and financial movement writes one of these (CLAUDE.md rule 8). Append-only:
+/// rows are inserted, never updated or deleted — enforced by a DB trigger (see migration)
+/// as well as by convention (no update/delete helpers exist). Corrections are new rows.
+model AuditLog {
+  id          String   @id @default(cuid())
+  companyId   String
+  company     Company  @relation(fields: [companyId], references: [id])
+  entity      String
+  entityId    String
+  action      String
+  actorUserId String?
+  actor       User?    @relation(fields: [actorUserId], references: [id])
+  beforeJson  Json?
+  afterJson   Json?
+  at          DateTime @default(now())
+
+  @@index([companyId])
+  @@index([entity, entityId])
+  @@index([at])
+}
+
+// --- document numbering --------------------------------------------------------------
+
+/// One gapless counter per (company, docType, financial year). Numbers are financial-
+/// year-wise, gapless, and cancel-not-delete (CLAUDE.md rule 7). Allocation increments
+/// nextSeq under a row lock inside the caller's transaction, so a rolled-back document
+/// rolls back its number too — which a bare Postgres sequence cannot guarantee.
+model DocSeries {
+  id            String  @id @default(cuid())
+  companyId     String
+  company       Company @relation(fields: [companyId], references: [id])
+  docType       String
+  financialYear String // e.g. "2026-27"
+  prefix        String
+  nextSeq       Int     @default(1)
+
+  @@unique([companyId, docType, financialYear])
 }

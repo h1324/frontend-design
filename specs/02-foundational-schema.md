@@ -1,6 +1,11 @@
 # Spec S2 — Foundational Schema (enums, audit log, document numbering)
 
-**Status:** Ready
+**Status:** Built — Plant, AuditLog, DocSeries + shared enums migrated;
+`lib/financial-year.ts`, `lib/doc-number.ts` (atomic ORM increment under a row lock),
+`lib/audit.ts`. AuditLog is append-only via a DB trigger. Verified: gapless + concurrent
++ FY-reset numbering, audit capture, and UPDATE/DELETE rejection (9 tests, run against
+Postgres). Resolved the open questions to the `PREFIX/FY/000123` format and a row lock on
+DocSeries (not a Postgres sequence).
 
 ## Purpose
 
