@@ -1,0 +1,57 @@
+rules_version = '2';
+
+// Diamond Furniture — Firestore security rules.
+// Roles are enforced HERE, not just in the UI. A user's role comes from a custom
+// auth claim (set server-side with the Admin SDK), with a users/{uid}.role fallback.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    // Role from custom claim first; fall back to the users/{uid} doc.
+    function role() {
+      return request.auth.token.role != null
+        ? request.auth.token.role
+        : (exists(/databases/$(database)/documents/users/$(request.auth.uid))
+            ? get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role
+            : 'viewer');
+    }
+
+    function isOwner()  { return signedIn() && role() == 'owner'; }
+    function canEdit()  { return signedIn() && (role() == 'owner' || role() == 'manager'); }
+
+    // Inventory SKUs: everyone signed in can read; owner/manager can write.
+    match /skus/{id} {
+      allow read:  if signedIn();
+      allow write: if canEdit();
+    }
+
+    // App settings (thresholds, period, lines, machines): read all, write editors.
+    match /settings/{doc} {
+      allow read:  if signedIn();
+      allow write: if canEdit();
+    }
+
+    // Production log: read all, editors append. No edits/deletes to history.
+    match /productionLog/{id} {
+      allow read:   if signedIn();
+      allow create: if canEdit();
+      allow update, delete: if false;
+    }
+
+    // Audit trail: append-only; OWNER-ONLY read (the "who changed what" log).
+    match /audit/{id} {
+      allow read:   if isOwner();
+      allow create: if canEdit();
+      allow update, delete: if false;
+    }
+
+    // User → role mapping: a user may read their own doc; only owners assign roles.
+    match /users/{uid} {
+      allow read:  if signedIn() && (request.auth.uid == uid || isOwner());
+      allow write: if isOwner();
+    }
+  }
+}

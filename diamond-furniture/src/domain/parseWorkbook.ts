@@ -46,7 +46,8 @@ async function unzip(blob: Blob): Promise<Record<string, string>> {
       out[name] = dec.decode(f.comp);
     } else if (f.method === 8) {
       const ds = new DecompressionStream('deflate-raw');
-      const ab = await new Response(new Blob([f.comp]).stream().pipeThrough(ds)).arrayBuffer();
+      // Copy into a fresh ArrayBuffer-backed view so the Blob typing is exact.
+      const ab = await new Response(new Blob([new Uint8Array(f.comp)]).stream().pipeThrough(ds)).arrayBuffer();
       out[name] = dec.decode(new Uint8Array(ab));
     }
   }
