@@ -52,6 +52,10 @@ npm run build
 
 Restart `npm run dev` after editing `.env`.
 
+### Deploy to a real URL
+See **[DEPLOY.md](./DEPLOY.md)** — `npm run deploy` builds and publishes to Firebase
+Hosting (`https://<project>.web.app`) plus the security rules.
+
 ### Firestore layout
 ```
 skus/{uid}          { line, model, colour, opening, sold, closing, reorder?, note? }
