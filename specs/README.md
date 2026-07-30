@@ -30,10 +30,27 @@ Each session ended in something committable (tests green + migration applied).
 | S6  | [06-supplier-master.md](06-supplier-master.md)         | Supplier master                                  | Built  |
 | S7  | [07-customer-master.md](07-customer-master.md)         | Customer master                                  | Built  |
 
-Later phases (production, converting, stores, dispatch, quality, costing) get their own
-specs. See `docs/brief.md` §8 for the full phasing. The largest open dependency carried
-into Phase 2 is the **"Diamond" framework** (customer tier scoring + receivables ageing),
-which is not in this repo — locate it before starting those modules.
+## Phase 1 build order (commissioning day) — **specs Draft**
+
+The hard deadline (brief §8): if roll tracking isn't live from the first production run,
+that data is gone permanently. Build order is dependency-ordered; each spec still has open
+questions to lock before its session.
+
+| #   | Spec                                                 | Module                                | Status |
+| --- | ---------------------------------------------------- | ------------------------------------- | ------ |
+| S8  | [08-production-masters.md](08-production-masters.md) | Machine / shift / operator / downtime | Ready  |
+| S9  | [09-rm-stores.md](09-rm-stores.md)                   | RM receipt & issue                    | Draft  |
+| S10 | [10-production-batch.md](10-production-batch.md)     | Production batch (lot) entry          | Draft  |
+| S11 | [11-roll-registry.md](11-roll-registry.md)           | Roll registry & barcode labels        | Draft  |
+| S12 | [12-aging-queue.md](12-aging-queue.md)               | Aging queue (curing → available)      | Draft  |
+| S13 | [13-dispatch-invoice.md](13-dispatch-invoice.md)     | Dispatch & tax invoice                | Draft  |
+
+Phases 2–3 (purchase/GRN, QC, converting, receivables, costing, KPI dashboards, Tally
+sync, e-invoice/e-way-bill APIs) get their specs later. See `docs/brief.md` §8.
+
+The largest open dependency carried into Phase 2 is the **"Diamond" framework** (customer
+tier scoring + receivables ageing), which is not in this repo — locate it before those
+modules.
 
 ## Cross-cutting decisions (apply to every spec)
 
