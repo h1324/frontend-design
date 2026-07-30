@@ -1,6 +1,12 @@
 # Spec S7 — Customer Master
 
-**Status:** Draft — tiering logic depends on external "Diamond" framework
+**Status:** Built — `Customer` + `ShipToAddress` + `CustomerTier` enum; `lib/customers.ts`
+(validation + audited create/update/deactivate, `code` immutable, nullable GSTIN, credit
+fields stored not enforced, `addShipTo`/`setDefaultShipTo` maintaining the "exactly one
+default" invariant); `/masters/customers` list+create+edit with ship-to management, gated
+(ADMIN writes, all read); 3 placeholder customers seeded, one with ship-tos in two states
+(IGST path). Verified: 13 tests, seed loads, page renders. **Tier scoring remains
+deferred** (Diamond) — tier is a placeholder defaulting to UNGRADED.
 
 ## Purpose
 

@@ -76,6 +76,15 @@ enum StockReason {
   REVERSAL
 }
 
+/// Customer tier (spec S7). Placeholder only — the scoring model ("port from Diamond")
+/// is deferred to Phase 2. New customers default to UNGRADED.
+enum CustomerTier {
+  A
+  B
+  C
+  UNGRADED
+}
+
 // --- company / plant -----------------------------------------------------------------
 
 /// The operating entity. Single company at launch, but every table carries companyId
@@ -97,6 +106,7 @@ model Company {
   locations     Location[]
   items         Item[]
   suppliers     Supplier[]
+  customers     Customer[]
   rolls         Roll[]
   stockLedger   StockLedger[]
   stockBalances StockBalance[]
@@ -250,6 +260,47 @@ model Supplier {
 
   @@unique([companyId, code])
   @@index([companyId])
+}
+
+/// Customer master (spec S7). Billing identity + credit terms live here; ship-to
+/// addresses hang off ShipToAddress (each with its own GST state code, for the future
+/// CGST/SGST-vs-IGST determination). Credit limit is stored, not enforced (Phase 2).
+model Customer {
+  id                    String       @id @default(cuid())
+  companyId             String
+  company               Company      @relation(fields: [companyId], references: [id])
+  code                  String
+  name                  String
+  legalName             String?
+  gstin                 String? // validated for format when present; null = unregistered
+  pan                   String?
+  creditLimit           Decimal      @default(0) @db.Decimal(14, 2)
+  creditDays            Int          @default(0)
+  paymentTerms          String?
+  transporterPreference String?
+  tier                  CustomerTier @default(UNGRADED)
+  isActive              Boolean      @default(true)
+  createdAt             DateTime     @default(now())
+
+  shipTos ShipToAddress[]
+
+  @@unique([companyId, code])
+  @@index([companyId])
+}
+
+/// A delivery destination for a customer. Exactly one per customer is the default. The
+/// gstStateCode drives ship-to-state tax logic in Phase 2 (brief §7).
+model ShipToAddress {
+  id           String   @id @default(cuid())
+  customerId   String
+  customer     Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  label        String
+  addressJson  Json? // { line1, city, state, pincode }
+  gstStateCode String // 2-digit GST state code
+  isDefault    Boolean  @default(false)
+  createdAt    DateTime @default(now())
+
+  @@index([customerId])
 }
 
 // --- stock: serial rolls -------------------------------------------------------------

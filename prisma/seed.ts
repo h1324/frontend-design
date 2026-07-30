@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import { LAUNCH_CATALOGUE } from "../lib/catalogue.js";
 import { validateItemInput } from "../lib/items.js";
 import { SUPPLIER_SEED, validateSupplierInput } from "../lib/suppliers.js";
+import { CUSTOMER_SEED, validateCustomerInput } from "../lib/customers.js";
 
 const prisma = new PrismaClient();
 
@@ -84,8 +85,40 @@ async function main() {
     });
   }
 
+  for (const input of CUSTOMER_SEED) {
+    const errors = validateCustomerInput(input);
+    if (errors.length)
+      throw new Error(`Customer ${input.code} invalid: ${errors.join("; ")}`);
+    const existing = await prisma.customer.findUnique({
+      where: { companyId_code: { companyId: company.id, code: input.code } },
+    });
+    if (existing) continue; // idempotent: skip if already seeded
+    const shipTos = input.shipTos ?? [];
+    const defIdx = shipTos.findIndex((s) => s.isDefault);
+    await prisma.customer.create({
+      data: {
+        companyId: company.id,
+        code: input.code,
+        name: input.name,
+        gstin: input.gstin ?? null,
+        tier: input.tier ?? "UNGRADED",
+        creditLimit: input.creditLimit != null ? String(input.creditLimit) : "0",
+        creditDays: input.creditDays ?? 0,
+        paymentTerms: input.paymentTerms ?? null,
+        shipTos: {
+          create: shipTos.map((s, i) => ({
+            label: s.label,
+            gstStateCode: s.gstStateCode,
+            addressJson: s.address ? (s.address as Prisma.InputJsonObject) : undefined,
+            isDefault: i === (defIdx >= 0 ? defIdx : 0),
+          })),
+        },
+      },
+    });
+  }
+
   console.log(
-    `Seeded company + admin (admin@epe.local / admin1234) + ${LAUNCH_CATALOGUE.length} items + ${SUPPLIER_SEED.length} suppliers`,
+    `Seeded company + admin (admin@epe.local / admin1234) + ${LAUNCH_CATALOGUE.length} items + ${SUPPLIER_SEED.length} suppliers + ${CUSTOMER_SEED.length} customers`,
   );
 }
 
