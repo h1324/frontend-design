@@ -1,6 +1,11 @@
 # Spec S8 — Production Masters (machine, shift, operator, downtime codes)
 
-**Status:** Ready
+**Status:** Built — `Machine`, `Shift`, `Operator`, `DowntimeReason` + `DowntimeCategory`
+enum; `lib/production-masters.ts` (pure validation + audited create/update/deactivate,
+`code` immutable, MASTERS-write gated); `/masters/production` (one page, four editable
+sections). Seed: FLY-250 line, shifts A/B/C, 2 operators, 6 downtime reasons (placeholders).
+Verified: 10 tests, seed loads, page renders. **RBAC decision:** kept ADMIN-only (MASTERS
+write), matching S5–S7 — widening PRODUCTION deferred.
 
 ## Purpose
 

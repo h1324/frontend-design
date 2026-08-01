@@ -85,6 +85,18 @@ enum CustomerTier {
   UNGRADED
 }
 
+/// Downtime reason categories (spec S8). What OEE availability-loss analysis groups on;
+/// the free code/description on a DowntimeReason names the specifics.
+enum DowntimeCategory {
+  DIE_CHANGE
+  RM_CHANGEOVER
+  BREAKDOWN
+  POWER_CUT
+  NO_ORDERS
+  MAINTENANCE
+  OTHER
+}
+
 // --- company / plant -----------------------------------------------------------------
 
 /// The operating entity. Single company at launch, but every table carries companyId
@@ -103,13 +115,17 @@ model Company {
   plants        Plant[]
   auditLogs     AuditLog[]
   docSeries     DocSeries[]
-  locations     Location[]
-  items         Item[]
-  suppliers     Supplier[]
-  customers     Customer[]
-  rolls         Roll[]
-  stockLedger   StockLedger[]
-  stockBalances StockBalance[]
+  locations       Location[]
+  items           Item[]
+  suppliers       Supplier[]
+  customers       Customer[]
+  machines        Machine[]
+  shifts          Shift[]
+  operators       Operator[]
+  downtimeReasons DowntimeReason[]
+  rolls           Roll[]
+  stockLedger     StockLedger[]
+  stockBalances   StockBalance[]
 }
 
 model Plant {
@@ -301,6 +317,69 @@ model ShipToAddress {
   createdAt    DateTime @default(now())
 
   @@index([customerId])
+}
+
+// --- production masters (spec S8) ----------------------------------------------------
+
+/// An extrusion/converting machine (e.g. the FLY-250 line). Rated capacity feeds the
+/// kg/hour-vs-capacity KPI.
+model Machine {
+  id                String   @id @default(cuid())
+  companyId         String
+  company           Company  @relation(fields: [companyId], references: [id])
+  code              String
+  name              String
+  ratedCapacityKgHr Decimal? @db.Decimal(10, 2)
+  isActive          Boolean  @default(true)
+  createdAt         DateTime @default(now())
+
+  @@unique([companyId, code])
+  @@index([companyId])
+}
+
+/// A work shift. Times are stored as "HH:MM"; end < start means the shift crosses midnight.
+model Shift {
+  id        String   @id @default(cuid())
+  companyId String
+  company   Company  @relation(fields: [companyId], references: [id])
+  code      String
+  name      String
+  startTime String // "HH:MM"
+  endTime   String // "HH:MM"
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  @@unique([companyId, code])
+  @@index([companyId])
+}
+
+/// A machine operator (a name on a batch, not necessarily a system user).
+model Operator {
+  id        String   @id @default(cuid())
+  companyId String
+  company   Company  @relation(fields: [companyId], references: [id])
+  code      String
+  name      String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  @@unique([companyId, code])
+  @@index([companyId])
+}
+
+/// A reason-coded downtime cause. `category` feeds OEE; `code`/`description` name specifics.
+model DowntimeReason {
+  id          String           @id @default(cuid())
+  companyId   String
+  company     Company          @relation(fields: [companyId], references: [id])
+  code        String
+  description String
+  category    DowntimeCategory
+  isActive    Boolean          @default(true)
+  createdAt   DateTime         @default(now())
+
+  @@unique([companyId, code])
+  @@index([companyId])
 }
 
 // --- stock: serial rolls -------------------------------------------------------------

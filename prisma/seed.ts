@@ -4,6 +4,12 @@ import { LAUNCH_CATALOGUE } from "../lib/catalogue.js";
 import { validateItemInput } from "../lib/items.js";
 import { SUPPLIER_SEED, validateSupplierInput } from "../lib/suppliers.js";
 import { CUSTOMER_SEED, validateCustomerInput } from "../lib/customers.js";
+import {
+  MACHINE_SEED,
+  SHIFT_SEED,
+  OPERATOR_SEED,
+  DOWNTIME_REASON_SEED,
+} from "../lib/production-masters.js";
 
 const prisma = new PrismaClient();
 
@@ -117,8 +123,50 @@ async function main() {
     });
   }
 
+  const cid = { companyId: company.id };
+  for (const m of MACHINE_SEED) {
+    await prisma.machine.upsert({
+      where: { companyId_code: { companyId: company.id, code: m.code } },
+      update: {},
+      create: {
+        ...cid,
+        code: m.code,
+        name: m.name,
+        ratedCapacityKgHr:
+          m.ratedCapacityKgHr != null ? String(m.ratedCapacityKgHr) : null,
+      },
+    });
+  }
+  for (const s of SHIFT_SEED) {
+    await prisma.shift.upsert({
+      where: { companyId_code: { companyId: company.id, code: s.code } },
+      update: {},
+      create: {
+        ...cid,
+        code: s.code,
+        name: s.name,
+        startTime: s.startTime,
+        endTime: s.endTime,
+      },
+    });
+  }
+  for (const o of OPERATOR_SEED) {
+    await prisma.operator.upsert({
+      where: { companyId_code: { companyId: company.id, code: o.code } },
+      update: {},
+      create: { ...cid, code: o.code, name: o.name },
+    });
+  }
+  for (const d of DOWNTIME_REASON_SEED) {
+    await prisma.downtimeReason.upsert({
+      where: { companyId_code: { companyId: company.id, code: d.code } },
+      update: {},
+      create: { ...cid, code: d.code, description: d.description, category: d.category },
+    });
+  }
+
   console.log(
-    `Seeded company + admin (admin@epe.local / admin1234) + ${LAUNCH_CATALOGUE.length} items + ${SUPPLIER_SEED.length} suppliers + ${CUSTOMER_SEED.length} customers`,
+    `Seeded company + admin (admin@epe.local / admin1234) + ${LAUNCH_CATALOGUE.length} items + ${SUPPLIER_SEED.length} suppliers + ${CUSTOMER_SEED.length} customers + production masters`,
   );
 }
 
