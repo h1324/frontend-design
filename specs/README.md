@@ -41,7 +41,7 @@ questions to lock before its session.
 | S8  | [08-production-masters.md](08-production-masters.md) | Machine / shift / operator / downtime | Ready  |
 | S9  | [09-rm-stores.md](09-rm-stores.md)                   | RM receipt & issue                    | Draft  |
 | S10 | [10-production-batch.md](10-production-batch.md)     | Production batch (lot) entry          | Draft  |
-| S11 | [11-roll-registry.md](11-roll-registry.md)           | Roll registry & barcode labels        | Draft  |
+| S11 | [11-roll-registry.md](11-roll-registry.md)           | Roll registry & labels (no barcode)   | Draft  |
 | S12 | [12-aging-queue.md](12-aging-queue.md)               | Aging queue (curing → available)      | Draft  |
 | S13 | [13-dispatch-invoice.md](13-dispatch-invoice.md)     | Dispatch & tax invoice                | Draft  |
 
