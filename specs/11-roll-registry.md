@@ -1,6 +1,23 @@
 # Spec S11 — Roll Registry & Labels
 
-**Status:** Draft — confirm the exact roll-number format
+**Status:** Built — `Roll` extended with `rollNo` (unique per company), `labelPrintedAt`,
+`labelPrintCount`. Roll numbers use the confirmed default format **`R<compactFY>-<seq>`**
+(e.g. `R2627-000001`): gapless per FY via the S2 counter (`allocateSeq`, shared atomic
+`DocSeries` row → never collides), assigned at creation inside `stock-ledger.receiveRoll`
+(a `Lot` passes its production date so the roll's FY matches the lot's). `lib/rolls.ts` —
+pure `buildLabelModel`/`labelFieldLines`/`renderLabelText` and a dependency-free
+`renderLabelPdf` (hand-built valid single-page Helvetica PDF, no barcode), plus audited
+`printLabel` (increments count + stamps time, PRODUCTION-write gated) and `lookupRollByNo`
+(case-insensitive). UI: `/production/rolls` (registry list — filter by SKU/lot/state +
+roll-number lookup that jumps to the roll) and `/production/rolls/[id]` (full attributes
+incl. theoretical-vs-actual weight variance + label preview + print); label served as a PDF
+by `POST /production/rolls/[id]/label`. Lot detail links each output roll by number; home
+nav link added. Verified: 5 pure + 4 DB tests (gapless non-colliding numbers, lookup,
+print-count increment + audit, gating/not-found), `npm run check` green (141 tests), build
+OK, pages render and the label endpoint streams a valid PDF (print count + audit confirmed
+in the DB).
+
+## Original plan
 
 ## Purpose
 

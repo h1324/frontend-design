@@ -15,3 +15,9 @@ export function financialYear(instant: Date): string {
   const endYY = String((startYear + 1) % 100).padStart(2, "0");
   return `${startYear}-${endYY}`;
 }
+
+/** Compact FY, e.g. "2026-27" → "2627". Used in roll numbers where a slash-free, terse
+ *  form reads better on a hand-keyed label (spec S11). */
+export function compactFinancialYear(fy: string): string {
+  return fy.slice(2, 4) + fy.slice(5, 7);
+}

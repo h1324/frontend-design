@@ -1,5 +1,5 @@
 import type { Prisma } from "@prisma/client";
-import { financialYear } from "./financial-year.js";
+import { financialYear, compactFinancialYear } from "./financial-year.js";
 
 // Financial-year-wise, gapless document numbers (CLAUDE.md rule 7).
 //
@@ -26,16 +26,31 @@ export function formatDocNumber(prefix: string, fy: string, seq: number): string
   return `${prefix}/${fy}/${String(seq).padStart(6, "0")}`;
 }
 
+/** Roll number `R<compactFY>-000123`, e.g. FY 2026-27 seq 123 → `R2627-000123` (spec S11).
+ *  Slash-free and terse for hand-keyed labels; still gapless per FY via `allocateSeq`. */
+export function formatRollNumber(fy: string, seq: number): string {
+  return `R${compactFinancialYear(fy)}-${String(seq).padStart(6, "0")}`;
+}
+
+/** A raw gapless allocation: the financial year, the stored prefix, and the number. */
+export interface SeqAllocation {
+  fy: string;
+  prefix: string;
+  seq: number;
+}
+
 /**
- * Allocate the next gapless number for a document type in the current financial year.
- * Returns the formatted string (e.g. `INV/2026-27/000001`).
+ * Allocate the next gapless sequence number for a (company, docType) in the current
+ * financial year, without formatting. Callers that want the standard `PREFIX/FY/000123`
+ * string use `nextDocNumber`; callers with a bespoke format (e.g. roll numbers) format the
+ * returned `{ fy, seq }` themselves while still sharing this one atomic counter.
  */
-export async function nextDocNumber(
+export async function allocateSeq(
   tx: Tx,
   companyId: string,
   docType: string,
   options: NextDocNumberOptions = {},
-): Promise<string> {
+): Promise<SeqAllocation> {
   const fy = financialYear(options.now ?? new Date());
   const prefix = options.prefix ?? docType;
   const where = {
@@ -58,5 +73,19 @@ export async function nextDocNumber(
     data: { nextSeq: { increment: 1 } },
   });
 
-  return formatDocNumber(prefix, fy, updated.nextSeq - 1);
+  return { fy, prefix, seq: updated.nextSeq - 1 };
+}
+
+/**
+ * Allocate the next gapless number for a document type in the current financial year.
+ * Returns the formatted string (e.g. `INV/2026-27/000001`).
+ */
+export async function nextDocNumber(
+  tx: Tx,
+  companyId: string,
+  docType: string,
+  options: NextDocNumberOptions = {},
+): Promise<string> {
+  const { prefix, fy, seq } = await allocateSeq(tx, companyId, docType, options);
+  return formatDocNumber(prefix, fy, seq);
 }

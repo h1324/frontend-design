@@ -556,6 +556,12 @@ model Roll {
   locationId String
   location   Location @relation(fields: [locationId], references: [id])
 
+  // Human-readable identity + label state (spec S11). rollNo is gapless per FY, immutable
+  // once assigned, and is THE identifier — there is no barcode/scanning system.
+  rollNo          String
+  labelPrintedAt  DateTime?
+  labelPrintCount Int       @default(0)
+
   state      RollState @default(CURING)
   length_m   Decimal   @db.Decimal(12, 3)
   width_m    Decimal   @db.Decimal(12, 3)
@@ -571,6 +577,7 @@ model Roll {
 
   ledgerEntries StockLedger[]
 
+  @@unique([companyId, rollNo])
   @@index([companyId])
   @@index([companyId, itemId, state])
 }

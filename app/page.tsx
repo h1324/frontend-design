@@ -58,6 +58,9 @@ export default async function Home() {
             <Button asChild variant="outline" size="sm">
               <Link href="/production/lots">Lots</Link>
             </Button>
+            <Button asChild variant="outline" size="sm">
+              <Link href="/production/rolls">Rolls</Link>
+            </Button>
             {session?.user?.role === "ADMIN" ? (
               <Button asChild variant="outline" size="sm">
                 <Link href="/admin/users">Users</Link>

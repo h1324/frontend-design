@@ -307,7 +307,11 @@ export default async function LotDetailPage({
               <tbody>
                 {lot.rolls.map((r) => (
                   <tr key={r.id} className="border-b last:border-0">
-                    <td className="py-2 pr-4 font-mono text-xs">{r.id.slice(0, 8)}</td>
+                    <td className="py-2 pr-4 font-mono text-xs">
+                      <Link href={`/production/rolls/${r.id}`} className="underline">
+                        {r.rollNo}
+                      </Link>
+                    </td>
                     <td className="py-2 pr-4 tabular-nums">{r.qtyKgActual.toString()}</td>
                     <td className="py-2 pr-4 tabular-nums">{r.qtyM2.toString()}</td>
                     <td className="py-2 pr-4 tabular-nums">{r.densityKgM3.toString()}</td>

@@ -21,6 +21,7 @@ import type {
 import { Decimal, type DecimalInput } from "./decimal.js";
 import { areaM2, compositeDensity, weightKg, type Dimensions } from "./uom.js";
 import { writeAudit } from "./audit.js";
+import { allocateSeq, formatRollNumber } from "./doc-number.js";
 
 type Tx = Prisma.TransactionClient;
 
@@ -208,6 +209,9 @@ export interface ReceiveRollInput {
   refType?: string;
   refId?: string;
   actorUserId?: string | null;
+  /** Instant used to pick the financial year for the roll number. Defaults to now — a lot
+   *  passes its production date so the roll number's FY matches the lot's (spec S11). */
+  at?: Date;
 }
 
 /** Create a roll (deriving m²/theoretical kg/density from its dimensions via `lib/uom.ts`)
@@ -226,9 +230,18 @@ export async function receiveRoll(
     density_kg_m3: String(l.density_kg_m3),
   }));
 
+  // Every roll gets a gapless, human-readable number at creation (spec S11) — the sole
+  // identifier, keyed by hand. Shares the S2 counter, so it can never collide.
+  const { fy, seq } = await allocateSeq(tx, input.companyId, "ROLL", {
+    prefix: "R",
+    ...(input.at ? { now: input.at } : {}),
+  });
+  const rollNo = formatRollNumber(fy, seq);
+
   const roll = await tx.roll.create({
     data: {
       companyId: input.companyId,
+      rollNo,
       itemId: input.itemId,
       locationId: input.locationId,
       lotId: input.lotId ?? null,

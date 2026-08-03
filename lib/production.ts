@@ -200,6 +200,7 @@ export async function closeLot(
       actualKg: spec.actualKg,
       initialState: "CURING",
       agingReadyDate: agingReadyDate(lot.productionDate, agingDays),
+      at: lot.productionDate,
       reason: "PRODUCTION",
       lotId: lot.id,
       refType: "Lot",
