@@ -1,6 +1,22 @@
 # Spec S12 — Aging Queue
 
-**Status:** Draft — confirm the scheduling mechanism
+**Status:** Built — `lib/aging.ts`: `agingSweep(tx, companyId, asOf, actorUserId?)` flips
+`CURING → AVAILABLE` for every roll with `agingReadyDate <= asOf` (one guarded `updateMany`,
+a `CURE_COMPLETE` audit per transition, **no ledger posting** — sellability flips, the roll
+stays put); idempotent (a second run flips nothing). `releaseEarly(tx, actor, rollId, reason)`
+is the logged supervisor override (PRODUCTION-write, reason required, CURING-only). Pure
+`agingCountdown` gives the IST-day countdown ("ready today/tomorrow/in N days"). Scheduling
+mechanism **confirmed as the default**: `POST /api/jobs/aging-sweep` — a token-authenticated
+internal route (`AGING_SWEEP_TOKEN`, timing-safe compare; unset → 503) that a plant cron
+container hits hourly, sweeping every company. `/production/aging` UI: the curing queue with
+countdowns, an on-demand "Run sweep now", and per-roll "Release early" (reason required);
+home nav link added. Verified: 5 pure + 2 DB tests (due-only flip, idempotency, `CURE_COMPLETE`
+audit, `availableRolls` after sweep, early-release override + reason-required + gating),
+`npm run check` green (148 tests), build OK; runtime-checked the queue render, the token
+gate (401/401/200), the sweep flipping exactly the due rolls with null-actor audit rows, and
+idempotency.
+
+## Original plan
 
 ## Purpose
 
