@@ -104,6 +104,13 @@ enum MaterialDocStatus {
   CANCELLED
 }
 
+/// Production lot lifecycle (spec S10). A CLOSED lot is immutable except by cancellation.
+enum LotStatus {
+  OPEN
+  CLOSED
+  CANCELLED
+}
+
 // --- company / plant -----------------------------------------------------------------
 
 /// The operating entity. Single company at launch, but every table carries companyId
@@ -132,6 +139,7 @@ model Company {
   downtimeReasons  DowntimeReason[]
   materialReceipts MaterialReceipt[]
   materialIssues   MaterialIssue[]
+  lots             Lot[]
   rolls            Roll[]
   stockLedger      StockLedger[]
   stockBalances    StockBalance[]
@@ -259,11 +267,12 @@ model Item {
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
 
-  rolls               Roll[]
-  stockBalances       StockBalance[]
-  stockLedger         StockLedger[]
+  rolls                Roll[]
+  stockBalances        StockBalance[]
+  stockLedger          StockLedger[]
   materialReceiptLines MaterialReceiptLine[]
   materialIssueLines   MaterialIssueLine[]
+  producedInLots       Lot[]
 
   @@unique([companyId, code])
   @@index([companyId])
@@ -334,6 +343,61 @@ model ShipToAddress {
   @@index([customerId])
 }
 
+// --- production batch / lot (spec S10) -----------------------------------------------
+
+/// One continuous extrusion run: one machine, one shift, one SKU. The root of genealogy
+/// and the source of every production KPI. A CLOSED lot is immutable except by cancellation.
+model Lot {
+  id           String    @id @default(cuid())
+  companyId    String
+  company      Company   @relation(fields: [companyId], references: [id])
+  lotNo        String // LOT/FY/seq
+  machineId    String
+  machine      Machine   @relation(fields: [machineId], references: [id])
+  shiftId      String
+  shift        Shift     @relation(fields: [shiftId], references: [id])
+  operatorId   String
+  operator     Operator  @relation(fields: [operatorId], references: [id])
+  targetItemId String
+  targetItem   Item      @relation(fields: [targetItemId], references: [id])
+
+  productionDate DateTime
+  startAt        DateTime?
+  endAt          DateTime?
+
+  regrindPct Decimal  @default(0) @db.Decimal(6, 3) // derived from issue lines flagged regrind
+  outputKg   Decimal  @default(0) @db.Decimal(14, 3)
+  scrapKg    Decimal  @default(0) @db.Decimal(14, 3)
+  trimKg     Decimal  @default(0) @db.Decimal(14, 3)
+  energyKwh  Decimal? @db.Decimal(12, 3) // for kWh/kg; nullable until a meter feeds it
+
+  status      LotStatus @default(OPEN)
+  createdById String?
+  createdAt   DateTime  @default(now())
+
+  rolls          Roll[]
+  materialIssues MaterialIssue[]
+  downtimeLogs   DowntimeLog[]
+
+  @@unique([companyId, lotNo])
+  @@index([companyId])
+  @@index([companyId, status])
+}
+
+/// Reason-coded downtime for a lot. Minutes feed OEE availability loss (Phase 3).
+model DowntimeLog {
+  id        String         @id @default(cuid())
+  lotId     String
+  lot       Lot            @relation(fields: [lotId], references: [id], onDelete: Cascade)
+  reasonId  String
+  reason    DowntimeReason @relation(fields: [reasonId], references: [id])
+  minutes   Int
+  note      String?
+  createdAt DateTime       @default(now())
+
+  @@index([lotId])
+}
+
 // --- raw-material stores (spec S9) ---------------------------------------------------
 
 /// A raw-material receipt (stock IN). Each line posts a BULK IN to the ledger. Lightweight
@@ -377,7 +441,8 @@ model MaterialIssue {
   companyId   String
   company     Company           @relation(fields: [companyId], references: [id])
   docNo       String // ISS/FY/seq
-  lotId       String? // → Lot (S10 adds the model + FK); the batch consuming the material
+  lotId       String? // the batch consuming the material
+  lot         Lot?              @relation(fields: [lotId], references: [id])
   issuedAt    DateTime          @default(now())
   refNote     String?
   createdById String?
@@ -418,6 +483,8 @@ model Machine {
   isActive          Boolean  @default(true)
   createdAt         DateTime @default(now())
 
+  lots Lot[]
+
   @@unique([companyId, code])
   @@index([companyId])
 }
@@ -434,6 +501,8 @@ model Shift {
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
 
+  lots Lot[]
+
   @@unique([companyId, code])
   @@index([companyId])
 }
@@ -447,6 +516,8 @@ model Operator {
   name      String
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
+
+  lots Lot[]
 
   @@unique([companyId, code])
   @@index([companyId])
@@ -463,6 +534,8 @@ model DowntimeReason {
   isActive    Boolean          @default(true)
   createdAt   DateTime         @default(now())
 
+  downtimeLogs DowntimeLog[]
+
   @@unique([companyId, code])
   @@index([companyId])
 }
@@ -477,8 +550,9 @@ model Roll {
   companyId  String
   company    Company @relation(fields: [companyId], references: [id])
   itemId     String
-  item       Item    @relation(fields: [itemId], references: [id])
-  lotId      String? // Phase 1 adds Lot + FK
+  item       Item     @relation(fields: [itemId], references: [id])
+  lotId      String?
+  lot        Lot?     @relation(fields: [lotId], references: [id])
   locationId String
   location   Location @relation(fields: [locationId], references: [id])
 

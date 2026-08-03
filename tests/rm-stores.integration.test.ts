@@ -94,7 +94,6 @@ suite("RM stores (integration)", () => {
     );
     await prisma.$transaction((tx) =>
       createIssue(tx, stores, {
-        lotId: "lot-placeholder",
         lines: [{ itemId: ldpeId, locationId: loc, qtyBase: "200", isRegrind: false }],
       }),
     );

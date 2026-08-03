@@ -1,6 +1,22 @@
 # Spec S10 — Production Batch (Lot) Entry
 
-**Status:** Draft — confirm shop-floor entry reality and weight capture
+**Status:** Built — `Lot` (+ `LotStatus`) and `DowntimeLog` models; `Roll.lotId` and
+`MaterialIssue.lotId` promoted to real FKs. `lib/production.ts` — pure metric helpers
+(`computeRegrindPct`, `computeYieldPct`, `materialBalance`, `agingReadyDate`) plus audited,
+PRODUCTION-write-gated services: `openLot` (gapless `LOT/FY/seq`), `addDowntime`, `closeLot`
+(creates output rolls in `CURING` via S3 `receiveRoll` with aging-ready = productionDate +
+`resolveItemAging`, sums output kg, derives `regrindPct` from the lot's POSTED issue lines),
+`cancelLot` (reverses each roll's SERIAL IN + marks it CANCELLED, reverses issued RM back to
+stock, cancels the issues — nothing deleted), and `lotMetrics` (input/output/scrap/trim,
+yield %, regrind %, material-balance variance). `/production/lots` (list + open) and
+`/production/lots/[id]` (metrics, close, downtime, cancel) UI; home nav link added.
+Manual per-roll weight + manual `energyKwh` (Phase 0 defaults). Verified: 6 pure + 5 DB tests
+(gapless lotNo, non-production denied, CURING rolls with aging-ready dates + SERIAL INs,
+regrindPct from issues, balance-variance metrics, downtime open/closed gating, cancel
+reverses roll stock + returns RM), `npm run check` green (132 tests), build OK, pages render
+authenticated.
+
+## Original plan
 
 ## Purpose
 
