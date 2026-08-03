@@ -97,6 +97,13 @@ enum DowntimeCategory {
   OTHER
 }
 
+/// Status of a stores document (spec S9). Documents are cancelled, never deleted;
+/// cancellation reverses the stock via S3 reversing entries.
+enum MaterialDocStatus {
+  POSTED
+  CANCELLED
+}
+
 // --- company / plant -----------------------------------------------------------------
 
 /// The operating entity. Single company at launch, but every table carries companyId
@@ -119,13 +126,15 @@ model Company {
   items           Item[]
   suppliers       Supplier[]
   customers       Customer[]
-  machines        Machine[]
-  shifts          Shift[]
-  operators       Operator[]
-  downtimeReasons DowntimeReason[]
-  rolls           Roll[]
-  stockLedger     StockLedger[]
-  stockBalances   StockBalance[]
+  machines         Machine[]
+  shifts           Shift[]
+  operators        Operator[]
+  downtimeReasons  DowntimeReason[]
+  materialReceipts MaterialReceipt[]
+  materialIssues   MaterialIssue[]
+  rolls            Roll[]
+  stockLedger      StockLedger[]
+  stockBalances    StockBalance[]
 }
 
 model Plant {
@@ -211,9 +220,11 @@ model Location {
   code      String
   createdAt DateTime @default(now())
 
-  rolls         Roll[]
-  stockBalances StockBalance[]
-  stockLedger   StockLedger[]
+  rolls                Roll[]
+  stockBalances        StockBalance[]
+  stockLedger          StockLedger[]
+  materialReceiptLines MaterialReceiptLine[]
+  materialIssueLines   MaterialIssueLine[]
 
   @@unique([companyId, code])
   @@index([companyId])
@@ -248,9 +259,11 @@ model Item {
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
 
-  rolls         Roll[]
-  stockBalances StockBalance[]
-  stockLedger   StockLedger[]
+  rolls               Roll[]
+  stockBalances       StockBalance[]
+  stockLedger         StockLedger[]
+  materialReceiptLines MaterialReceiptLine[]
+  materialIssueLines   MaterialIssueLine[]
 
   @@unique([companyId, code])
   @@index([companyId])
@@ -273,6 +286,8 @@ model Supplier {
   paymentTerms String?
   isActive     Boolean  @default(true)
   createdAt    DateTime @default(now())
+
+  materialReceipts MaterialReceipt[]
 
   @@unique([companyId, code])
   @@index([companyId])
@@ -317,6 +332,76 @@ model ShipToAddress {
   createdAt    DateTime @default(now())
 
   @@index([customerId])
+}
+
+// --- raw-material stores (spec S9) ---------------------------------------------------
+
+/// A raw-material receipt (stock IN). Each line posts a BULK IN to the ledger. Lightweight
+/// for commissioning — full PO/GRN/QC/landed-cost is Phase 2. Cancel-not-delete.
+model MaterialReceipt {
+  id          String            @id @default(cuid())
+  companyId   String
+  company     Company           @relation(fields: [companyId], references: [id])
+  docNo       String // RCPT/FY/seq
+  supplierId  String?
+  supplier    Supplier?         @relation(fields: [supplierId], references: [id])
+  receivedAt  DateTime          @default(now())
+  refNote     String?
+  createdById String? // acting user (audit log holds the authoritative actor)
+  status      MaterialDocStatus @default(POSTED)
+  createdAt   DateTime          @default(now())
+
+  lines MaterialReceiptLine[]
+
+  @@unique([companyId, docNo])
+  @@index([companyId])
+}
+
+model MaterialReceiptLine {
+  id         String          @id @default(cuid())
+  receiptId  String
+  receipt    MaterialReceipt @relation(fields: [receiptId], references: [id], onDelete: Cascade)
+  itemId     String
+  item       Item            @relation(fields: [itemId], references: [id])
+  locationId String
+  location   Location        @relation(fields: [locationId], references: [id])
+  qtyBase    Decimal         @db.Decimal(16, 3)
+  ratePaise  Int? // optional landed rate; valuation is Phase 3
+  ledgerId   String? // the BULK IN posting, for reversal on cancel
+}
+
+/// A raw-material issue to a production batch (stock OUT, negative-blocked). `isRegrind`
+/// marks blend composition for the batch's regrind-% calc (S10). Cancel-not-delete.
+model MaterialIssue {
+  id          String            @id @default(cuid())
+  companyId   String
+  company     Company           @relation(fields: [companyId], references: [id])
+  docNo       String // ISS/FY/seq
+  lotId       String? // → Lot (S10 adds the model + FK); the batch consuming the material
+  issuedAt    DateTime          @default(now())
+  refNote     String?
+  createdById String?
+  status      MaterialDocStatus @default(POSTED)
+  createdAt   DateTime          @default(now())
+
+  lines MaterialIssueLine[]
+
+  @@unique([companyId, docNo])
+  @@index([companyId])
+  @@index([lotId])
+}
+
+model MaterialIssueLine {
+  id         String        @id @default(cuid())
+  issueId    String
+  issue      MaterialIssue @relation(fields: [issueId], references: [id], onDelete: Cascade)
+  itemId     String
+  item       Item          @relation(fields: [itemId], references: [id])
+  locationId String
+  location   Location      @relation(fields: [locationId], references: [id])
+  qtyBase    Decimal       @db.Decimal(16, 3)
+  isRegrind  Boolean       @default(false)
+  ledgerId   String? // the BULK OUT posting, for reversal on cancel
 }
 
 // --- production masters (spec S8) ----------------------------------------------------

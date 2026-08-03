@@ -1,6 +1,13 @@
 # Spec S9 — Raw-Material Stores (receipt & issue)
 
-**Status:** Draft — confirm valuation timing and weighbridge input
+**Status:** Built — `MaterialReceipt`/`MaterialIssue` (+ lines) with a `MaterialDocStatus`
+enum; `lib/rm-stores.ts` — receipts post BULK IN, issues post BULK OUT (negative-blocked),
+gapless FY doc numbers (RCPT/ISS), STORES-write gated, cancel-not-delete via S3 reversal
+(cancelling a consumed receipt is refused), regrind flagged on issue lines, optional
+`ratePaise` stored (valuation deferred). `/stores/receipts` + `/stores/issues` UI.
+Verified: 5 DB tests (balance up/down, negative block, cancel reversal both ways, regrind,
+gating), build OK, pages render. **Weight capture: manual** (Phase 0 default). `lotId` is a
+plain string until S10 adds the `Lot` FK.
 
 ## Purpose
 
