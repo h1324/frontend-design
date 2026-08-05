@@ -85,6 +85,15 @@ export function ItemFields({
         <Input name="hsnCode" defaultValue={d("hsnCode")} placeholder="2/4/6/8 digits" />
       </Field>
 
+      <Field label="GST rate (%)">
+        <Input
+          name="gstRatePct"
+          inputMode="decimal"
+          defaultValue={d("gstRatePct")}
+          placeholder="e.g. 18"
+        />
+      </Field>
+
       <Field label="Grade">
         <Input name="grade" defaultValue={d("grade")} />
       </Field>

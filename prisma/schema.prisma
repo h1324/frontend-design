@@ -143,6 +143,8 @@ model Company {
   rolls            Roll[]
   stockLedger      StockLedger[]
   stockBalances    StockBalance[]
+  dispatchNotes    DispatchNote[]
+  invoices         Invoice[]
 }
 
 model Plant {
@@ -250,6 +252,7 @@ model Item {
   type      ItemType
   uomBase   String // KG | M2 | NOS | LITRE
   hsnCode   String? // free text; validated for 2/4/6/8-digit format only
+  gstRatePct Decimal? @db.Decimal(5, 2) // per-SKU GST rate for invoicing (spec S13); EPE sheets are Chapter 39
 
   // foam attributes (nullable; required for FINISHED_GOOD / WIP_ROLL)
   grade            String?
@@ -273,6 +276,7 @@ model Item {
   materialReceiptLines MaterialReceiptLine[]
   materialIssueLines   MaterialIssueLine[]
   producedInLots       Lot[]
+  invoiceLines         InvoiceLine[]
 
   @@unique([companyId, code])
   @@index([companyId])
@@ -322,7 +326,9 @@ model Customer {
   isActive              Boolean      @default(true)
   createdAt             DateTime     @default(now())
 
-  shipTos ShipToAddress[]
+  shipTos       ShipToAddress[]
+  dispatchNotes DispatchNote[]
+  invoices      Invoice[]
 
   @@unique([companyId, code])
   @@index([companyId])
@@ -339,6 +345,9 @@ model ShipToAddress {
   gstStateCode String // 2-digit GST state code
   isDefault    Boolean  @default(false)
   createdAt    DateTime @default(now())
+
+  dispatchNotes DispatchNote[]
+  invoices      Invoice[]
 
   @@index([customerId])
 }
@@ -576,6 +585,7 @@ model Roll {
   createdAt DateTime @default(now())
 
   ledgerEntries StockLedger[]
+  dispatchRolls DispatchRoll[]
 
   @@unique([companyId, rollNo])
   @@index([companyId])
@@ -642,4 +652,120 @@ model StockLedger {
   @@index([companyId])
   @@index([companyId, itemId, locationId])
   @@index([rollId])
+}
+
+// --- Dispatch & Invoice (spec S13) ---------------------------------------------------
+
+enum DispatchStatus {
+  OPEN
+  DISPATCHED
+  CANCELLED
+}
+
+enum InvoiceStatus {
+  DRAFT
+  ISSUED
+  CANCELLED
+}
+
+/// A shipment of specific rolls to a customer/ship-to. Picking allocates rolls; issuing the
+/// invoice posts the SERIAL-OUT and flips them DISPATCHED.
+model DispatchNote {
+  id           String         @id @default(cuid())
+  companyId    String
+  company      Company        @relation(fields: [companyId], references: [id])
+  docNo        String // DN/FY/seq
+  customerId   String
+  customer     Customer       @relation(fields: [customerId], references: [id])
+  shipToId     String
+  shipTo       ShipToAddress  @relation(fields: [shipToId], references: [id])
+  dispatchedAt DateTime?
+  transporter  String?
+  vehicleNo    String?
+  lrNo         String?
+  status       DispatchStatus @default(OPEN)
+  createdById  String?
+  createdAt    DateTime       @default(now())
+
+  rolls   DispatchRoll[]
+  invoice Invoice?
+
+  @@unique([companyId, docNo])
+  @@index([companyId])
+  @@index([companyId, status])
+}
+
+/// The specific rolls on a dispatch note — one row per physical roll (genealogy anchor).
+model DispatchRoll {
+  id             String       @id @default(cuid())
+  dispatchNoteId String
+  dispatchNote   DispatchNote @relation(fields: [dispatchNoteId], references: [id], onDelete: Cascade)
+  rollId         String
+  roll           Roll         @relation(fields: [rollId], references: [id])
+
+  @@unique([dispatchNoteId, rollId])
+  @@index([dispatchNoteId])
+  @@index([rollId])
+}
+
+/// A GST tax invoice for a dispatch. Money in paise (integers). IRN/signed-QR/e-way-bill
+/// fields exist from day one (brief §7) though the APIs are Phase 3. Not a ledger — this is
+/// the document; statutory books stay in Tally.
+model Invoice {
+  id             String        @id @default(cuid())
+  companyId      String
+  company        Company       @relation(fields: [companyId], references: [id])
+  docNo          String // INV/FY/seq
+  dispatchNoteId String        @unique
+  dispatchNote   DispatchNote  @relation(fields: [dispatchNoteId], references: [id])
+  customerId     String
+  customer       Customer      @relation(fields: [customerId], references: [id])
+  shipToId       String
+  shipTo         ShipToAddress @relation(fields: [shipToId], references: [id])
+  invoiceDate    DateTime      @default(now())
+
+  placeOfSupplyStateCode String
+  taxableValuePaise      BigInt
+  cgstPaise              BigInt  @default(0)
+  sgstPaise              BigInt  @default(0)
+  igstPaise              BigInt  @default(0)
+  roundOffPaise          BigInt  @default(0)
+  totalPaise             BigInt
+
+  // e-invoice / e-way-bill fields — populated by Phase 3 API calls; null until then.
+  irn          String?
+  signedQr     String?
+  ewbNo        String?
+  ewbValidTill DateTime?
+
+  status      InvoiceStatus @default(DRAFT)
+  createdById String?
+  createdAt   DateTime      @default(now())
+
+  lines InvoiceLine[]
+
+  @@unique([companyId, docNo])
+  @@index([companyId])
+  @@index([companyId, status])
+}
+
+/// One line per SKU on an invoice. Carries both kg and m² (CLAUDE.md 3) and its own HSN + rate.
+model InvoiceLine {
+  id                String  @id @default(cuid())
+  invoiceId         String
+  invoice           Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  itemId            String
+  item              Item    @relation(fields: [itemId], references: [id])
+  description       String
+  hsnCode           String?
+  qtyKg             Decimal @db.Decimal(14, 3)
+  qtyM2             Decimal @db.Decimal(14, 4)
+  ratePaise         BigInt // rate per billed unit (item's base UOM)
+  gstRatePct        Decimal @db.Decimal(5, 2)
+  taxableValuePaise BigInt
+  cgstPaise         BigInt  @default(0)
+  sgstPaise         BigInt  @default(0)
+  igstPaise         BigInt  @default(0)
+
+  @@index([invoiceId])
 }

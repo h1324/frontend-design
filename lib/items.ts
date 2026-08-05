@@ -26,6 +26,7 @@ export interface ItemInput {
   type: ItemType;
   uomBase: string;
   hsnCode?: string | null;
+  gstRatePct?: DecimalInput | null;
   grade?: string | null;
   thickness_mm?: DecimalInput | null;
   width_mm?: DecimalInput | null;
@@ -83,6 +84,22 @@ export function validateItemInput(input: ItemInput): string[] {
 
   if (input.hsnCode != null && input.hsnCode !== "" && !HSN_RE.test(input.hsnCode)) {
     errors.push("hsnCode must be 2, 4, 6 or 8 digits");
+  }
+
+  if (input.gstRatePct != null && input.gstRatePct !== "") {
+    if (typeof input.gstRatePct === "number") {
+      errors.push("gstRatePct: pass a string/Decimal, not a JS number");
+    } else {
+      let rate: Decimal | null = null;
+      try {
+        rate = new Decimal(input.gstRatePct);
+      } catch {
+        errors.push("gstRatePct is not a number");
+      }
+      if (rate && (!rate.isFinite() || rate.lt(0) || rate.gt(100))) {
+        errors.push("gstRatePct must be between 0 and 100");
+      }
+    }
   }
 
   checkPositive(input.thickness_mm, "thickness_mm", errors);
@@ -155,6 +172,7 @@ function toData(input: ItemInput) {
     type: input.type,
     uomBase: input.uomBase,
     hsnCode: input.hsnCode ?? null,
+    gstRatePct: decOrNull(input.gstRatePct),
     grade: input.grade ?? null,
     thickness_mm: decOrNull(input.thickness_mm),
     width_mm: decOrNull(input.width_mm),
@@ -175,6 +193,7 @@ function itemToInput(item: Item): ItemInput {
     type: item.type,
     uomBase: item.uomBase,
     hsnCode: item.hsnCode,
+    gstRatePct: item.gstRatePct?.toString() ?? null,
     grade: item.grade,
     thickness_mm: item.thickness_mm?.toString() ?? null,
     width_mm: item.width_mm?.toString() ?? null,

@@ -13,6 +13,7 @@ const HSN_EPE_SHEET = "39211900"; // cellular plastic sheets — confirm with CA
 const HSN_LDPE = "39011010"; // LDPE, primary form
 const HSN_BUTANE = "27111300"; // butanes, liquefied
 const HSN_TALC = "25262000"; // talc, crushed/powdered
+const GST_EPE_SHEET = "18"; // EPE foam sheets, Chapter 39 — confirm the rate with your CA
 
 export const LAUNCH_CATALOGUE: ItemInput[] = [
   // --- finished goods: EPE foam rolls (mattress wrap + protective packaging) ----------
@@ -22,6 +23,7 @@ export const LAUNCH_CATALOGUE: ItemInput[] = [
     type: "FINISHED_GOOD",
     uomBase: "M2",
     hsnCode: HSN_EPE_SHEET,
+    gstRatePct: GST_EPE_SHEET,
     grade: "EPE-22",
     thickness_mm: "2.0",
     width_mm: "1200",
@@ -36,6 +38,7 @@ export const LAUNCH_CATALOGUE: ItemInput[] = [
     type: "FINISHED_GOOD",
     uomBase: "M2",
     hsnCode: HSN_EPE_SHEET,
+    gstRatePct: GST_EPE_SHEET,
     grade: "EPE-25",
     thickness_mm: "3.0",
     width_mm: "1500",
@@ -50,6 +53,7 @@ export const LAUNCH_CATALOGUE: ItemInput[] = [
     type: "FINISHED_GOOD",
     uomBase: "M2",
     hsnCode: HSN_EPE_SHEET,
+    gstRatePct: GST_EPE_SHEET,
     grade: "EPE-18",
     thickness_mm: "1.0",
     width_mm: "1000",
@@ -65,6 +69,7 @@ export const LAUNCH_CATALOGUE: ItemInput[] = [
     type: "FINISHED_GOOD",
     uomBase: "M2",
     hsnCode: HSN_EPE_SHEET,
+    gstRatePct: GST_EPE_SHEET,
     grade: "EPE-25",
     thickness_mm: "0.5",
     width_mm: "1000",
@@ -80,6 +85,7 @@ export const LAUNCH_CATALOGUE: ItemInput[] = [
     type: "FINISHED_GOOD",
     uomBase: "M2",
     hsnCode: HSN_EPE_SHEET,
+    gstRatePct: GST_EPE_SHEET,
     grade: "EPE-LAM-28",
     thickness_mm: "40",
     width_mm: "1200",
@@ -95,6 +101,7 @@ export const LAUNCH_CATALOGUE: ItemInput[] = [
     type: "FINISHED_GOOD",
     uomBase: "M2",
     hsnCode: HSN_EPE_SHEET,
+    gstRatePct: GST_EPE_SHEET,
     grade: "EPE-22",
     thickness_mm: "2.0",
     width_mm: "1350",
@@ -110,6 +117,7 @@ export const LAUNCH_CATALOGUE: ItemInput[] = [
     type: "FINISHED_GOOD",
     uomBase: "M2",
     hsnCode: HSN_EPE_SHEET,
+    gstRatePct: GST_EPE_SHEET,
     grade: "EPE-25-AS",
     thickness_mm: "2.0",
     width_mm: "1200",

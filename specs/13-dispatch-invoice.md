@@ -1,6 +1,26 @@
 # Spec S13 — Dispatch & Invoice
 
-**Status:** Draft — confirm GST-rate source and e-invoice/e-way-bill provider
+**Status:** Built — models `DispatchNote`, `DispatchRoll`, `Invoice`, `InvoiceLine`
+(+ `DispatchStatus`/`InvoiceStatus`); money in **paise as BigInt**, quantities `Decimal`, every
+invoice line carries both kg and m². **GST-rate source (confirmed default): `gstRatePct` on
+`Item`** (wired through the item master + form + seed catalogue at 18% for EPE Chapter 39).
+`lib/gst.ts` — pure tax: `isIntraState`, `lineTaxableValuePaise`, `computeLineTax`
+(CGST+SGST intra / IGST inter, half-up per component), `sumInvoiceTotals` (round-to-rupee with
+disclosed round-off), `formatPaise` (₹ lakh/crore). `lib/dispatch.ts` — DISPATCH-write-gated,
+audited, transactional: `createDispatch`/`pickRolls` (allocate AVAILABLE→ALLOCATED, S3, curing
+needs the logged override), `generateInvoice` (SERIAL-OUT per roll → DISPATCHED, one line per
+SKU, tax by ship-to state, gapless `DN`/`INV` FY numbers), `cancelInvoice` (reverses stock,
+rolls→AVAILABLE, keeps the number, cancels the note), `cancelDispatch` (de-allocates an OPEN
+note; refuses once invoiced), `traceRoll` (genealogy DispatchRoll→Roll→Lot). IRN / signed-QR /
+e-way-bill fields exist but stay null (Phase 3 — no retrofit); this is the document, books stay
+in Tally. UI: `/dispatch` (pick rolls + create) and `/dispatch/[id]` (rolls, per-SKU rate entry,
+full tax invoice, cancel paths); home nav link. Verified: 8 pure GST + 6 DB tests (intra→
+CGST+SGST, inter→IGST, place of supply, gapless numbers, cancellation reversal keeping the
+number, genealogy, role gating; kg+m²+HSN + totals reconcile), `npm run check` green (162
+tests), build OK; runtime-checked the pick UI, an intra-state invoice (CGST=SGST, HSN, round-off,
+₹ totals) and the list — end to end.
+
+## Original plan
 
 ## Purpose
 

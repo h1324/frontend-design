@@ -18,8 +18,15 @@ const prisma = new PrismaClient();
 async function main() {
   const company = await prisma.company.upsert({
     where: { id: "seed-company" },
-    update: {},
-    create: { id: "seed-company", name: "EPE Foam Unit" },
+    // Backfill the GSTIN on an already-seeded company so dispatch can determine GST.
+    update: { gstin: "27AABCE1234F1Z5" },
+    create: {
+      id: "seed-company",
+      name: "EPE Foam Unit",
+      legalName: "EPE Foam Unit Pvt Ltd",
+      // Placeholder GSTIN — Maharashtra (state 27). Replace with the real GSTIN before go-live.
+      gstin: "27AABCE1234F1Z5",
+    },
   });
 
   const passwordHash = await bcrypt.hash("admin1234", 10);
@@ -56,6 +63,7 @@ async function main() {
         type: input.type,
         uomBase: input.uomBase,
         hsnCode: input.hsnCode ?? null,
+        gstRatePct: input.gstRatePct != null ? String(input.gstRatePct) : null,
         grade: input.grade ?? null,
         thickness_mm: input.thickness_mm != null ? String(input.thickness_mm) : null,
         width_mm: input.width_mm != null ? String(input.width_mm) : null,
