@@ -27,7 +27,7 @@ Lock these before the first line of code — several change the data model mater
 | --- | ------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
 | 1   | Single plant, single extrusion line (FLY-250) at commissioning, with a converting section (lamination/slitting)           | Multi-line needs machine dimension on every batch             |
 | 2   | Primary customers = mattress manufacturers buying wide rolls for wrap/protection packaging; secondary = general packaging | Changes SKU cardinality — few high-volume SKUs vs. hundreds   |
-| 3   | Sales are wholesale/B2B on credit, similar dealer dynamics to Diamond                                                     | Drives credit-limit and receivables design                    |
+| 3   | Sales are wholesale/B2B on credit, with dealer/distributor dynamics                                                      | Drives credit-limit and receivables design                    |
 | 4   | Output sold **by weight (kg)**, specified **by dimensions** (thickness × width × length × density)                        | This is the core UOM problem — see §5                         |
 | 5   | Scrap/trim is ground and re-pelletised in-house and blended back as regrind                                               | Needs a closed-loop material flow, not just a scrap write-off |
 | 6   | Aging/curing period required before dispatch or lamination (butane diffusion) — ⚠️ confirm days from machine supplier     | Determines whether "available stock" ≠ "physical stock"       |
@@ -97,7 +97,7 @@ Grouped roughly in dependency order.
 ### 6.1 Masters
 
 - **Item master.** Distinct types: raw material, WIP roll, finished good, consumable, packing material. Foam attributes: grade, thickness (mm), width (mm), density (kg/m³), colour, layer count, surface treatment (plain / anti-static / laminated / perforated), HSN code.
-- **Customer master.** GSTIN, billing & multiple ship-to addresses, credit limit, credit days, payment terms, transporter preference, tier. _Port the tiering logic from the Diamond framework — same scoring dimensions, different weights._
+- **Customer master.** GSTIN, billing & multiple ship-to addresses, credit limit, credit days, payment terms, transporter preference, tier. _Customer tiering (A/B/C) with a scoring model — Phase 2._
 - **Supplier master.** LDPE suppliers, butane, talc, GMS, masterbatch, packing.
 - **Machine, shift, operator, warehouse/location masters.**
 
@@ -120,7 +120,7 @@ Grouped roughly in dependency order.
 
 - Sales order → production allocation → picking → dispatch note → invoice → e-way bill → LR/transporter → delivery confirmation.
 - Credit-limit block at order entry, with a logged override path.
-- Receivables ageing — reuse the Diamond tracker logic rather than rebuilding it.
+- Receivables ageing — Phase 2.
 
 ### 6.6 Quality
 
@@ -168,7 +168,7 @@ Containers land at Mundra early-to-mid August; realistically commissioning falls
 | **1** | Commissioning day | Production batch entry, roll registry + barcode labels, aging queue, dispatch + invoice, RM issue/receipt |
 | **2** | +4 weeks          | Purchase & GRN, QC module, converting orders, receivables                                                 |
 | **3** | +8 weeks          | Batch costing, KPI dashboards, Tally sync, e-invoice/e-way bill APIs                                      |
-| **4** | Later             | Customer portal, mobile order-taking, predictive reorder, cross-entity view with Diamond                  |
+| **4** | Later             | Customer portal, mobile order-taking, predictive reorder, cross-entity consolidated view                  |
 
 Phase 1 is the hard deadline. Everything else can run on paper or in Excel for a few weeks without lasting damage — but if roll tracking isn't live from the first production run, that data is gone permanently.
 
