@@ -9,17 +9,19 @@ import { Production } from './views/Production';
 import { Alerts } from './views/Alerts';
 import { Reports } from './views/Reports';
 import { Activity } from './views/Activity';
+import { Team } from './views/Team';
 import { EditDialog } from './components/dialogs/EditDialog';
 import { ProductionDialog } from './components/dialogs/ProductionDialog';
 import { ImportDialog } from './components/dialogs/ImportDialog';
 
-const NAV: { id: View; label: string; ownerOnly?: boolean }[] = [
+const NAV: { id: View; label: string; ownerOnly?: boolean; firebaseOnly?: boolean }[] = [
   { id: 'dashboard', label: 'Dashboard' },
   { id: 'inventory', label: 'Inventory' },
   { id: 'production', label: 'Production' },
   { id: 'alerts', label: 'Alerts' },
   { id: 'reports', label: 'Reports' },
   { id: 'activity', label: 'Activity', ownerOnly: true },
+  { id: 'team', label: 'Team', ownerOnly: true, firebaseOnly: true },
 ];
 
 export function App({ onSignOut }: { onSignOut?: () => void }) {
@@ -34,7 +36,7 @@ export function App({ onSignOut }: { onSignOut?: () => void }) {
     return <div style={{ padding: 80, textAlign: 'center', color: 'var(--color-neutral-600)' }}>Loading inventory…</div>;
   }
 
-  const nav = NAV.filter((n) => !n.ownerOnly || app.isOwner);
+  const nav = NAV.filter((n) => (!n.ownerOnly || app.isOwner) && (!n.firebaseOnly || app.mode === 'firebase'));
   const openImport = () => (app.canEdit ? setImportOpen(true) : flash('View-only role cannot import data'));
   const openProd = () => (app.canEdit ? setProdOpen(true) : flash('View-only role cannot log production'));
 
@@ -85,6 +87,7 @@ export function App({ onSignOut }: { onSignOut?: () => void }) {
         {view === 'alerts' && <Alerts onEdit={setEditing} />}
         {view === 'reports' && <Reports />}
         {view === 'activity' && app.isOwner && <Activity />}
+        {view === 'team' && app.isOwner && app.mode === 'firebase' && <Team />}
       </main>
 
       {editing && <EditDialog sku={editing} onClose={() => setEditing(null)} />}

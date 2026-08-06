@@ -25,6 +25,7 @@ interface AppContextValue {
   period: string;
   audit: AuditEntry[];
   role: Role;
+  uid: string;
   userName: string;
   canEdit: boolean;
   isOwner: boolean;
@@ -64,6 +65,7 @@ export function AppProvider({
   }, [repo]);
 
   const role: Role = mode === 'firebase' ? identity?.role ?? 'viewer' : state.role;
+  const uid = mode === 'firebase' ? identity?.uid ?? '' : 'demo';
   const userName = mode === 'firebase' ? identity?.name ?? 'User' : 'Demo user';
   const canEdit = role !== 'viewer';
   const isOwner = role === 'owner';
@@ -141,7 +143,7 @@ export function AppProvider({
     loading, mode,
     dataset: state.dataset, effs, ov: state.ov, prodLog: state.prodLog,
     thresholds: state.thresholds, period: state.period, audit: state.audit,
-    role, userName, canEdit, isOwner,
+    role, uid, userName, canEdit, isOwner,
     setDemoRole, saveEdit, addProduction, setDefaultThreshold, setLineThreshold, applyImport,
   };
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;

@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import {
-  GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup, signOut,
-  onAuthStateChanged, type User,
+  GoogleAuthProvider, signInWithEmailAndPassword, createUserWithEmailAndPassword,
+  updateProfile, signInWithPopup, signOut, onAuthStateChanged, type User,
 } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import { auth, db } from './config';
+import { ensureProfile } from './users';
 import type { Identity, Role } from '../store/types';
 import type { Role as DomainRole } from '../domain/types';
 
@@ -41,6 +42,7 @@ export interface FirebaseAuthState {
   identity: Identity | null;
   error: string;
   signInEmail: (email: string, password: string) => Promise<void>;
+  signUpEmail: (email: string, password: string, name: string) => Promise<void>;
   signInGoogle: () => Promise<void>;
   signOutUser: () => Promise<void>;
 }
@@ -61,6 +63,8 @@ export function useFirebaseAuth(): FirebaseAuthState {
         setStatus('signed-out');
         return;
       }
+      // Register a directory profile for first-time users (so owners can see/promote them).
+      await ensureProfile(user.uid, user.email || '', user.displayName || user.email || 'User');
       const role = await resolveRole(user);
       setIdentity({ uid: user.uid, name: user.displayName || user.email || 'User', role });
       setStatus('signed-in');
@@ -81,6 +85,12 @@ export function useFirebaseAuth(): FirebaseAuthState {
     identity,
     error,
     signInEmail: (email, password) => wrap(() => signInWithEmailAndPassword(auth!, email, password))(),
+    signUpEmail: (email, password, name) =>
+      wrap(async () => {
+        const cred = await createUserWithEmailAndPassword(auth!, email, password);
+        if (name) await updateProfile(cred.user, { displayName: name });
+        await ensureProfile(cred.user.uid, email, name || email);
+      })(),
     signInGoogle: wrap(() => signInWithPopup(auth!, new GoogleAuthProvider())),
     signOutUser: wrap(() => signOut(auth!)),
   };

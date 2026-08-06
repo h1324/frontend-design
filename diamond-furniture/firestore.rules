@@ -48,10 +48,20 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
-    // User → role mapping: a user may read their own doc; only owners assign roles.
+    // User directory + role mapping.
+    //  - read: your own profile, or any profile if you're an owner (owners list the team).
+    //  - create: you may create only your OWN profile, and only as a viewer
+    //    (this is how in-app sign-up registers a new user — no self-promotion).
+    //  - update: only owners change roles, and an owner cannot demote themselves
+    //    (prevents locking the last owner out).
+    //  - delete: owners may remove others, never themselves.
     match /users/{uid} {
-      allow read:  if signedIn() && (request.auth.uid == uid || isOwner());
-      allow write: if isOwner();
+      allow read:   if signedIn() && (request.auth.uid == uid || isOwner());
+      allow create: if signedIn() && request.auth.uid == uid
+                    && request.resource.data.role == 'viewer';
+      allow update: if isOwner()
+                    && !(uid == request.auth.uid && request.resource.data.role != 'owner');
+      allow delete: if isOwner() && uid != request.auth.uid;
     }
   }
 }

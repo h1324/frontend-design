@@ -42,17 +42,21 @@ npm run deploy:hosting   # site only
 npm run deploy:rules     # security rules only
 ```
 
-## Give yourself the owner role
+## Give yourself the owner role (first owner only)
 
-New users default to **viewer**. Make yourself owner once (using the Admin SDK, e.g. a
-one-off Node script or a Cloud Function):
-```js
-const admin = require('firebase-admin');
-admin.initializeApp();
-admin.auth().setCustomUserClaims('<your-uid>', { role: 'owner' }); // owner | manager | viewer
-```
-…or, as the quick fallback our rules also accept, create a Firestore doc
-`users/<your-uid>` with `{ role: "owner" }`. Sign out and back in to pick up the change.
+New users default to **viewer**. Bootstrap the **first** owner once, from the console
+(this is the only user you ever create by hand):
+
+1. Sign up on your live site (the **Create account** tab), or add yourself in
+   Console → **Authentication → Users → Add user**.
+2. Copy your **User UID** from that Users list.
+3. Console → **Firestore → users** collection → open your `users/<uid>` document (it's
+   created automatically on first sign-in) → set field **`role`** to **`owner`** → Save.
+4. Sign out and back in.
+
+**After that, do everything in the app:** the **Team** tab (owner-only) lists everyone
+who has signed up and lets you set each person's role — no more console. New people just
+use **Create account** on the site; they start as viewer until you promote them.
 
 ## Load the data
 
