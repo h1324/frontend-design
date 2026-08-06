@@ -64,9 +64,11 @@ export function ImportDialog({ onClose }: { onClose: () => void }) {
       flash(`Imported ${parsed.skus.length} SKUs — data refreshed`);
       onClose();
     } catch (err) {
+      console.error('Import apply failed:', err);
       setApplying(false);
       setOk(false);
-      setMsg('Could not save to the cloud: ' + (err instanceof Error ? err.message : String(err)));
+      const code = err && typeof err === 'object' && 'code' in err ? ` [${(err as { code: string }).code}]` : '';
+      setMsg('Could not save to the cloud' + code + ': ' + (err instanceof Error ? err.message : String(err)));
     }
   };
 

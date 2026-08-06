@@ -1,5 +1,12 @@
 /* App-specific layout & animation (design-system tokens only; no new palette). */
 @keyframes grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+/* Dialogs float over the page, so they must be opaque and legible.
+   (The blueprint token sheet makes cards transparent; that's wrong for modals.) */
+.dialog {
+  background: var(--color-bg);
+  box-shadow: var(--shadow-lg);
+}
 *::-webkit-scrollbar { height: 10px; width: 10px; }
 *::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--color-text) 22%, transparent); }
 .barfill { transform-origin: left; animation: grow .5s cubic-bezier(.2,.7,.3,1) both; }
