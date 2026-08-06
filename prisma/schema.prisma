@@ -76,8 +76,8 @@ enum StockReason {
   REVERSAL
 }
 
-/// Customer tier (spec S7). Placeholder only — the scoring model ("port from Diamond")
-/// is deferred to Phase 2. New customers default to UNGRADED.
+/// Customer tier (spec S7). Placeholder only — the scoring model is deferred to Phase 2.
+/// New customers default to UNGRADED.
 enum CustomerTier {
   A
   B

@@ -48,9 +48,8 @@ questions to lock before its session.
 Phases 2–3 (purchase/GRN, QC, converting, receivables, costing, KPI dashboards, Tally
 sync, e-invoice/e-way-bill APIs) get their specs later. See `docs/brief.md` §8.
 
-The largest open dependency carried into Phase 2 is the **"Diamond" framework** (customer
-tier scoring + receivables ageing), which is not in this repo — locate it before those
-modules.
+Customer tier scoring and receivables ageing are deferred to Phase 2; until then tier is a
+placeholder (UNGRADED) and no scoring runs.
 
 ## Cross-cutting decisions (apply to every spec)
 

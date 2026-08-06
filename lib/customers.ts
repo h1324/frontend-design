@@ -2,7 +2,7 @@
 // Billing identity + credit terms + multiple ship-to addresses. Validation is pure; the
 // service enforces authorization (MASTERS write), writes audit rows, keeps `code`
 // immutable, and maintains the "exactly one default ship-to" invariant. Tier is a
-// placeholder (UNGRADED) — the Diamond scoring model is deferred to Phase 2.
+// placeholder (UNGRADED) — the scoring model is deferred to Phase 2.
 
 import {
   Prisma,

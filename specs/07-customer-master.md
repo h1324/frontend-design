@@ -6,7 +6,7 @@ fields stored not enforced, `addShipTo`/`setDefaultShipTo` maintaining the "exac
 default" invariant); `/masters/customers` list+create+edit with ship-to management, gated
 (ADMIN writes, all read); 3 placeholder customers seeded, one with ship-tos in two states
 (IGST path). Verified: 13 tests, seed loads, page renders. **Tier scoring remains
-deferred** (Diamond) — tier is a placeholder defaulting to UNGRADED.
+deferred** — tier is a placeholder defaulting to UNGRADED.
 
 ## Purpose
 
@@ -18,9 +18,9 @@ that sales orders, dispatch, invoicing, and receivables (Phase 2) all depend on.
 **In:** customer schema, CRUD, GSTIN validation, multiple ship-to addresses, credit
 fields, a placeholder tier.
 
-**Out:** the tier _scoring_ logic and receivables ageing — both flagged as "port from
-Diamond" in the brief and deferred (see open questions). Credit-limit _enforcement_
-happens at order entry (Phase 2), not here; this master just stores the limit.
+**Out:** the tier _scoring_ logic and receivables ageing — both deferred to Phase 2 (see
+open questions). Credit-limit _enforcement_ happens at order entry (Phase 2), not here;
+this master just stores the limit.
 
 ## Dependencies
 
@@ -54,8 +54,8 @@ determination by ship-to state — brief §7).
    (with the logged-override path per brief §6.5). Storing them now avoids a later
    migration.
 4. **Tier is a placeholder enum** (`A | B | C | UNGRADED`, default `UNGRADED`). The
-   scoring model ("port from Diamond") is **not** built in Phase 0 — the field exists so
-   the schema is stable when scoring lands.
+   scoring model is **not** built in Phase 0 — the field exists so the schema is stable
+   when scoring lands.
 5. **Code immutable** once referenced by an order/invoice; other fields editable with
    audit.
 6. Edits write audit rows (S2). Deactivate, don't delete.
@@ -88,10 +88,8 @@ exercise the IGST path later).
 
 ## Open questions
 
-- ⚠️ **"Diamond framework" is undocumented and not in this repo.** Both the customer
-  **tier scoring** (§6.1) and **receivables ageing** (§6.5) are meant to be ported from
-  it. Locate/confirm access to Diamond before Phase 2. Phase 0 is unblocked — tier is a
-  placeholder — but this is the biggest external dependency in the project.
-- **Tier band definition** (A/B/C by what dimensions/weights) — deferred with Diamond.
+- **Tier scoring and receivables ageing are deferred to Phase 2.** Phase 0 is unblocked —
+  tier is a placeholder defaulting to UNGRADED and no scoring runs.
+- **Tier band definition** (A/B/C by what dimensions/weights) — deferred to Phase 2.
 - **PAN required or optional** — **default: optional**, capture when available.
 - Whether credit limit is per-company or per-ship-to. **Default: per-customer.**
