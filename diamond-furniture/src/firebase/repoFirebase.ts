@@ -4,6 +4,7 @@ import {
 import type { Dataset, Machine, Overrides, ProdLogEntry, RawSku, Thresholds } from '../domain/types';
 import { normalizeDataset } from '../domain/logic';
 import { db } from './config';
+import { safeDocId } from './docId';
 import {
   DEFAULT_THRESHOLDS, type AuditEntry, type Identity, type PersistedState, type Repo,
 } from '../store/types';
@@ -29,6 +30,7 @@ interface SettingsDoc {
 
 export class FirebaseRepo implements Repo {
   private skus: SkuDoc[] = [];
+  private skuDocIds: string[] = []; // actual Firestore doc IDs currently present
   private settings: SettingsDoc = {};
   private prodLog: ProdLogEntry[] = [];
   private audit: AuditEntry[] = [];
@@ -77,7 +79,13 @@ export class FirebaseRepo implements Repo {
     const d = this.db();
     const unsubs = [
       onSnapshot(collection(d, 'skus'), (snap) => {
-        this.skus = snap.docs.map((x) => ({ ...(x.data() as SkuDoc), uid: x.id }));
+        // uid is the readable key stored as a field; the doc ID is a safe hash.
+        // Fall back to the doc ID for any legacy docs written before this change.
+        this.skus = snap.docs.map((x) => {
+          const data = x.data() as SkuDoc;
+          return { ...data, uid: data.uid ?? x.id };
+        });
+        this.skuDocIds = snap.docs.map((x) => x.id);
         this.ready.skus = true;
         this.emit();
       }),
@@ -115,7 +123,8 @@ export class FirebaseRepo implements Repo {
   }
 
   async saveOverride(id: string, patch: Overrides[string], audit: AuditEntry): Promise<void> {
-    await setDoc(doc(this.db(), 'skus', id), patch, { merge: true });
+    // `id` is the readable key; the document lives under a safe hashed ID.
+    await setDoc(doc(this.db(), 'skus', safeDocId(id)), { ...patch, uid: id }, { merge: true });
     await this.writeAudit(audit);
   }
 
@@ -135,14 +144,20 @@ export class FirebaseRepo implements Repo {
   ): Promise<void> {
     const d = this.db();
     const norm = normalizeDataset(next.dataset);
-    // Chunk sku writes into batches (Firestore limit 500 ops/batch).
     const rows = norm.skus;
+
+    // Write (upsert) every SKU under a safe, hashed doc ID, keeping the readable
+    // key as the `uid` field. Chunk into batches (Firestore limit 500 ops/batch).
+    const newIds = new Set<string>();
     for (let i = 0; i < rows.length; i += 450) {
       const batch = writeBatch(d);
       for (const s of rows.slice(i, i + 450)) {
         const uid = s.uid!;
+        const docId = safeDocId(uid);
+        newIds.add(docId);
         const kept = next.ov[uid] || {};
-        batch.set(doc(d, 'skus', uid), {
+        batch.set(doc(d, 'skus', docId), {
+          uid,
           line: s.line, model: s.model, colour: s.colour,
           opening: s.opening, sold: s.sold, closing: s.closing,
           ...(kept.reorder != null ? { reorder: kept.reorder } : {}),
@@ -151,6 +166,17 @@ export class FirebaseRepo implements Repo {
       }
       await batch.commit();
     }
+
+    // Remove any docs no longer present (incl. legacy IDs from before this fix),
+    // so a re-import can't leave duplicates behind. Done after writes so the data
+    // is never momentarily empty.
+    const orphans = this.skuDocIds.filter((id) => !newIds.has(id));
+    for (let i = 0; i < orphans.length; i += 450) {
+      const batch = writeBatch(d);
+      for (const id of orphans.slice(i, i + 450)) batch.delete(doc(d, 'skus', id));
+      await batch.commit();
+    }
+
     await setDoc(
       doc(d, 'settings', 'app'),
       { lines: norm.lines, machines: norm.machines, period: next.period },

@@ -54,11 +54,20 @@ export function ImportDialog({ onClose }: { onClose: () => void }) {
     }
   };
 
+  const [applying, setApplying] = useState(false);
+
   const apply = async () => {
-    if (!parsed) return;
-    await applyImport(parsed, detectedPeriod);
-    flash(`Imported ${parsed.skus.length} SKUs — data refreshed`);
-    onClose();
+    if (!parsed || applying) return;
+    setApplying(true);
+    try {
+      await applyImport(parsed, detectedPeriod);
+      flash(`Imported ${parsed.skus.length} SKUs — data refreshed`);
+      onClose();
+    } catch (err) {
+      setApplying(false);
+      setOk(false);
+      setMsg('Could not save to the cloud: ' + (err instanceof Error ? err.message : String(err)));
+    }
   };
 
   return (
@@ -94,8 +103,10 @@ export function ImportDialog({ onClose }: { onClose: () => void }) {
           )}
 
           <div className="dialog-actions">
-            <button className="btn btn-ghost" onClick={onClose}>{parsed ? 'Cancel' : 'Close'}</button>
-            <button className="btn btn-primary" onClick={apply} disabled={!parsed}>Apply to app</button>
+            <button className="btn btn-ghost" onClick={onClose} disabled={applying}>{parsed ? 'Cancel' : 'Close'}</button>
+            <button className="btn btn-primary" onClick={apply} disabled={!parsed || applying}>
+              {applying ? 'Saving…' : 'Apply to app'}
+            </button>
           </div>
         </>
       </Blueprint>
