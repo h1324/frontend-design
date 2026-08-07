@@ -111,28 +111,37 @@ enum LotStatus {
   CANCELLED
 }
 
+/// Purchase-order lifecycle (spec S14). DRAFT is editable; OPEN is released to the supplier
+/// and receivable (S15); CLOSED is fully/short received; CANCELLED keeps its number.
+enum PurchaseOrderStatus {
+  DRAFT
+  OPEN
+  CLOSED
+  CANCELLED
+}
+
 // --- company / plant -----------------------------------------------------------------
 
 /// The operating entity. Single company at launch, but every table carries companyId
 /// from day one to avoid a painful multi-entity retrofit (specs/README cross-cutting #3).
 model Company {
-  id        String   @id @default(cuid())
-  name      String
-  legalName String?
-  gstin     String?
+  id               String   @id @default(cuid())
+  name             String
+  legalName        String?
+  gstin            String?
   /// Plant-wide default aging/curing period (days). An item may override via agingDays;
   /// resolution is Item.agingDays ?? Company.defaultAgingDays (spec S5, decision B4).
   defaultAgingDays Int      @default(7)
   createdAt        DateTime @default(now())
 
-  users         User[]
-  plants        Plant[]
-  auditLogs     AuditLog[]
-  docSeries     DocSeries[]
-  locations       Location[]
-  items           Item[]
-  suppliers       Supplier[]
-  customers       Customer[]
+  users            User[]
+  plants           Plant[]
+  auditLogs        AuditLog[]
+  docSeries        DocSeries[]
+  locations        Location[]
+  items            Item[]
+  suppliers        Supplier[]
+  customers        Customer[]
   machines         Machine[]
   shifts           Shift[]
   operators        Operator[]
@@ -145,6 +154,7 @@ model Company {
   stockBalances    StockBalance[]
   dispatchNotes    DispatchNote[]
   invoices         Invoice[]
+  purchaseOrders   PurchaseOrder[]
 }
 
 model Plant {
@@ -244,14 +254,14 @@ model Location {
 /// types (FINISHED_GOOD / WIP_ROLL); non-foam items (raw material, consumable, packing)
 /// leave them null. HSN is free text, never hardcoded.
 model Item {
-  id        String   @id @default(cuid())
-  companyId String
-  company   Company  @relation(fields: [companyId], references: [id])
-  code      String
-  name      String
-  type      ItemType
-  uomBase   String // KG | M2 | NOS | LITRE
-  hsnCode   String? // free text; validated for 2/4/6/8-digit format only
+  id         String   @id @default(cuid())
+  companyId  String
+  company    Company  @relation(fields: [companyId], references: [id])
+  code       String
+  name       String
+  type       ItemType
+  uomBase    String // KG | M2 | NOS | LITRE
+  hsnCode    String? // free text; validated for 2/4/6/8-digit format only
   gstRatePct Decimal? @db.Decimal(5, 2) // per-SKU GST rate for invoicing (spec S13); EPE sheets are Chapter 39
 
   // foam attributes (nullable; required for FINISHED_GOOD / WIP_ROLL)
@@ -277,6 +287,7 @@ model Item {
   materialIssueLines   MaterialIssueLine[]
   producedInLots       Lot[]
   invoiceLines         InvoiceLine[]
+  purchaseOrderLines   PurchaseOrderLine[]
 
   @@unique([companyId, code])
   @@index([companyId])
@@ -301,6 +312,7 @@ model Supplier {
   createdAt    DateTime @default(now())
 
   materialReceipts MaterialReceipt[]
+  purchaseOrders   PurchaseOrder[]
 
   @@unique([companyId, code])
   @@index([companyId])
@@ -357,18 +369,18 @@ model ShipToAddress {
 /// One continuous extrusion run: one machine, one shift, one SKU. The root of genealogy
 /// and the source of every production KPI. A CLOSED lot is immutable except by cancellation.
 model Lot {
-  id           String    @id @default(cuid())
+  id           String   @id @default(cuid())
   companyId    String
-  company      Company   @relation(fields: [companyId], references: [id])
+  company      Company  @relation(fields: [companyId], references: [id])
   lotNo        String // LOT/FY/seq
   machineId    String
-  machine      Machine   @relation(fields: [machineId], references: [id])
+  machine      Machine  @relation(fields: [machineId], references: [id])
   shiftId      String
-  shift        Shift     @relation(fields: [shiftId], references: [id])
+  shift        Shift    @relation(fields: [shiftId], references: [id])
   operatorId   String
-  operator     Operator  @relation(fields: [operatorId], references: [id])
+  operator     Operator @relation(fields: [operatorId], references: [id])
   targetItemId String
-  targetItem   Item      @relation(fields: [targetItemId], references: [id])
+  targetItem   Item     @relation(fields: [targetItemId], references: [id])
 
   productionDate DateTime
   startAt        DateTime?
@@ -555,9 +567,9 @@ model DowntimeReason {
 /// (theoretical from dimensions×density, and actual weighed) and m² (from dimensions),
 /// never one without the other (CLAUDE.md rules 3 & 4).
 model Roll {
-  id         String @id @default(cuid())
+  id         String   @id @default(cuid())
   companyId  String
-  company    Company @relation(fields: [companyId], references: [id])
+  company    Company  @relation(fields: [companyId], references: [id])
   itemId     String
   item       Item     @relation(fields: [itemId], references: [id])
   lotId      String?
@@ -619,9 +631,9 @@ model StockBalance {
 /// points at the original via reversesLedgerId — the pointer lives on the reversing row
 /// precisely because the original can never be updated.
 model StockLedger {
-  id        String  @id @default(cuid())
+  id        String   @id @default(cuid())
   companyId String
-  company   Company @relation(fields: [companyId], references: [id])
+  company   Company  @relation(fields: [companyId], references: [id])
   at        DateTime @default(now())
 
   grain     StockGrain
@@ -726,10 +738,10 @@ model Invoice {
 
   placeOfSupplyStateCode String
   taxableValuePaise      BigInt
-  cgstPaise              BigInt  @default(0)
-  sgstPaise              BigInt  @default(0)
-  igstPaise              BigInt  @default(0)
-  roundOffPaise          BigInt  @default(0)
+  cgstPaise              BigInt @default(0)
+  sgstPaise              BigInt @default(0)
+  igstPaise              BigInt @default(0)
+  roundOffPaise          BigInt @default(0)
   totalPaise             BigInt
 
   // e-invoice / e-way-bill fields — populated by Phase 3 API calls; null until then.
@@ -768,4 +780,56 @@ model InvoiceLine {
   igstPaise         BigInt  @default(0)
 
   @@index([invoiceId])
+}
+
+// --- Purchase orders (spec S14) ------------------------------------------------------
+
+/// A purchase order to a supplier. Commitment value is derived from the lines; goods are
+/// received against it in S15, which maintains each line's qtyReceived.
+model PurchaseOrder {
+  id            String              @id @default(cuid())
+  companyId     String
+  company       Company             @relation(fields: [companyId], references: [id])
+  docNo         String // PO/FY/seq
+  supplierId    String
+  supplier      Supplier            @relation(fields: [supplierId], references: [id])
+  status        PurchaseOrderStatus @default(DRAFT)
+  orderDate     DateTime            @default(now())
+  expectedDate  DateTime?
+  paymentTerms  String?
+  deliveryTerms String?
+  // Multi-currency imports are Phase 2+; columns exist now (default INR) to avoid a migration.
+  currency      String              @default("INR")
+  fxRate        Decimal?            @db.Decimal(12, 6)
+  notes         String?
+  closeReason   String? // set on a manual short-close
+  createdById   String?
+  createdAt     DateTime            @default(now())
+
+  lines PurchaseOrderLine[]
+
+  @@unique([companyId, docNo])
+  @@index([companyId])
+  @@index([companyId, status])
+  @@index([supplierId])
+}
+
+/// One ordered line. `qtyReceived` is a denormalised running total maintained by S15 GRNs
+/// (source of truth is the GRN rows); `ratePaise` is indicative until the GRN/invoice.
+model PurchaseOrderLine {
+  id           String        @id @default(cuid())
+  poId         String
+  po           PurchaseOrder @relation(fields: [poId], references: [id], onDelete: Cascade)
+  itemId       String
+  item         Item          @relation(fields: [itemId], references: [id])
+  description  String?
+  qtyOrdered   Decimal       @db.Decimal(14, 3)
+  uom          String
+  ratePaise    BigInt
+  gstRatePct   Decimal?      @db.Decimal(5, 2)
+  expectedDate DateTime?
+  qtyReceived  Decimal       @default(0) @db.Decimal(14, 3)
+
+  @@index([poId])
+  @@index([itemId])
 }
