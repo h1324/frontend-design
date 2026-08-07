@@ -30,26 +30,41 @@ Each session ended in something committable (tests green + migration applied).
 | S6  | [06-supplier-master.md](06-supplier-master.md)         | Supplier master                                  | Built  |
 | S7  | [07-customer-master.md](07-customer-master.md)         | Customer master                                  | Built  |
 
-## Phase 1 build order (commissioning day) — **specs Draft**
+## Phase 1 build order (commissioning day) — **complete ✅**
 
 The hard deadline (brief §8): if roll tracking isn't live from the first production run,
-that data is gone permanently. Build order is dependency-ordered; each spec still has open
-questions to lock before its session.
+that data is gone permanently. That deadline is met — the full physical flow runs end to
+end (RM in → lot → numbered rolls cure → age into availability → pick, dispatch, GST
+invoice), every movement on the append-only ledger with audit trail and gapless FY numbers.
 
 | #   | Spec                                                 | Module                                | Status |
 | --- | ---------------------------------------------------- | ------------------------------------- | ------ |
-| S8  | [08-production-masters.md](08-production-masters.md) | Machine / shift / operator / downtime | Ready  |
-| S9  | [09-rm-stores.md](09-rm-stores.md)                   | RM receipt & issue                    | Draft  |
-| S10 | [10-production-batch.md](10-production-batch.md)     | Production batch (lot) entry          | Draft  |
-| S11 | [11-roll-registry.md](11-roll-registry.md)           | Roll registry & labels (no barcode)   | Draft  |
-| S12 | [12-aging-queue.md](12-aging-queue.md)               | Aging queue (curing → available)      | Draft  |
-| S13 | [13-dispatch-invoice.md](13-dispatch-invoice.md)     | Dispatch & tax invoice                | Draft  |
+| S8  | [08-production-masters.md](08-production-masters.md) | Machine / shift / operator / downtime | Built  |
+| S9  | [09-rm-stores.md](09-rm-stores.md)                   | RM receipt & issue                    | Built  |
+| S10 | [10-production-batch.md](10-production-batch.md)     | Production batch (lot) entry          | Built  |
+| S11 | [11-roll-registry.md](11-roll-registry.md)           | Roll registry & labels (no barcode)   | Built  |
+| S12 | [12-aging-queue.md](12-aging-queue.md)               | Aging queue (curing → available)      | Built  |
+| S13 | [13-dispatch-invoice.md](13-dispatch-invoice.md)     | Dispatch & tax invoice                | Built  |
 
-Phases 2–3 (purchase/GRN, QC, converting, receivables, costing, KPI dashboards, Tally
-sync, e-invoice/e-way-bill APIs) get their specs later. See `docs/brief.md` §8.
+## Phase 2 build order (+4 weeks) — **specs Draft**
 
-Customer tier scoring and receivables ageing are deferred to Phase 2; until then tier is a
-placeholder (UNGRADED) and no scoring runs.
+The "can run on paper for a few weeks" work: close the procurement side, add quality gates,
+model converting/genealogy, and put the sales-order + credit + receivables layer over the
+direct dispatch built in Phase 1. Dependency-ordered; each spec has open questions to lock
+before its session.
+
+| #   | Spec                                                 | Module                                     | Status |
+| --- | ---------------------------------------------------- | ------------------------------------------ | ------ |
+| S14 | [14-purchase-order.md](14-purchase-order.md)         | Purchase orders (to suppliers)             | Draft  |
+| S15 | [15-goods-receipt.md](15-goods-receipt.md)           | Goods receipt (GRN) against a PO           | Draft  |
+| S16 | [16-quality-control.md](16-quality-control.md)       | QC inspection & hold (incoming + finished) | Draft  |
+| S17 | [17-converting.md](17-converting.md)                 | Converting orders (lamination/slitting)    | Draft  |
+| S18 | [18-sales-order-credit.md](18-sales-order-credit.md) | Sales order, credit control, customer tier | Draft  |
+| S19 | [19-receivables.md](19-receivables.md)               | Receivables ageing (credit control)        | Draft  |
+
+Phase 3 (batch costing, KPI dashboards, Tally sync, e-invoice/e-way-bill APIs) and Phase 4
+(portal, mobile, predictive reorder, cross-entity view) get their specs later. See
+`docs/brief.md` §8.
 
 ## Cross-cutting decisions (apply to every spec)
 
