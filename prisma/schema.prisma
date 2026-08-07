@@ -104,6 +104,15 @@ enum MaterialDocStatus {
   CANCELLED
 }
 
+/// Per-GRN-line QC state (spec S15/S16). Received stock lands PENDING on a QC-hold location;
+/// QC (S16) passes/fails/partially-dispositions it, moving accepted qty to free stock.
+enum QcLineStatus {
+  PENDING
+  PASSED
+  FAILED
+  PARTIAL
+}
+
 /// Production lot lifecycle (spec S10). A CLOSED lot is immutable except by cancellation.
 enum LotStatus {
   OPEN
@@ -155,6 +164,7 @@ model Company {
   dispatchNotes    DispatchNote[]
   invoices         Invoice[]
   purchaseOrders   PurchaseOrder[]
+  goodsReceipts    GoodsReceipt[]
 }
 
 model Plant {
@@ -238,6 +248,9 @@ model Location {
   company   Company  @relation(fields: [companyId], references: [id])
   name      String
   code      String
+  /// QC-hold locations quarantine received-but-unpassed stock (spec S15). Stock here is not
+  /// free/issuable; QC (S16) transfers accepted qty out to a free location.
+  isQcHold  Boolean  @default(false)
   createdAt DateTime @default(now())
 
   rolls                Roll[]
@@ -245,6 +258,7 @@ model Location {
   stockLedger          StockLedger[]
   materialReceiptLines MaterialReceiptLine[]
   materialIssueLines   MaterialIssueLine[]
+  goodsReceiptLines    GoodsReceiptLine[]
 
   @@unique([companyId, code])
   @@index([companyId])
@@ -288,6 +302,7 @@ model Item {
   producedInLots       Lot[]
   invoiceLines         InvoiceLine[]
   purchaseOrderLines   PurchaseOrderLine[]
+  goodsReceiptLines    GoodsReceiptLine[]
 
   @@unique([companyId, code])
   @@index([companyId])
@@ -313,6 +328,7 @@ model Supplier {
 
   materialReceipts MaterialReceipt[]
   purchaseOrders   PurchaseOrder[]
+  goodsReceipts    GoodsReceipt[]
 
   @@unique([companyId, code])
   @@index([companyId])
@@ -806,7 +822,8 @@ model PurchaseOrder {
   createdById   String?
   createdAt     DateTime            @default(now())
 
-  lines PurchaseOrderLine[]
+  lines         PurchaseOrderLine[]
+  goodsReceipts GoodsReceipt[]
 
   @@unique([companyId, docNo])
   @@index([companyId])
@@ -830,6 +847,60 @@ model PurchaseOrderLine {
   expectedDate DateTime?
   qtyReceived  Decimal       @default(0) @db.Decimal(14, 3)
 
+  grnLines GoodsReceiptLine[]
+
   @@index([poId])
+  @@index([itemId])
+}
+
+// --- Goods receipt / GRN (spec S15) --------------------------------------------------
+
+/// Receipt of supplier goods against a PO (or a direct receipt). Each line posts a BULK IN
+/// into a QC-hold location — physically present but not free/issuable until QC passes it (S16).
+/// Cancel-not-delete: cancelling reverses the postings (refused if the stock has moved on).
+model GoodsReceipt {
+  id          String            @id @default(cuid())
+  companyId   String
+  company     Company           @relation(fields: [companyId], references: [id])
+  docNo       String // GRN/FY/seq
+  supplierId  String?
+  supplier    Supplier?         @relation(fields: [supplierId], references: [id])
+  poId        String?
+  po          PurchaseOrder?    @relation(fields: [poId], references: [id])
+  receivedAt  DateTime          @default(now())
+  docketNo    String?
+  vehicleNo   String?
+  status      MaterialDocStatus @default(POSTED)
+  createdById String?
+  createdAt   DateTime          @default(now())
+
+  lines GoodsReceiptLine[]
+
+  @@unique([companyId, docNo])
+  @@index([companyId])
+  @@index([companyId, status])
+  @@index([poId])
+}
+
+/// One received line. Posts a BULK IN (reason GRN) to a QC-hold location; `qcStatus` starts
+/// PENDING and S16 sets `qtyAccepted` + disposition. `ledgerId` is the posting for reversal.
+model GoodsReceiptLine {
+  id          String             @id @default(cuid())
+  grnId       String
+  grn         GoodsReceipt       @relation(fields: [grnId], references: [id], onDelete: Cascade)
+  poLineId    String?
+  poLine      PurchaseOrderLine? @relation(fields: [poLineId], references: [id])
+  itemId      String
+  item        Item               @relation(fields: [itemId], references: [id])
+  locationId  String
+  location    Location           @relation(fields: [locationId], references: [id])
+  qtyReceived Decimal            @db.Decimal(14, 3)
+  qtyAccepted Decimal            @default(0) @db.Decimal(14, 3)
+  ratePaise   BigInt?
+  qcStatus    QcLineStatus       @default(PENDING)
+  ledgerId    String?
+
+  @@index([grnId])
+  @@index([poLineId])
   @@index([itemId])
 }

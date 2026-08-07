@@ -49,6 +49,14 @@ async function main() {
     create: { companyId: company.id, name: "Main Warehouse", code: "MAIN" },
   });
 
+  // A QC-hold location where goods receipt (S15) quarantines incoming stock until QC (S16)
+  // passes it. Backfill isQcHold on an already-seeded location.
+  await prisma.location.upsert({
+    where: { companyId_code: { companyId: company.id, code: "QC-HOLD" } },
+    update: { isQcHold: true },
+    create: { companyId: company.id, name: "QC Hold", code: "QC-HOLD", isQcHold: true },
+  });
+
   for (const input of LAUNCH_CATALOGUE) {
     const errors = validateItemInput(input);
     if (errors.length)

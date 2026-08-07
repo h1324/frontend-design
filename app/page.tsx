@@ -59,6 +59,9 @@ export default async function Home() {
               <Link href="/purchasing/orders">Purchasing</Link>
             </Button>
             <Button asChild variant="outline" size="sm">
+              <Link href="/purchasing/grn">Receiving</Link>
+            </Button>
+            <Button asChild variant="outline" size="sm">
               <Link href="/production/lots">Lots</Link>
             </Button>
             <Button asChild variant="outline" size="sm">

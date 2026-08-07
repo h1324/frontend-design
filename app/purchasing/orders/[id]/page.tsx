@@ -57,6 +57,11 @@ export default async function PurchaseOrderDetailPage({
           <span className="rounded-full border px-3 py-1 text-xs font-medium">
             {po.status}
           </span>
+          {po.status === "OPEN" ? (
+            <Button asChild variant="secondary" size="sm">
+              <Link href={`/purchasing/grn?poId=${po.id}`}>Receive goods</Link>
+            </Button>
+          ) : null}
           <Button asChild variant="ghost" size="sm">
             <Link href="/purchasing/orders">All orders</Link>
           </Button>
