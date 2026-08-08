@@ -1,5 +1,5 @@
 import {
-  collection, doc, onSnapshot, setDoc, addDoc, writeBatch, serverTimestamp,
+  collection, doc, onSnapshot, setDoc, addDoc, deleteDoc, serverTimestamp,
 } from 'firebase/firestore';
 import type { Dataset, Machine, Overrides, ProdLogEntry, RawSku, Thresholds } from '../domain/types';
 import { normalizeDataset } from '../domain/logic';
@@ -146,35 +146,37 @@ export class FirebaseRepo implements Repo {
     const norm = normalizeDataset(next.dataset);
     const rows = norm.skus;
 
-    // Write (upsert) every SKU under a safe, hashed doc ID, keeping the readable
-    // key as the `uid` field. Chunk into batches (Firestore limit 500 ops/batch).
-    const newIds = new Set<string>();
-    for (let i = 0; i < rows.length; i += 450) {
-      const batch = writeBatch(d);
-      for (const s of rows.slice(i, i + 450)) {
-        const uid = s.uid!;
-        const docId = safeDocId(uid);
-        newIds.add(docId);
-        const kept = next.ov[uid] || {};
-        batch.set(doc(d, 'skus', docId), {
-          uid,
-          line: s.line, model: s.model, colour: s.colour,
-          opening: s.opening, sold: s.sold, closing: s.closing,
-          ...(kept.reorder != null ? { reorder: kept.reorder } : {}),
-          ...(kept.note ? { note: kept.note } : {}),
-        });
-      }
-      await batch.commit();
+    // Write each SKU as an individual document (a single-document request), NOT a
+    // big writeBatch. A batched write is one request, and the role check in the
+    // security rules runs per document — hundreds of rows exceed Firestore's
+    // per-request document-access limit and the whole batch is rejected with
+    // permission-denied. Individual writes each stay far under the limit; we run
+    // them in parallel chunks for speed.
+    const CHUNK = 40;
+    const newIds = new Set<string>(rows.map((s) => safeDocId(s.uid!)));
+
+    for (let i = 0; i < rows.length; i += CHUNK) {
+      await Promise.all(
+        rows.slice(i, i + CHUNK).map((s) => {
+          const uid = s.uid!;
+          const kept = next.ov[uid] || {};
+          return setDoc(doc(d, 'skus', safeDocId(uid)), {
+            uid,
+            line: s.line, model: s.model, colour: s.colour,
+            opening: s.opening, sold: s.sold, closing: s.closing,
+            ...(kept.reorder != null ? { reorder: kept.reorder } : {}),
+            ...(kept.note ? { note: kept.note } : {}),
+          });
+        }),
+      );
     }
 
     // Remove any docs no longer present (incl. legacy IDs from before this fix),
     // so a re-import can't leave duplicates behind. Done after writes so the data
     // is never momentarily empty.
     const orphans = this.skuDocIds.filter((id) => !newIds.has(id));
-    for (let i = 0; i < orphans.length; i += 450) {
-      const batch = writeBatch(d);
-      for (const id of orphans.slice(i, i + 450)) batch.delete(doc(d, 'skus', id));
-      await batch.commit();
+    for (let i = 0; i < orphans.length; i += CHUNK) {
+      await Promise.all(orphans.slice(i, i + CHUNK).map((id) => deleteDoc(doc(d, 'skus', id))));
     }
 
     await setDoc(
