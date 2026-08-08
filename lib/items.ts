@@ -31,6 +31,7 @@ export interface ItemInput {
   thickness_mm?: DecimalInput | null;
   width_mm?: DecimalInput | null;
   density_kg_m3?: DecimalInput | null;
+  densityTolerance?: DecimalInput | null;
   colour?: string | null;
   layerCount?: number | null;
   surfaceTreatment?: SurfaceTreatment | null;
@@ -105,6 +106,7 @@ export function validateItemInput(input: ItemInput): string[] {
   checkPositive(input.thickness_mm, "thickness_mm", errors);
   checkPositive(input.width_mm, "width_mm", errors);
   checkPositive(input.density_kg_m3, "density_kg_m3", errors);
+  checkPositive(input.densityTolerance, "densityTolerance", errors);
   checkPositive(input.reorderLevel, "reorderLevel", errors);
 
   if (
@@ -177,6 +179,7 @@ function toData(input: ItemInput) {
     thickness_mm: decOrNull(input.thickness_mm),
     width_mm: decOrNull(input.width_mm),
     density_kg_m3: decOrNull(input.density_kg_m3),
+    densityTolerance: decOrNull(input.densityTolerance),
     colour: input.colour ?? null,
     layerCount: input.layerCount ?? null,
     surfaceTreatment: input.surfaceTreatment ?? null,
@@ -198,6 +201,7 @@ function itemToInput(item: Item): ItemInput {
     thickness_mm: item.thickness_mm?.toString() ?? null,
     width_mm: item.width_mm?.toString() ?? null,
     density_kg_m3: item.density_kg_m3?.toString() ?? null,
+    densityTolerance: item.densityTolerance?.toString() ?? null,
     colour: item.colour,
     layerCount: item.layerCount,
     surfaceTreatment: item.surfaceTreatment,

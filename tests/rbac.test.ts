@@ -16,6 +16,7 @@ const ALL_ROLES: Role[] = [
   "SALES",
   "DISPATCH",
   "ACCOUNTS",
+  "QC",
   "VIEWER",
 ];
 
@@ -64,6 +65,12 @@ describe("can()", () => {
     // DISPATCH writes dispatch, not costing
     expect(can("DISPATCH", "DISPATCH", "write")).toBe(true);
     expect(can("DISPATCH", "COSTING", "write")).toBe(false);
+    // QC writes QC only; everyone else reads QC but cannot write it
+    expect(can("QC", "QC", "write")).toBe(true);
+    expect(can("QC", "STORES", "write")).toBe(false);
+    expect(can("STORES", "QC", "write")).toBe(false);
+    expect(can("ADMIN", "QC", "write")).toBe(true);
+    expect(can("VIEWER", "QC", "read")).toBe(true);
   });
 });
 

@@ -22,6 +22,7 @@ enum Role {
   SALES
   DISPATCH
   ACCOUNTS
+  QC
   VIEWER
 }
 
@@ -42,6 +43,7 @@ enum RollState {
   ALLOCATED
   DISPATCHED
   CONSUMED
+  REJECTED
   CANCELLED
 }
 
@@ -73,6 +75,8 @@ enum StockReason {
   CONVERT_IN
   CONVERT_OUT
   ADJUSTMENT
+  QC_PASS
+  QC_FAIL
   REVERSAL
 }
 
@@ -111,6 +115,28 @@ enum QcLineStatus {
   PASSED
   FAILED
   PARTIAL
+}
+
+/// What a QC inspection is against (spec S16): an incoming GRN line or a produced roll.
+enum QcRefType {
+  GRN_LINE
+  ROLL
+}
+
+/// A QC disposition (spec S16). PARTIAL splits the quantity into passed/failed.
+enum QcResult {
+  PASS
+  FAIL
+  PARTIAL
+}
+
+/// A measured QC metric (spec S16). Density is the defining EPE quality spec (CLAUDE.md).
+enum QcMetric {
+  DENSITY
+  THICKNESS
+  DIMENSION
+  VISUAL
+  OTHER
 }
 
 /// Production lot lifecycle (spec S10). A CLOSED lot is immutable except by cancellation.
@@ -165,6 +191,7 @@ model Company {
   invoices         Invoice[]
   purchaseOrders   PurchaseOrder[]
   goodsReceipts    GoodsReceipt[]
+  qcInspections    QcInspection[]
 }
 
 model Plant {
@@ -251,6 +278,8 @@ model Location {
   /// QC-hold locations quarantine received-but-unpassed stock (spec S15). Stock here is not
   /// free/issuable; QC (S16) transfers accepted qty out to a free location.
   isQcHold  Boolean  @default(false)
+  /// Reject locations hold QC-failed stock (spec S16), segregated from free/issuable stock.
+  isReject  Boolean  @default(false)
   createdAt DateTime @default(now())
 
   rolls                Roll[]
@@ -283,6 +312,8 @@ model Item {
   thickness_mm     Decimal?          @db.Decimal(9, 3)
   width_mm         Decimal?          @db.Decimal(9, 2)
   density_kg_m3    Decimal?          @db.Decimal(9, 3)
+  /// QC tolerance band (± kg/m³) around the target density for roll QC (spec S16).
+  densityTolerance Decimal?          @db.Decimal(9, 3)
   colour           String?
   layerCount       Int?
   surfaceTreatment SurfaceTreatment?
@@ -303,6 +334,7 @@ model Item {
   invoiceLines         InvoiceLine[]
   purchaseOrderLines   PurchaseOrderLine[]
   goodsReceiptLines    GoodsReceiptLine[]
+  qcInspections        QcInspection[]
 
   @@unique([companyId, code])
   @@index([companyId])
@@ -598,6 +630,11 @@ model Roll {
   rollNo          String
   labelPrintedAt  DateTime?
   labelPrintCount Int       @default(0)
+
+  // QC gate (spec S16). A roll needs qcStatus = PASSED *and* aging complete (S12) to become
+  // AVAILABLE; the two gates are independent. Fresh production rolls start PENDING.
+  qcStatus      QcLineStatus @default(PENDING)
+  qcInspectedAt DateTime?
 
   state      RollState @default(CURING)
   length_m   Decimal   @db.Decimal(12, 3)
@@ -903,4 +940,46 @@ model GoodsReceiptLine {
   @@index([grnId])
   @@index([poLineId])
   @@index([itemId])
+}
+
+// --- Quality control (spec S16) ------------------------------------------------------
+
+/// A QC inspection of an incoming GRN line or a produced roll. Passing releases stock (RM:
+/// hold→free; roll: clears the QC gate); failing routes it to reject / REJECTED. Readings are
+/// recorded, never averaged away. Gapless FY numbers; append-only (re-inspection is a new row).
+model QcInspection {
+  id          String    @id @default(cuid())
+  companyId   String
+  company     Company   @relation(fields: [companyId], references: [id])
+  docNo       String // QC/FY/seq
+  refType     QcRefType
+  refId       String // GoodsReceiptLine.id or Roll.id (polymorphic)
+  itemId      String
+  item        Item      @relation(fields: [itemId], references: [id])
+  result      QcResult
+  qtyPassed   Decimal   @default(0) @db.Decimal(14, 3)
+  qtyFailed   Decimal   @default(0) @db.Decimal(14, 3)
+  remarks     String?
+  inspectedAt DateTime  @default(now())
+  createdById String?
+  createdAt   DateTime  @default(now())
+
+  readings QcReading[]
+
+  @@unique([companyId, docNo])
+  @@index([companyId])
+  @@index([refType, refId])
+}
+
+/// One sampled reading on an inspection, stored with its in-spec flag (spec S16 rule 3).
+model QcReading {
+  id           String       @id @default(cuid())
+  inspectionId String
+  inspection   QcInspection @relation(fields: [inspectionId], references: [id], onDelete: Cascade)
+  metric       QcMetric
+  value        Decimal?     @db.Decimal(14, 4)
+  uom          String?
+  withinSpec   Boolean      @default(true)
+
+  @@index([inspectionId])
 }
