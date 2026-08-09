@@ -27,7 +27,7 @@ export function Dashboard({ setView }: { setView: (v: View) => void }) {
     { label: 'Negative stock', count: k.negativeCount, hint: 'data to fix', meta: STATUS_META.Negative },
     { label: 'Low / reorder', count: k.lowCount, hint: 'order now', meta: STATUS_META.Low },
     { label: 'Overstock', count: k.overstockCount, hint: 'cash tied up', meta: STATUS_META.Overstock },
-    { label: 'No activity', count: k.noActivityCount, hint: 'sitting still', meta: STATUS_META['No activity'] },
+    { label: 'No activity', count: k.noActivityCount, hint: 'dormant · no stock or sales', meta: STATUS_META['No activity'] },
   ];
 
   const stockBars = [...lines].sort((a, b) => b.stock - a.stock).slice(0, 12).map((l) => ({ name: l.name, value: l.stock }));

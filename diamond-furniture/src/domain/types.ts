@@ -1,6 +1,12 @@
 // Domain types for the Diamond Furniture inventory app.
 
-export type Status = 'Negative' | 'Low' | 'Overstock' | 'No activity' | 'OK' | 'Empty';
+// Status taxonomy matches the client's Master workbook formulas (Status column):
+//   Negative     — closing < 0 (data/recording issue)
+//   No activity  — no sales this period AND no stock on hand (0/0, dormant SKU)
+//   Low          — has sales and at/below the reorder point (~under 0.5 month cover)
+//   Overstock    — has sales and more than the overstock months of cover (~>3 months)
+//   OK           — everything else (incl. stock on hand with no sales this period)
+export type Status = 'Negative' | 'Low' | 'Overstock' | 'No activity' | 'OK';
 
 export type Role = 'owner' | 'manager' | 'viewer';
 

@@ -2,7 +2,8 @@ import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { parseWorkbook } from '../parseWorkbook';
 import { applyParsedToDataset, preserveOverrides, summarizeParse } from '../applyImport';
-import { skuId } from '../logic';
+import { skuId, eff, normalizeDataset, statusCounts } from '../logic';
+import { DEFAULT_THRESHOLDS } from '../../store/types';
 import type { Dataset, ParsedWorkbook } from '../types';
 import dataJson from '../../data/data.json';
 
@@ -79,15 +80,38 @@ describe('parseWorkbook — Master SKU List', () => {
 });
 
 describe('parseWorkbook — Production machine tabs', () => {
-  it('reads 7 machines and the Fresh band total (68,838)', async () => {
+  it('reads 7 machines and the full Fresh band total', async () => {
     const parsed = await parseWorkbook(fixture(PRODUCTION));
     expect(parsed.skus.length).toBe(0); // no SKU sheet in this file
     expect(parsed.machines.length).toBe(7);
-    const total = parsed.machines.reduce((a, m) => a + m.fresh, 0);
-    expect(total).toBe(68838);
-    const expected = dj.machines.reduce((a, m) => a + m.fresh, 0);
-    expect(total).toBe(expected);
     expect(parsed.machines.map((m) => m.name)).toEqual(['M-1', 'M-2', 'M-3', 'M-4', 'M-5', 'M-6', 'M-7']);
+  });
+
+  it('REGRESSION: reads formula cells in the Fresh band (was undercounting ~4x)', async () => {
+    // The machine tabs store daily Fresh values as formulas: <c ...><f/><v>N</v></c>.
+    // An earlier reader matched only value-first cells and skipped formulas, so the
+    // total read 68,838 instead of the true 266,088 (verified against openpyxl).
+    const parsed = await parseWorkbook(fixture(PRODUCTION));
+    const total = parsed.machines.reduce((a, m) => a + m.fresh, 0);
+    expect(total).toBe(266088);
+    expect(parsed.machines.find((m) => m.name === 'M-1')!.fresh).toBe(37992);
+    expect(total).toBeGreaterThan(68838 * 3); // not the old undercount
+  });
+});
+
+describe('status counts reconcile with the Master workbook Alerts tab', () => {
+  it('matches the client spreadsheet (Negative 28 · Low ~50 · Overstock 76 · No activity 363)', async () => {
+    const parsed = await parseWorkbook(fixture(MASTER));
+    const ds = normalizeDataset({ skus: parsed.skus, lines: parsed.lines, machines: [] });
+    const counts = statusCounts(eff(ds, {}, DEFAULT_THRESHOLDS));
+    // The workbook's own Alerts sheet: Negative 28, Low 50, Overstock 76, No Activity 363, OK 179.
+    // We keep an editable reorder point, so Low is 51 (one SKU sits exactly at 0.5-month cover).
+    expect(counts.Negative).toBe(28);
+    expect(counts.Overstock).toBe(76);
+    expect(counts['No activity']).toBe(363);
+    expect(counts.Low).toBeGreaterThanOrEqual(50);
+    expect(counts.Low).toBeLessThanOrEqual(51);
+    expect(counts.Negative + counts.Low + counts.Overstock + counts['No activity'] + counts.OK).toBe(696);
   });
 });
 
@@ -134,7 +158,7 @@ describe('summarizeParse', () => {
     const s = summarizeParse(await parseWorkbook(fixture(PRODUCTION)));
     expect(s.ok).toBe(true);
     expect(s.message).toContain('7 machine tabs');
-    expect(s.message).toContain('68,838');
+    expect(s.message).toContain('2,66,088'); // Indian grouping of 266088
   });
   it('flags a workbook with no recognised sheets', () => {
     const s = summarizeParse({ skus: [], lines: [], machines: [], sheetNames: ['Sheet1'] });

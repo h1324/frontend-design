@@ -9,8 +9,11 @@ export function pieces(n: number): number {
   return Math.round(n);
 }
 
-/** Months-of-cover display: ∞ when effectively infinite, 1 dp when there's demand, else em dash. */
-export function coverLabel(cover: number, sold: number): string {
-  if (cover >= 999) return '∞';
-  return sold > 0 ? cover.toFixed(1) : '—';
+/**
+ * Months-of-cover display, matching the workbook: "n/a" when there's no demand
+ * (can't divide by zero sales) or negative stock; otherwise 1 decimal place.
+ */
+export function coverLabel(cover: number, sold: number, closing = 0): string {
+  if (sold <= 0 || closing < 0) return 'n/a';
+  return cover.toFixed(1);
 }

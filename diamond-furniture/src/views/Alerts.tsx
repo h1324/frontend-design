@@ -19,7 +19,7 @@ export function Alerts({ onEdit }: { onEdit: (s: EffSku) => void }) {
     { title: 'Negative stock', desc: 'Recorded stock is below zero — a data/recording issue to correct first.', meta: STATUS_META.Negative, rows: neg, meta2: (s: EffSku) => `sold ${fmt(s.sold)}` },
     { title: 'Low / reorder', desc: 'At or below reorder point with active demand — order or produce now.', meta: STATUS_META.Low, rows: low, meta2: (s: EffSku) => `${s.cover.toFixed(1)} mo cover` },
     { title: 'Overstock', desc: `More than the line's overstock months of cover — cash sitting on the floor.`, meta: STATUS_META.Overstock, rows: over, meta2: (s: EffSku) => `${fmt(s.cover)} mo cover` },
-    { title: 'No activity', desc: 'Holding stock but nothing produced or sold this period.', meta: STATUS_META['No activity'], rows: noact, meta2: () => 'idle' },
+    { title: 'No activity', desc: 'No sales and no stock on hand this month — dormant SKUs to review.', meta: STATUS_META['No activity'], rows: noact, meta2: () => 'no stock' },
   ];
 
   const isDefault = lineForOverride === 'All lines (default)';

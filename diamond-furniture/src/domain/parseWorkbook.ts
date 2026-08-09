@@ -85,16 +85,27 @@ function sheetRows(xml: string, ss: string[]): Rows {
   let rm: RegExpExecArray | null;
   while ((rm = rowRe.exec(xml))) {
     const cells: (string | undefined)[] = [];
-    const cRe = /<c r="([A-Z]+)\d+"(?:[^>]*t="([^"]*)")?[^>]*>(?:<v>([\s\S]*?)<\/v>|<is><t[^>]*>([\s\S]*?)<\/t><\/is>)?<\/c>/g;
+    // Match each cell whether self-closing (<c .../>) or with inner content
+    // (<c ...>…</c>), then pull the value out of the inner. IMPORTANT: the value
+    // must be extracted regardless of a preceding <f>…</f> (a formula) — cells
+    // like <c ...><f/><v>156</v></c> are common (machine tabs use formulas), and
+    // an earlier version skipped them, badly under-counting production.
+    const cRe = /<c\b([^>]*?)(?:\/>|>([\s\S]*?)<\/c>)/g;
     let cm: RegExpExecArray | null;
     while ((cm = cRe.exec(rm[1]))) {
-      const col = colToIndex(cm[1]);
-      const t = cm[2];
-      const v = cm[3];
+      const attrs = cm[1] || '';
+      const inner = cm[2];
+      const rMatch = /r="([A-Z]+)\d+"/.exec(attrs);
+      if (!rMatch) continue;
+      const col = colToIndex(rMatch[1]);
+      const t = /t="([^"]*)"/.exec(attrs)?.[1];
       let val: string | undefined;
-      if (cm[4] !== undefined) val = cm[4];
-      else if (t === 's') val = ss[parseInt(v!)];
-      else val = v;
+      if (inner) {
+        const vMatch = /<v>([\s\S]*?)<\/v>/.exec(inner);
+        const isMatch = /<is>[\s\S]*?<t[^>]*>([\s\S]*?)<\/t>/.exec(inner);
+        if (vMatch) val = t === 's' ? ss[parseInt(vMatch[1])] : vMatch[1];
+        else if (isMatch) val = isMatch[1];
+      }
       if (val != null) val = unesc(String(val));
       cells[col] = val;
     }

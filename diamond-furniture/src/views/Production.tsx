@@ -31,7 +31,7 @@ export function Production({ onLog }: { onLog: () => void }) {
           <Blueprint key={m.name} className="card elev-sm" style={{ gap: 5 }}>
             <span className="card-kicker">Machine {m.name}</span>
             <span style={{ fontFamily: 'var(--font-heading)', fontSize: 28, lineHeight: 1 }}>{fmt(m.total)}</span>
-            <span className="card-meta" style={{ margin: 0 }}>fresh pieces · {m.days} active days</span>
+            <span className="card-meta" style={{ margin: 0 }}>fresh pieces · {m.days} production entries</span>
           </Blueprint>
         ))}
       </div>

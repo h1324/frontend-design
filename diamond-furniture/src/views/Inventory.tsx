@@ -88,7 +88,7 @@ export function Inventory({ onEdit }: { onEdit: (s: EffSku) => void }) {
                 <td><span className="tag tag-neutral">{s.colour || '—'}</span></td>
                 <td style={{ textAlign: 'right', fontVariantNumeric: 'tabular-nums', fontWeight: 600, color: s.closing < 0 ? '#a63a3a' : 'var(--color-text)' }}>{fmt(s.closing)}</td>
                 <td style={{ textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>{fmt(s.sold)}</td>
-                <td style={{ textAlign: 'right', fontVariantNumeric: 'tabular-nums', color: 'var(--color-neutral-700)' }}>{coverLabel(s.cover, s.sold)}</td>
+                <td style={{ textAlign: 'right', fontVariantNumeric: 'tabular-nums', color: 'var(--color-neutral-700)' }}>{coverLabel(s.cover, s.sold, s.closing)}</td>
                 <td style={{ textAlign: 'right', fontVariantNumeric: 'tabular-nums', color: 'var(--color-neutral-600)' }}>{fmt(s.reorder)}</td>
                 <td><StatusPill status={s.status as Status} /></td>
                 <td className="no-print" style={{ textAlign: 'right' }}>

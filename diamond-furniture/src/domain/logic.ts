@@ -54,21 +54,27 @@ export function computeCover(closing: number, sold: number): number {
   return sold > 0 ? closing / sold : closing > 0 ? 999 : 0;
 }
 
-/** Status classification — the exact precedence from the prototype. */
+/**
+ * Status classification — mirrors the client's Master workbook Status formula:
+ *   =IF(F<0,"Negative",
+ *       IF(OR(E="",E=0), IF(F=0,"No Activity","OK"),
+ *          IF(F/E<0.5,"Low", IF(F/E>3,"Overstock","OK"))))
+ * where E = sold this period, F = closing stock. We keep an editable reorder
+ * point in place of the hard-coded 0.5 (reorder defaults to round(sold*lowMonths),
+ * lowMonths default 0.5), and the overstock cover threshold is overMonths (default 3).
+ */
 export function classify(args: {
   closing: number;
   sold: number;
-  produced: number;
   reorder: number;
   cover: number;
   overMonths: number;
 }): Status {
-  const { closing, sold, produced, reorder, cover, overMonths } = args;
-  const moved = sold > 0 || Math.abs(produced) > 0;
+  const { closing, sold, reorder, cover, overMonths } = args;
   if (closing < 0) return 'Negative';
-  if (!moved) return closing > 0 ? 'No activity' : 'Empty';
-  if (sold > 0 && closing <= reorder) return 'Low';
-  if (sold > 0 && cover > overMonths) return 'Overstock';
+  if (sold <= 0) return closing === 0 ? 'No activity' : 'OK';
+  if (closing <= reorder) return 'Low';
+  if (cover > overMonths) return 'Overstock';
   return 'OK';
 }
 
@@ -85,7 +91,7 @@ export function effOne(raw: RawSku, ov: Overrides, thresholds: Thresholds): EffS
   const note = o.note || '';
   const produced = closing + sold - opening;
   const cover = computeCover(closing, sold);
-  const status = classify({ closing, sold, produced, reorder, cover, overMonths });
+  const status = classify({ closing, sold, reorder, cover, overMonths });
 
   return { ...raw, id, opening, sold, closing, reorder, note, produced, cover, status, lowMonths, overMonths };
 }
@@ -128,7 +134,7 @@ export function lineSummaries(effs: EffSku[]): LineSummary[] {
 
 export function statusCounts(effs: EffSku[]): Record<Status, number> {
   const counts: Record<Status, number> = {
-    Negative: 0, Low: 0, Overstock: 0, 'No activity': 0, OK: 0, Empty: 0,
+    Negative: 0, Low: 0, Overstock: 0, 'No activity': 0, OK: 0,
   };
   for (const s of effs) counts[s.status] += 1;
   return counts;

@@ -55,4 +55,6 @@ export interface Repo {
   setDemoRole?(role: Role): void;
 }
 
-export const DEFAULT_THRESHOLDS: Thresholds = { lowMonths: 1, overMonths: 6, byLine: {} };
+// Defaults match the client's Master workbook: Low = under 0.5 month of cover,
+// Overstock = more than 3 months of cover. Adjustable per line in the Alerts view.
+export const DEFAULT_THRESHOLDS: Thresholds = { lowMonths: 0.5, overMonths: 3, byLine: {} };
