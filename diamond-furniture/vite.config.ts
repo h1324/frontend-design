@@ -44,5 +44,7 @@ export default defineConfig({
     globals: true,
     environment: 'node',
     include: ['src/**/*.test.ts'],
+    // Rules tests need the Firestore emulator; they run separately via test:rules.
+    exclude: ['node_modules/**', 'dist/**', '**/*.emulator.test.ts'],
   },
 });

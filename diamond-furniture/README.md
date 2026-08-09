@@ -26,10 +26,14 @@ npm run dev        # http://localhost:5173
 
 ### Test / typecheck / build
 ```bash
-npm test           # 37 unit tests (logic + XLSX importer)
+npm test           # unit tests: logic, XLSX importer, status reconciliation, safe doc ids
 npm run typecheck
 npm run build
+npm run test:rules # Firestore security-rules tests (starts the emulator; needs Java)
 ```
+`test:rules` runs the security rules against the Firestore emulator to prove the
+role model (owner/manager/viewer, self-signup, owner-only audit) — including the
+regression where a missing custom claim denied every write.
 
 ---
 
