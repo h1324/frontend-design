@@ -1,8 +1,8 @@
 rules_version = '2';
 
 // Diamond Furniture — Firestore security rules.
-// Roles are enforced HERE, not just in the UI. A user's role comes from a custom
-// auth claim (set server-side with the Admin SDK), with a users/{uid}.role fallback.
+// Roles are enforced HERE, not just in the UI. A user's role comes from the
+// users/{uid} doc (owner-managed), with an optional custom-claim override.
 service cloud.firestore {
   match /databases/{database}/documents {
 
@@ -10,12 +10,18 @@ service cloud.firestore {
       return request.auth != null;
     }
 
-    // Role from custom claim first; fall back to the users/{uid} doc.
+    // Role resolution.
+    // IMPORTANT: read possibly-absent fields with .get(key, default). A bare
+    // `request.auth.token.role` THROWS ("Property role is undefined") when the
+    // custom claim isn't set — which is the normal case here (roles live in the
+    // users doc, not on the token) — and that error denies EVERY write for
+    // everyone, owners included. .get() returns the default instead of throwing.
+    // Precedence: custom claim (if present) → users/{uid}.role → 'viewer'.
     function role() {
-      return request.auth.token.role != null
-        ? request.auth.token.role
+      return request.auth.token.get('role', '') != ''
+        ? request.auth.token.get('role', 'viewer')
         : (exists(/databases/$(database)/documents/users/$(request.auth.uid))
-            ? get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role
+            ? get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('role', 'viewer')
             : 'viewer');
     }
 
@@ -49,18 +55,16 @@ service cloud.firestore {
     }
 
     // User directory + role mapping.
-    //  - read: your own profile, or any profile if you're an owner (owners list the team).
-    //  - create: you may create only your OWN profile, and only as a viewer
-    //    (this is how in-app sign-up registers a new user — no self-promotion).
-    //  - update: only owners change roles, and an owner cannot demote themselves
-    //    (prevents locking the last owner out).
+    //  - read: your own profile, or any profile if you're an owner.
+    //  - create: you may create only your OWN profile, and only as a viewer.
+    //  - update: only owners change roles; an owner cannot demote themselves.
     //  - delete: owners may remove others, never themselves.
     match /users/{uid} {
       allow read:   if signedIn() && (request.auth.uid == uid || isOwner());
       allow create: if signedIn() && request.auth.uid == uid
-                    && request.resource.data.role == 'viewer';
+                    && request.resource.data.get('role', '') == 'viewer';
       allow update: if isOwner()
-                    && !(uid == request.auth.uid && request.resource.data.role != 'owner');
+                    && !(uid == request.auth.uid && request.resource.data.get('role', '') != 'owner');
       allow delete: if isOwner() && uid != request.auth.uid;
     }
   }
