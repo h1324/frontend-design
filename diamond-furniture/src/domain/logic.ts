@@ -92,8 +92,9 @@ export function effOne(raw: RawSku, ov: Overrides, thresholds: Thresholds): EffS
   const produced = closing + sold - opening;
   const cover = computeCover(closing, sold);
   const status = classify({ closing, sold, reorder, cover, overMonths });
+  const idle = sold <= 0 && closing > 0; // stock sitting with no sales this period
 
-  return { ...raw, id, opening, sold, closing, reorder, note, produced, cover, status, lowMonths, overMonths };
+  return { ...raw, id, opening, sold, closing, reorder, note, produced, cover, status, idle, lowMonths, overMonths };
 }
 
 /** Compute effective SKUs for the whole dataset. */
@@ -147,11 +148,14 @@ export interface Kpis {
   lowCount: number;
   overstockCount: number;
   noActivityCount: number;
-  urgent: number; // negative + low
+  idleCount: number;   // stock on hand but no sales this period
+  idleUnits: number;   // units of stock tied up in idle SKUs
+  urgent: number;      // negative + low
 }
 
 export function kpis(effs: EffSku[]): Kpis {
   const c = statusCounts(effs);
+  const idle = effs.filter((s) => s.idle);
   return {
     totalStock: effs.reduce((a, s) => a + Math.max(0, s.closing), 0),
     totalSold: effs.reduce((a, s) => a + s.sold, 0),
@@ -159,6 +163,8 @@ export function kpis(effs: EffSku[]): Kpis {
     lowCount: c.Low,
     overstockCount: c.Overstock,
     noActivityCount: c['No activity'],
+    idleCount: idle.length,
+    idleUnits: idle.reduce((a, s) => a + s.closing, 0),
     urgent: c.Negative + c.Low,
   };
 }

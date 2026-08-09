@@ -12,6 +12,12 @@ export const STATUS_META: Record<Status, { bg: string; fg: string; accent: strin
   OK: { bg: '#dde9dd', fg: '#39633f', accent: '#4e8055' },
 };
 
+/**
+ * "Idle stock" is an insight, not a status (these SKUs stay 'OK' so counts still
+ * reconcile with the workbook). Its own muted-teal colour keeps it distinct.
+ */
+export const IDLE_META = { bg: '#dce9e7', fg: '#35605b', accent: '#4e7d78' };
+
 /** Ordered status list used for the "Status of every SKU" segmented bar. */
 export const STATUS_ORDER: Status[] = ['OK', 'Low', 'Negative', 'Overstock', 'No activity'];
 

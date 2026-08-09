@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Blueprint } from '../components/Blueprint';
 import { useApp } from '../store/store';
 import { fmt } from '../domain/format';
-import { STATUS_META } from '../domain/status';
+import { STATUS_META, IDLE_META } from '../domain/status';
 import { resolveThreshold } from '../domain/logic';
 import type { EffSku } from '../domain/types';
 
@@ -14,12 +14,14 @@ export function Alerts({ onEdit }: { onEdit: (s: EffSku) => void }) {
   const low = effs.filter((s) => s.status === 'Low').sort((a, b) => a.cover - b.cover);
   const over = effs.filter((s) => s.status === 'Overstock').sort((a, b) => b.closing - a.closing);
   const noact = effs.filter((s) => s.status === 'No activity').sort((a, b) => b.closing - a.closing);
+  const idle = effs.filter((s) => s.idle).sort((a, b) => b.closing - a.closing);
 
   const groups = [
     { title: 'Negative stock', desc: 'Recorded stock is below zero — a data/recording issue to correct first.', meta: STATUS_META.Negative, rows: neg, meta2: (s: EffSku) => `sold ${fmt(s.sold)}` },
     { title: 'Low / reorder', desc: 'At or below reorder point with active demand — order or produce now.', meta: STATUS_META.Low, rows: low, meta2: (s: EffSku) => `${s.cover.toFixed(1)} mo cover` },
     { title: 'Overstock', desc: `More than the line's overstock months of cover — cash sitting on the floor.`, meta: STATUS_META.Overstock, rows: over, meta2: (s: EffSku) => `${fmt(s.cover)} mo cover` },
     { title: 'No activity', desc: 'No sales and no stock on hand this month — dormant SKUs to review.', meta: STATUS_META['No activity'], rows: noact, meta2: () => 'no stock' },
+    { title: 'Idle stock', desc: 'Stock on hand but no sales this period — cash sitting still (still counts as OK).', meta: IDLE_META, rows: idle, meta2: (s: EffSku) => `${fmt(s.closing)} in stock` },
   ];
 
   const isDefault = lineForOverride === 'All lines (default)';

@@ -66,6 +66,8 @@ export interface EffSku extends RawSku {
   produced: number;
   cover: number;
   status: Status;
+  /** Insight flag (not a status): has stock on hand but no sales this period. */
+  idle: boolean;
   /** thresholds actually used for this SKU's line (resolved from per-line + default) */
   lowMonths: number;
   overMonths: number;

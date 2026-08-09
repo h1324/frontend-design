@@ -8,6 +8,7 @@ import { ALL_STATUSES } from '../domain/status';
 import type { EffSku, Status } from '../domain/types';
 
 const PAGE = 40;
+const IDLE_FILTER = 'Idle stock (no sales)';
 
 export function Inventory({ onEdit }: { onEdit: (s: EffSku) => void }) {
   const { effs, dataset, canEdit, period } = useApp();
@@ -20,7 +21,9 @@ export function Inventory({ onEdit }: { onEdit: (s: EffSku) => void }) {
     const query = q.trim().toLowerCase();
     const rows = effs.filter((s) => {
       if (lineFilter !== 'All lines' && s.line !== lineFilter) return false;
-      if (statusFilter !== 'All statuses' && s.status !== statusFilter) return false;
+      if (statusFilter === IDLE_FILTER) {
+        if (!s.idle) return false;
+      } else if (statusFilter !== 'All statuses' && s.status !== statusFilter) return false;
       if (query && !(s.line + ' ' + s.model + ' ' + s.colour).toLowerCase().includes(query)) return false;
       return true;
     });
@@ -65,7 +68,7 @@ export function Inventory({ onEdit }: { onEdit: (s: EffSku) => void }) {
         <div className="field" style={{ margin: 0, minWidth: 160 }}>
           <label>Status</label>
           <select className="input" value={statusFilter} onChange={(e) => setFilter(() => setStatusFilter(e.target.value))}>
-            {['All statuses', ...ALL_STATUSES].map((o) => <option key={o} value={o}>{o}</option>)}
+            {['All statuses', ...ALL_STATUSES, IDLE_FILTER].map((o) => <option key={o} value={o}>{o}</option>)}
           </select>
         </div>
       </div>

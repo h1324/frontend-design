@@ -158,6 +158,26 @@ describe('aggregations', () => {
     expect(k.negativeCount).toBe(1);
     expect(k.urgent).toBe(k.negativeCount + k.lowCount);
   });
+  it('idle insight: flags stock-on-hand with no sales, without changing its OK status', () => {
+    const dsi = {
+      lines: ['L'], machines: [],
+      skus: [
+        raw({ model: 'idle', sold: 0, closing: 100 }),  // stock, no sales → OK + idle
+        raw({ model: 'dead', sold: 0, closing: 0 }),    // No activity, not idle
+        raw({ model: 'sells', sold: 10, closing: 100 }), // OK, not idle
+      ],
+    };
+    const e = eff(dsi, {}, T());
+    const idle = e.find((s) => s.model === 'idle')!;
+    expect(idle.status).toBe('OK');   // status still reconciles with the workbook
+    expect(idle.idle).toBe(true);
+    expect(e.find((s) => s.model === 'dead')!.idle).toBe(false);
+    expect(e.find((s) => s.model === 'sells')!.idle).toBe(false);
+    const k = kpis(e);
+    expect(k.idleCount).toBe(1);
+    expect(k.idleUnits).toBe(100);
+  });
+
   it('lineSummaries flags negative + low', () => {
     const [L] = lineSummaries(e);
     expect(L.stock).toBe(60);

@@ -44,7 +44,8 @@ beforeEach(async () => {
   });
 });
 
-const as = (uid: string, claims?: object) => env.authenticatedContext(uid, claims).firestore();
+const as = (uid: string, claims?: Record<string, unknown>) =>
+  env.authenticatedContext(uid, claims).firestore();
 
 describe('SKU writes', () => {
   it('owner (users-doc role, NO claim) can write — the regression that denied everyone', async () => {

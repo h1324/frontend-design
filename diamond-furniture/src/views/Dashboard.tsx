@@ -6,7 +6,7 @@ import { BarList } from '../components/BarList';
 import { useApp } from '../store/store';
 import { fmt } from '../domain/format';
 import { kpis, lineSummaries, statusCounts } from '../domain/logic';
-import { STATUS_META, STATUS_ORDER } from '../domain/status';
+import { STATUS_META, STATUS_ORDER, IDLE_META } from '../domain/status';
 import type { View } from './types';
 
 export function Dashboard({ setView }: { setView: (v: View) => void }) {
@@ -28,6 +28,7 @@ export function Dashboard({ setView }: { setView: (v: View) => void }) {
     { label: 'Low / reorder', count: k.lowCount, hint: 'order now', meta: STATUS_META.Low },
     { label: 'Overstock', count: k.overstockCount, hint: 'cash tied up', meta: STATUS_META.Overstock },
     { label: 'No activity', count: k.noActivityCount, hint: 'dormant · no stock or sales', meta: STATUS_META['No activity'] },
+    { label: 'Idle stock', count: k.idleCount, hint: `${fmt(k.idleUnits)} units, no sales`, meta: IDLE_META },
   ];
 
   const stockBars = [...lines].sort((a, b) => b.stock - a.stock).slice(0, 12).map((l) => ({ name: l.name, value: l.stock }));
