@@ -3,7 +3,7 @@ import {
   type ReactNode,
 } from 'react';
 import type {
-  CatalogSku, EffSku, Machine, PeriodSnapshot, ProdLogEntry, Role, Thresholds, ParsedWorkbook,
+  CatalogSku, EffSku, Machine, Order, OrderItem, PeriodSnapshot, ProdLogEntry, Role, Thresholds, ParsedWorkbook,
 } from '../domain/types';
 import { effWithHistory, normalizeDataset } from '../domain/logic';
 import { periodKeyFromLabel, periodLabel, trailingPeriods, financialYearOf } from '../domain/period';
@@ -28,6 +28,7 @@ interface AppContextValue {
   dataset: { skus: never[]; lines: string[]; machines: Machine[] } | null;
   effs: EffSku[];
   prodLog: ProdLogEntry[];
+  orders: Order[];
   thresholds: Thresholds;
   period: string;              // label of the selected month
   audit: AuditEntry[];
@@ -45,12 +46,15 @@ interface AppContextValue {
   setLineThreshold: (line: string, field: 'lowMonths' | 'overMonths', value: number | undefined) => Promise<void>;
   applyImport: (parsed: ParsedWorkbook, periodLabelStr: string) => Promise<void>;
   scrubYear: () => Promise<void>;
+  createOrder: (input: { dealer: string; date: string; note?: string; items: OrderItem[] }) => Promise<void>;
+  fulfilLine: (orderId: string, itemIndex: number, qty: number) => Promise<void>;
+  cancelOrder: (orderId: string) => Promise<void>;
 }
 
 const Ctx = createContext<AppContextValue | null>(null);
 
 const empty: PersistedState = {
-  catalog: [], periods: [], latestPeriodKey: '', prodLog: [],
+  catalog: [], periods: [], latestPeriodKey: '', prodLog: [], orders: [], orderSeq: 1,
   thresholds: DEFAULT_THRESHOLDS, role: 'owner', audit: [],
 };
 
@@ -197,13 +201,38 @@ export function AppProvider({
     [repo, mkAudit, financialYearLabel],
   );
 
+  const createOrder = useCallback<AppContextValue['createOrder']>(
+    async (input) => {
+      const units = input.items.reduce((a, i) => a + i.qtyOrdered, 0);
+      await repo.createOrder(input, mkAudit('create-order', input.dealer, `${input.items.length} lines · ${units} units`));
+    },
+    [repo, mkAudit],
+  );
+
+  const fulfilLine = useCallback<AppContextValue['fulfilLine']>(
+    async (orderId, itemIndex, qty) => {
+      await repo.fulfilLine(orderId, itemIndex, qty, currentPeriodKey,
+        mkAudit('fulfil-order', orderId, `dispatched ${qty} (into ${periodLabelText})`));
+    },
+    [repo, mkAudit, currentPeriodKey, periodLabelText],
+  );
+
+  const cancelOrder = useCallback<AppContextValue['cancelOrder']>(
+    async (orderId) => {
+      await repo.cancelOrder(orderId, mkAudit('cancel-order', orderId));
+    },
+    [repo, mkAudit],
+  );
+
   const value: AppContextValue = {
     loading, mode,
     catalog: state.catalog, periods: state.periods, periodKeys, currentPeriodKey,
     setPeriod: setSelectedKey, latestPeriodKey: state.latestPeriodKey, financialYearLabel,
-    dataset, effs, prodLog: state.prodLog, thresholds: state.thresholds, period: periodLabelText, audit: state.audit,
+    dataset, effs, prodLog: state.prodLog, orders: state.orders, thresholds: state.thresholds,
+    period: periodLabelText, audit: state.audit,
     role, uid, userName, canEdit, isOwner,
     setDemoRole, saveEdit, addProduction, setDefaultThreshold, setLineThreshold, applyImport, scrubYear,
+    createOrder, fulfilLine, cancelOrder,
   };
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }

@@ -1,5 +1,5 @@
 import type {
-  CatalogSku, Machine, PeriodSnapshot, ProdLogEntry, Role, Thresholds,
+  CatalogSku, Machine, Order, OrderItem, PeriodSnapshot, ProdLogEntry, Role, Thresholds,
 } from '../domain/types';
 export type { Role } from '../domain/types';
 
@@ -15,7 +15,10 @@ export interface AuditEntry {
     | 'log-production'
     | 'set-threshold'
     | 'import'
-    | 'scrub-year';
+    | 'scrub-year'
+    | 'create-order'
+    | 'fulfil-order'
+    | 'cancel-order';
   target?: string;
   detail?: string;
 }
@@ -29,6 +32,8 @@ export interface PersistedState {
   periods: PeriodSnapshot[];   // every month on file (each with rows + machines)
   latestPeriodKey: string;     // newest month (default selection)
   prodLog: ProdLogEntry[];
+  orders: Order[];
+  orderSeq: number;            // next order number
   thresholds: Thresholds;
   role: Role;
   audit: AuditEntry[];
@@ -60,8 +65,13 @@ export interface Repo {
   addProdLog(entry: ProdLogEntry, audit: AuditEntry): Promise<void>;
   setThresholds(thresholds: Thresholds, audit: AuditEntry): Promise<void>;
   applyImport(payload: ImportPayload, audit: AuditEntry): Promise<void>;
-  /** Year-end reset: delete all monthly snapshots, keep the catalog. */
+  /** Year-end reset: delete monthly snapshots + fulfilled/cancelled orders; keep the catalog + open orders. */
   scrubYear(audit: AuditEntry): Promise<void>;
+  // Orders (Phase B)
+  createOrder(input: { dealer: string; date: string; note?: string; items: OrderItem[] }, audit: AuditEntry): Promise<void>;
+  /** Dispatch `qty` of one order line: reduces stock/increases sold in `periodKey`, advances the line. */
+  fulfilLine(orderId: string, itemIndex: number, qty: number, periodKey: string, audit: AuditEntry): Promise<void>;
+  cancelOrder(orderId: string, audit: AuditEntry): Promise<void>;
   setDemoRole?(role: Role): void;
 }
 

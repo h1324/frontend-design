@@ -9,6 +9,9 @@ const ACTION_LABEL: Record<AuditEntry['action'], string> = {
   'set-threshold': 'Changed threshold',
   import: 'Imported data',
   'scrub-year': 'Started new financial year',
+  'create-order': 'Created order',
+  'fulfil-order': 'Dispatched order',
+  'cancel-order': 'Cancelled order',
 };
 
 function when(ts: number): string {

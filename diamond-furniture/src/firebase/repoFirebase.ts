@@ -1,9 +1,11 @@
 import {
   collection, doc, onSnapshot, setDoc, getDoc, getDocs, deleteDoc, addDoc, serverTimestamp,
+  runTransaction, increment,
 } from 'firebase/firestore';
 import type {
-  CatalogSku, Machine, MonthRow, PeriodSnapshot, ProdLogEntry, Thresholds,
+  CatalogSku, Machine, MonthRow, Order, OrderItem, PeriodSnapshot, ProdLogEntry, Thresholds,
 } from '../domain/types';
+import { ordersToKeepOnScrub } from '../domain/orders';
 import { periodKeyFromLabel, periodLabel } from '../domain/period';
 import { db } from './config';
 import { safeDocId } from './docId';
@@ -31,8 +33,9 @@ interface PeriodDoc {
 export class FirebaseRepo implements Repo {
   private catalog: CatalogSku[] = [];
   private periods: PeriodSnapshot[] = [];
-  private settings: { thresholds?: Thresholds } = {};
+  private settings: { thresholds?: Thresholds; orderSeq?: number } = {};
   private prodLog: ProdLogEntry[] = [];
+  private orders: Order[] = [];
   private audit: AuditEntry[] = [];
   private ready = { catalog: false, periods: false, settings: false };
   private migrationTried = false;
@@ -51,6 +54,8 @@ export class FirebaseRepo implements Repo {
       periods: this.periods,
       latestPeriodKey: this.periods.map((p) => p.key).sort().at(-1) ?? '',
       prodLog: this.prodLog,
+      orders: this.orders,
+      orderSeq: this.settings.orderSeq ?? 1,
       thresholds: this.settings.thresholds ?? DEFAULT_THRESHOLDS,
       role: this.identity.role,
       audit: this.audit,
@@ -88,12 +93,16 @@ export class FirebaseRepo implements Repo {
         this.emit();
       }),
       onSnapshot(doc(d, 'settings', 'app'), (snap) => {
-        this.settings = (snap.data() as { thresholds?: Thresholds }) ?? {};
+        this.settings = (snap.data() as { thresholds?: Thresholds; orderSeq?: number }) ?? {};
         this.ready.settings = true;
         this.emit();
       }),
       onSnapshot(collection(d, 'productionLog'), (snap) => {
         this.prodLog = snap.docs.map((x) => x.data() as ProdLogEntry).sort((a, b) => b.date.localeCompare(a.date));
+        this.emit();
+      }),
+      onSnapshot(collection(d, 'orders'), (snap) => {
+        this.orders = snap.docs.map((x) => x.data() as Order).sort((a, b) => b.no - a.no);
         this.emit();
       }),
       onSnapshot(collection(d, 'audit'), (snap) => {
@@ -196,8 +205,55 @@ export class FirebaseRepo implements Repo {
 
   async scrubYear(audit: AuditEntry): Promise<void> {
     const d = this.db();
-    const snap = await getDocs(collection(d, 'periods'));
-    for (const x of snap.docs) await deleteDoc(doc(d, 'periods', x.id));
+    const pSnap = await getDocs(collection(d, 'periods'));
+    for (const x of pSnap.docs) await deleteDoc(doc(d, 'periods', x.id));
+    // Carry over open/partial orders; delete fulfilled + cancelled.
+    const oSnap = await getDocs(collection(d, 'orders'));
+    const keep = new Set(ordersToKeepOnScrub(oSnap.docs.map((x) => x.data() as Order)).map((o) => o.id));
+    for (const x of oSnap.docs) if (!keep.has(x.id)) await deleteDoc(doc(d, 'orders', x.id));
     await this.writeAudit(audit); // catalog kept intact
+  }
+
+  async createOrder(
+    input: { dealer: string; date: string; note?: string; items: OrderItem[] },
+    audit: AuditEntry,
+  ): Promise<void> {
+    const d = this.db();
+    await runTransaction(d, async (tx) => {
+      const setRef = doc(d, 'settings', 'app');
+      const seq = ((await tx.get(setRef)).data()?.orderSeq as number | undefined) ?? 1;
+      const id = `ORD-${String(seq).padStart(4, '0')}`;
+      tx.set(doc(d, 'orders', id), {
+        id, no: seq, dealer: input.dealer, date: input.date,
+        note: input.note ?? null, createdAt: Date.now(), items: input.items,
+      });
+      tx.set(setRef, { orderSeq: seq + 1 }, { merge: true });
+    });
+    await this.writeAudit(audit);
+  }
+
+  async fulfilLine(orderId: string, itemIndex: number, qty: number, periodKey: string, audit: AuditEntry): Promise<void> {
+    const d = this.db();
+    const orderRef = doc(d, 'orders', orderId);
+    const snap = await getDoc(orderRef);
+    const order = snap.data() as Order | undefined;
+    const item = order?.items[itemIndex];
+    if (!order || !item) return;
+    const dispatched = Math.min(qty, item.qtyOrdered - item.qtyFulfilled);
+    if (dispatched <= 0) return;
+    const items = order.items.map((it, i) => (i === itemIndex ? { ...it, qtyFulfilled: it.qtyFulfilled + dispatched } : it));
+    await setDoc(orderRef, { items }, { merge: true });
+    const id = safeDocId(item.uid);
+    await setDoc(
+      doc(d, 'periods', periodKey),
+      { rows: { [id]: { uid: item.uid, c: increment(-dispatched), s: increment(dispatched) } } },
+      { merge: true },
+    );
+    await this.writeAudit(audit);
+  }
+
+  async cancelOrder(orderId: string, audit: AuditEntry): Promise<void> {
+    await setDoc(doc(this.db(), 'orders', orderId), { cancelled: true }, { merge: true });
+    await this.writeAudit(audit);
   }
 }

@@ -1,7 +1,8 @@
 import type {
-  CatalogSku, Dataset, Machine, PeriodSnapshot, ProdLogEntry, Role, Thresholds,
+  CatalogSku, Dataset, Machine, Order, OrderItem, PeriodSnapshot, ProdLogEntry, Role, Thresholds,
 } from '../domain/types';
 import { catalogFromDataset, snapshotFromDataset } from '../domain/logic';
+import { orderNo, ordersToKeepOnScrub } from '../domain/orders';
 import { periodKeyFromLabel } from '../domain/period';
 import {
   DEFAULT_THRESHOLDS, type AuditEntry, type ImportPayload, type PersistedState, type Repo,
@@ -15,6 +16,8 @@ interface StoredV2 {
   catalog: CatalogSku[];
   periods: PeriodSnapshot[];
   prodLog: ProdLogEntry[];
+  orders: Order[];
+  orderSeq: number;
   thresholds: Thresholds;
   role: Role;
   audit: AuditEntry[];
@@ -27,6 +30,8 @@ function seedState(): StoredV2 {
     catalog: catalogFromDataset(SEED),
     periods: [snapshotFromDataset(SEED, key, 'April 2026')],
     prodLog: [],
+    orders: [],
+    orderSeq: 1,
     thresholds: DEFAULT_THRESHOLDS,
     role: 'owner',
     audit: [],
@@ -60,6 +65,8 @@ export class DemoRepo implements Repo {
       periods: this.s.periods,
       latestPeriodKey: latestKey(this.s.periods),
       prodLog: this.s.prodLog,
+      orders: this.s.orders ?? [],
+      orderSeq: this.s.orderSeq ?? 1,
       thresholds: this.s.thresholds,
       role: this.s.role,
       audit: this.s.audit,
@@ -129,7 +136,48 @@ export class DemoRepo implements Repo {
   }
 
   async scrubYear(audit: AuditEntry): Promise<void> {
-    this.commit({ periods: [] }, audit); // keep catalog, drop all monthly numbers
+    // keep catalog, drop monthly numbers; carry over open/partial orders
+    this.commit({ periods: [], orders: ordersToKeepOnScrub(this.s.orders ?? []) }, audit);
+  }
+
+  async createOrder(
+    input: { dealer: string; date: string; note?: string; items: OrderItem[] },
+    audit: AuditEntry,
+  ): Promise<void> {
+    const seq = this.s.orderSeq ?? 1;
+    const order: Order = {
+      id: orderNo(seq), no: seq, dealer: input.dealer, date: input.date, note: input.note,
+      createdAt: Date.now(), items: input.items,
+    };
+    this.commit({ orders: [order, ...(this.s.orders ?? [])], orderSeq: seq + 1 }, audit);
+  }
+
+  async fulfilLine(orderId: string, itemIndex: number, qty: number, periodKey: string, audit: AuditEntry): Promise<void> {
+    const orders = (this.s.orders ?? []).map((o) => {
+      if (o.id !== orderId) return o;
+      const items = o.items.map((it, i) =>
+        i === itemIndex ? { ...it, qtyFulfilled: Math.min(it.qtyOrdered, it.qtyFulfilled + qty) } : it);
+      return { ...o, items };
+    });
+    const target = (this.s.orders ?? []).find((o) => o.id === orderId);
+    const item = target?.items[itemIndex];
+    let periods = this.s.periods;
+    if (item) {
+      const dispatched = Math.min(qty, item.qtyOrdered - item.qtyFulfilled);
+      periods = this.s.periods.map((p) => {
+        if (p.key !== periodKey) return p;
+        const rows = p.rows.map((r) =>
+          r.uid === item.uid ? { ...r, closing: r.closing - dispatched, sold: r.sold + dispatched } : r);
+        if (!rows.some((r) => r.uid === item.uid)) rows.push({ uid: item.uid, opening: 0, sold: dispatched, closing: -dispatched });
+        return { ...p, rows };
+      });
+    }
+    this.commit({ orders, periods }, audit);
+  }
+
+  async cancelOrder(orderId: string, audit: AuditEntry): Promise<void> {
+    const orders = (this.s.orders ?? []).map((o) => (o.id === orderId ? { ...o, cancelled: true } : o));
+    this.commit({ orders }, audit);
   }
 
   setDemoRole(role: Role): void {
