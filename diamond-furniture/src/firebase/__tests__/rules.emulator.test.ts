@@ -97,6 +97,24 @@ describe('catalogue + monthly periods (new model)', () => {
   });
 });
 
+describe('orders', () => {
+  const ord = { id: 'ORD-0001', no: 1, dealer: 'D', date: '2026-04-01', createdAt: 0, items: [] };
+  it('owner/manager create + update; viewer cannot', async () => {
+    await assertSucceeds(setDoc(doc(as(OWNER), 'orders', 'ORD-0001'), ord));
+    await assertSucceeds(setDoc(doc(as(MANAGER), 'orders', 'ORD-0001'), { cancelled: true }, { merge: true }));
+    await assertFails(setDoc(doc(as(VIEWER), 'orders', 'ORD-0002'), ord));
+  });
+  it('everyone signed in can read orders', async () => {
+    await assertSucceeds(setDoc(doc(as(OWNER), 'orders', 'ORD-0003'), ord));
+    await assertSucceeds(getDoc(doc(as(VIEWER), 'orders', 'ORD-0003')));
+  });
+  it('only owners delete orders (year-end scrub)', async () => {
+    await assertSucceeds(setDoc(doc(as(OWNER), 'orders', 'ORD-0004'), ord));
+    await assertFails(deleteDoc(doc(as(MANAGER), 'orders', 'ORD-0004')));
+    await assertSucceeds(deleteDoc(doc(as(OWNER), 'orders', 'ORD-0004')));
+  });
+});
+
 describe('settings + production log', () => {
   it('manager can write settings; viewer cannot', async () => {
     await assertSucceeds(setDoc(doc(as(MANAGER), 'settings', 'app'), { period: 'May 2026' }));

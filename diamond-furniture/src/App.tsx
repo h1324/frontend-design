@@ -7,6 +7,7 @@ import type { View } from './views/types';
 import { Dashboard } from './views/Dashboard';
 import { Inventory } from './views/Inventory';
 import { Production } from './views/Production';
+import { Orders } from './views/Orders';
 import { Trends } from './views/Trends';
 import { Alerts } from './views/Alerts';
 import { Reports } from './views/Reports';
@@ -19,6 +20,7 @@ import { ImportDialog } from './components/dialogs/ImportDialog';
 const NAV: { id: View; label: string; ownerOnly?: boolean; firebaseOnly?: boolean }[] = [
   { id: 'dashboard', label: 'Dashboard' },
   { id: 'inventory', label: 'Inventory' },
+  { id: 'orders', label: 'Orders' },
   { id: 'production', label: 'Production' },
   { id: 'trends', label: 'Trends' },
   { id: 'alerts', label: 'Alerts' },
@@ -101,6 +103,7 @@ export function App({ onSignOut }: { onSignOut?: () => void }) {
       <main className="app-main">
         {view === 'dashboard' && <Dashboard setView={setView} />}
         {view === 'inventory' && <Inventory onEdit={setEditing} />}
+        {view === 'orders' && <Orders />}
         {view === 'production' && <Production onLog={openProd} />}
         {view === 'trends' && <Trends />}
         {view === 'alerts' && <Alerts onEdit={setEditing} />}

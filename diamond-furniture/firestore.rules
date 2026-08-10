@@ -40,6 +40,14 @@ service cloud.firestore {
       allow write: if canEdit();
     }
 
+    // Orders: read all signed in; owner/manager create/update (fulfil, cancel).
+    // Deletes happen only in the owner-run year-end scrub.
+    match /orders/{id} {
+      allow read:   if signedIn();
+      allow create, update: if canEdit();
+      allow delete: if isOwner();
+    }
+
     // Legacy per-SKU collection, kept as a migration backup. Read-only now.
     match /skus/{id} {
       allow read:  if signedIn();
