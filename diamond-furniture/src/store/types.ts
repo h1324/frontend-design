@@ -1,57 +1,67 @@
-import type { Dataset, Overrides, ProdLogEntry, Role, Thresholds } from '../domain/types';
+import type {
+  CatalogSku, Machine, PeriodSnapshot, ProdLogEntry, Role, Thresholds,
+} from '../domain/types';
 export type { Role } from '../domain/types';
 
 /** One audit-trail entry: who changed what, when. Visible to owners. */
 export interface AuditEntry {
   id: string;
-  at: number;          // epoch ms
-  user: string;        // display name or email
+  at: number;
+  user: string;
   role: Role;
   action:
     | 'edit-sku'
     | 'record-sale'
     | 'log-production'
     | 'set-threshold'
-    | 'import';
-  target?: string;     // e.g. SKU id or product line
-  detail?: string;     // human summary, e.g. "stock 80 → 60"
+    | 'import'
+    | 'scrub-year';
+  target?: string;
+  detail?: string;
 }
 
-/** The full app state that both backends persist and stream. */
+/**
+ * Full app state. The permanent catalog is separate from the monthly snapshots,
+ * so the year-end scrub can clear the numbers while keeping names + settings.
+ */
 export interface PersistedState {
-  dataset: Dataset | null;   // normalized (unique ids)
-  ov: Overrides;
+  catalog: CatalogSku[];
+  periods: PeriodSnapshot[];   // every month on file (each with rows + machines)
+  latestPeriodKey: string;     // newest month (default selection)
   prodLog: ProdLogEntry[];
   thresholds: Thresholds;
-  period: string;
-  /** role is authoritative from Firebase claims; in demo mode it's user-selectable */
   role: Role;
   audit: AuditEntry[];
 }
 
-/** The current signed-in identity. */
 export interface Identity {
   uid: string;
   name: string;
   role: Role;
 }
 
-/**
- * Storage backend contract. Two implementations: DemoRepo (localStorage) and
- * FirebaseRepo (Firestore). The store code is identical against either.
- */
+/** What an import writes: catalog upserts + a full month snapshot, or machines-only. */
+export interface ImportPayload {
+  catalogUpserts?: CatalogSku[];               // names only; reorder/note preserved server-side
+  snapshot?: PeriodSnapshot;                   // full month (rows + machines)
+  machinesFor?: { key: string; machines: Machine[] }; // production-only update
+}
+
+/** Storage backend contract. Two implementations: DemoRepo + FirebaseRepo. */
 export interface Repo {
-  /** Push the initial state and every subsequent update. Returns an unsubscribe fn. */
   subscribe(cb: (state: PersistedState) => void): () => void;
-  saveOverride(id: string, patch: Overrides[string], audit: AuditEntry): Promise<void>;
+  saveSku(
+    uid: string,
+    periodKey: string,
+    numbers: { closing: number; sold: number },
+    settings: { reorder: number; note: string },
+    audit: AuditEntry,
+  ): Promise<void>;
   addProdLog(entry: ProdLogEntry, audit: AuditEntry): Promise<void>;
   setThresholds(thresholds: Thresholds, audit: AuditEntry): Promise<void>;
-  applyImport(next: {
-    dataset: Dataset;
-    ov: Overrides;
-    period: string;
-  }, audit: AuditEntry): Promise<void>;
-  /** Demo-only: change the acting role. No-op under Firebase (role comes from claims). */
+  applyImport(payload: ImportPayload, audit: AuditEntry): Promise<void>;
+  /** Year-end reset: delete all monthly snapshots, keep the catalog. */
+  scrubYear(audit: AuditEntry): Promise<void>;
   setDemoRole?(role: Role): void;
 }
 

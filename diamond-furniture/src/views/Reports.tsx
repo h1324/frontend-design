@@ -1,12 +1,17 @@
+import { useState } from 'react';
 import { Blueprint } from '../components/Blueprint';
 import { useApp } from '../store/store';
+import { useToast } from '../components/Toast';
 import { fmt } from '../domain/format';
 import { downloadCsv } from '../lib/csv';
 import { kpis, lineSummaries } from '../domain/logic';
 import { STATUS_META } from '../domain/status';
 
 export function Reports() {
-  const { effs, dataset, prodLog, period } = useApp();
+  const { effs, dataset, prodLog, period, isOwner, catalog, periods, financialYearLabel, scrubYear } = useApp();
+  const flash = useToast();
+  const [confirmScrub, setConfirmScrub] = useState(false);
+  const [scrubbing, setScrubbing] = useState(false);
   const k = kpis(effs);
   const machinesFresh = dataset?.machines.reduce((a, m) => a + m.fresh, 0) ?? 0;
   const loggedTotal = prodLog.reduce((a, l) => a + l.qty, 0);
@@ -77,6 +82,53 @@ export function Reports() {
           </tbody>
         </table>
       </Blueprint>
+
+      {isOwner && (
+        <Blueprint className="card no-print" style={{ gap: 12, marginTop: 22, borderTop: '3px solid #a63a3a' }}>
+          <h4 style={{ margin: 0 }}>Data management</h4>
+          <p className="text-muted" style={{ margin: 0, fontSize: 13, lineHeight: 1.5 }}>
+            Start a new financial year: this permanently clears all <strong>{periods.length} month(s)</strong> of
+            production &amp; stock numbers, while <strong>keeping your SKU catalogue</strong> ({catalog.length} items —
+            names, models, colours, reorder points and notes). Use it at the start of the Indian financial year, then
+            import April's file. Owner-only, and recorded in the Activity log.
+          </p>
+          <div>
+            <button className="btn btn-secondary" style={{ borderColor: '#a63a3a', color: '#a63a3a' }} onClick={() => setConfirmScrub(true)}>
+              Start new financial year…
+            </button>
+          </div>
+        </Blueprint>
+      )}
+
+      {confirmScrub && (
+        <div className="dialog-backdrop no-print" onClick={() => !scrubbing && setConfirmScrub(false)}>
+          <Blueprint className="dialog" onClick={(e) => e.stopPropagation()}>
+            <>
+              <div className="dialog-title">Start new financial year?</div>
+              <p className="text-muted" style={{ margin: 0, fontSize: 13, lineHeight: 1.5 }}>
+                This clears <strong>all {periods.length} month(s)</strong> of stock &amp; production numbers
+                (current FY {financialYearLabel}). Your catalogue of <strong>{catalog.length} SKUs</strong> — names,
+                models, colours, reorder points, notes — is kept, so you can import the new year's numbers onto it.
+                This can't be undone from the app.
+              </p>
+              <div className="dialog-actions">
+                <button className="btn btn-ghost" onClick={() => setConfirmScrub(false)} disabled={scrubbing}>Cancel</button>
+                <button
+                  className="btn btn-primary" style={{ background: '#a63a3a', borderColor: '#a63a3a' }} disabled={scrubbing}
+                  onClick={async () => {
+                    setScrubbing(true);
+                    try { await scrubYear(); flash('New financial year started — numbers cleared, catalogue kept'); setConfirmScrub(false); }
+                    catch (e) { flash('Could not clear: ' + (e instanceof Error ? e.message : String(e))); }
+                    finally { setScrubbing(false); }
+                  }}
+                >
+                  {scrubbing ? 'Clearing…' : 'Yes, clear the numbers'}
+                </button>
+              </div>
+            </>
+          </Blueprint>
+        </div>
+      )}
     </section>
   );
 }

@@ -1,40 +1,41 @@
 import {
-  collection, doc, onSnapshot, setDoc, addDoc, deleteDoc, serverTimestamp,
+  collection, doc, onSnapshot, setDoc, getDoc, getDocs, deleteDoc, addDoc, serverTimestamp,
 } from 'firebase/firestore';
-import type { Dataset, Machine, Overrides, ProdLogEntry, RawSku, Thresholds } from '../domain/types';
-import { normalizeDataset } from '../domain/logic';
+import type {
+  CatalogSku, Machine, MonthRow, PeriodSnapshot, ProdLogEntry, Thresholds,
+} from '../domain/types';
+import { periodKeyFromLabel, periodLabel } from '../domain/period';
 import { db } from './config';
 import { safeDocId } from './docId';
 import {
-  DEFAULT_THRESHOLDS, type AuditEntry, type Identity, type PersistedState, type Repo,
+  DEFAULT_THRESHOLDS, type AuditEntry, type Identity, type ImportPayload,
+  type PersistedState, type Repo,
 } from '../store/types';
 
 /**
- * Firestore backend. Layout:
- *   skus/{uid}          → { line, model, colour, opening, sold, closing, reorder?, note? }
- *   settings/app        → { thresholds, period, lines, machines }
- *   productionLog/{id}  → { machine, date, line, qty }
- *   audit/{id}          → { at, user, role, action, target?, detail? }
+ * Firestore backend (catalog + monthly-history model).
+ *   catalog/{docId}   → { uid, line, model, colour, reorder?, note?, cost?, price? }   (permanent)
+ *   periods/{key}     → { key, label, machines[], rows: { [docId]: { uid, o, s, c } } } (one per month)
+ *   settings/app      → { thresholds }
+ *   productionLog/{id}, audit/{id}, users/{uid}
  *
- * Edits write directly to the sku doc (the README's "overrides become field
- * writes"); reorder/note are folded back into the in-memory `ov` map so the
- * shared domain logic is identical to demo mode.
+ * A month is a single document, so a whole import is one write (no bulk-write
+ * limits), and per-SKU edits deep-merge safely. Old skus/{docId} docs are kept
+ * as a backup and migrated on first load.
  */
-type SkuDoc = RawSku & { reorder?: number; note?: string };
-interface SettingsDoc {
-  thresholds?: Thresholds;
-  period?: string;
-  lines?: string[];
-  machines?: Machine[];
+type RowVal = { uid: string; o: number; s: number; c: number };
+interface PeriodDoc {
+  key: string; label: string; machines?: Machine[]; rows?: Record<string, RowVal>;
 }
 
 export class FirebaseRepo implements Repo {
-  private skus: SkuDoc[] = [];
-  private skuDocIds: string[] = []; // actual Firestore doc IDs currently present
-  private settings: SettingsDoc = {};
+  private catalog: CatalogSku[] = [];
+  private periods: PeriodSnapshot[] = [];
+  private settings: { thresholds?: Thresholds } = {};
   private prodLog: ProdLogEntry[] = [];
   private audit: AuditEntry[] = [];
-  private ready = { skus: false, settings: false, prod: false, audit: false };
+  private ready = { catalog: false, periods: false, settings: false };
+  private migrationTried = false;
   private listeners = new Set<(s: PersistedState) => void>();
 
   constructor(private identity: Identity) {}
@@ -45,31 +46,19 @@ export class FirebaseRepo implements Repo {
   }
 
   private compose(): PersistedState {
-    const raw: RawSku[] = [];
-    const ov: Overrides = {};
-    for (const s of this.skus) {
-      const uid = s.uid!;
-      raw.push({ line: s.line, model: s.model, colour: s.colour, opening: s.opening, sold: s.sold, closing: s.closing, uid });
-      if (s.reorder != null || s.note) ov[uid] = { reorder: s.reorder, note: s.note };
-    }
-    const dataset: Dataset = normalizeDataset({
-      skus: raw,
-      lines: this.settings.lines ?? [...new Set(raw.map((r) => r.line))],
-      machines: this.settings.machines ?? [],
-    });
     return {
-      dataset,
-      ov,
+      catalog: this.catalog,
+      periods: this.periods,
+      latestPeriodKey: this.periods.map((p) => p.key).sort().at(-1) ?? '',
       prodLog: this.prodLog,
       thresholds: this.settings.thresholds ?? DEFAULT_THRESHOLDS,
-      period: this.settings.period ?? 'April 2026',
       role: this.identity.role,
       audit: this.audit,
     };
   }
 
   private emit() {
-    if (!this.ready.skus || !this.ready.settings) return; // wait for core data
+    if (!this.ready.catalog || !this.ready.periods || !this.ready.settings) return;
     const s = this.compose();
     for (const cb of this.listeners) cb(s);
   }
@@ -78,34 +67,39 @@ export class FirebaseRepo implements Repo {
     this.listeners.add(cb);
     const d = this.db();
     const unsubs = [
-      onSnapshot(collection(d, 'skus'), (snap) => {
-        // uid is the readable key stored as a field; the doc ID is a safe hash.
-        // Fall back to the doc ID for any legacy docs written before this change.
-        this.skus = snap.docs.map((x) => {
-          const data = x.data() as SkuDoc;
-          return { ...data, uid: data.uid ?? x.id };
+      onSnapshot(collection(d, 'catalog'), (snap) => {
+        this.catalog = snap.docs.map((x) => x.data() as CatalogSku);
+        this.ready.catalog = true;
+        if (snap.empty && !this.migrationTried && this.identity.role !== 'viewer') {
+          this.migrationTried = true;
+          void this.migrate();
+        }
+        this.emit();
+      }),
+      onSnapshot(collection(d, 'periods'), (snap) => {
+        this.periods = snap.docs.map((x) => {
+          const p = x.data() as PeriodDoc;
+          const rows: MonthRow[] = Object.values(p.rows ?? {}).map((v) => ({
+            uid: v.uid, opening: v.o ?? 0, sold: v.s ?? 0, closing: v.c ?? 0,
+          }));
+          return { key: p.key ?? x.id, label: p.label ?? periodLabel(x.id), machines: p.machines ?? [], rows };
         });
-        this.skuDocIds = snap.docs.map((x) => x.id);
-        this.ready.skus = true;
+        this.ready.periods = true;
         this.emit();
       }),
       onSnapshot(doc(d, 'settings', 'app'), (snap) => {
-        this.settings = (snap.data() as SettingsDoc) ?? {};
+        this.settings = (snap.data() as { thresholds?: Thresholds }) ?? {};
         this.ready.settings = true;
         this.emit();
       }),
       onSnapshot(collection(d, 'productionLog'), (snap) => {
-        this.prodLog = snap.docs
-          .map((x) => x.data() as ProdLogEntry)
-          .sort((a, b) => b.date.localeCompare(a.date));
-        this.ready.prod = true;
+        this.prodLog = snap.docs.map((x) => x.data() as ProdLogEntry).sort((a, b) => b.date.localeCompare(a.date));
         this.emit();
       }),
       onSnapshot(collection(d, 'audit'), (snap) => {
         this.audit = snap.docs
           .map((x) => ({ id: x.id, ...(x.data() as Omit<AuditEntry, 'id'>) }))
           .sort((a, b) => b.at - a.at);
-        this.ready.audit = true;
         this.emit();
       }),
     ];
@@ -115,6 +109,35 @@ export class FirebaseRepo implements Repo {
     };
   }
 
+  /** One-time, non-destructive migration from the old skus/ collection. */
+  private async migrate(): Promise<void> {
+    const d = this.db();
+    try {
+      const skuSnap = await getDocs(collection(d, 'skus'));
+      if (skuSnap.empty) return; // fresh project — nothing to migrate
+      const setSnap = await getDoc(doc(d, 'settings', 'app'));
+      const s = (setSnap.data() as { period?: string; machines?: Machine[] }) ?? {};
+      const label = s.period ?? 'April 2026';
+      const key = periodKeyFromLabel(label) ?? 'legacy';
+      const rows: Record<string, RowVal> = {};
+      const docs = skuSnap.docs;
+      for (let i = 0; i < docs.length; i += 40) {
+        await Promise.all(docs.slice(i, i + 40).map((x) => {
+          const data = x.data() as CatalogSku & { opening?: number; sold?: number; closing?: number };
+          rows[x.id] = { uid: data.uid ?? x.id, o: data.opening ?? 0, s: data.sold ?? 0, c: data.closing ?? 0 };
+          const cat: CatalogSku = { uid: data.uid ?? x.id, line: data.line, model: data.model, colour: data.colour };
+          if (data.reorder != null) cat.reorder = data.reorder;
+          if (data.note) cat.note = data.note;
+          return setDoc(doc(d, 'catalog', x.id), cat);
+        }));
+      }
+      await setDoc(doc(d, 'periods', key), { key, label, machines: s.machines ?? [], rows });
+      // old skus/ left in place as a backup.
+    } catch (e) {
+      console.error('Migration failed:', e);
+    }
+  }
+
   private async writeAudit(a: AuditEntry) {
     await addDoc(collection(this.db(), 'audit'), {
       at: a.at, user: a.user, role: a.role, action: a.action,
@@ -122,9 +145,20 @@ export class FirebaseRepo implements Repo {
     });
   }
 
-  async saveOverride(id: string, patch: Overrides[string], audit: AuditEntry): Promise<void> {
-    // `id` is the readable key; the document lives under a safe hashed ID.
-    await setDoc(doc(this.db(), 'skus', safeDocId(id)), { ...patch, uid: id }, { merge: true });
+  async saveSku(
+    uid: string, periodKey: string,
+    numbers: { closing: number; sold: number },
+    settings: { reorder: number; note: string },
+    audit: AuditEntry,
+  ): Promise<void> {
+    const d = this.db();
+    const id = safeDocId(uid);
+    await setDoc(doc(d, 'catalog', id), { reorder: settings.reorder, note: settings.note }, { merge: true });
+    await setDoc(
+      doc(d, 'periods', periodKey),
+      { rows: { [id]: { uid, s: numbers.sold, c: numbers.closing } } },
+      { merge: true },
+    );
     await this.writeAudit(audit);
   }
 
@@ -138,52 +172,32 @@ export class FirebaseRepo implements Repo {
     await this.writeAudit(audit);
   }
 
-  async applyImport(
-    next: { dataset: Dataset; ov: Overrides; period: string },
-    audit: AuditEntry,
-  ): Promise<void> {
+  async applyImport(payload: ImportPayload, audit: AuditEntry): Promise<void> {
     const d = this.db();
-    const norm = normalizeDataset(next.dataset);
-    const rows = norm.skus;
-
-    // Write each SKU as an individual document (a single-document request), NOT a
-    // big writeBatch. A batched write is one request, and the role check in the
-    // security rules runs per document — hundreds of rows exceed Firestore's
-    // per-request document-access limit and the whole batch is rejected with
-    // permission-denied. Individual writes each stay far under the limit; we run
-    // them in parallel chunks for speed.
-    const CHUNK = 40;
-    const newIds = new Set<string>(rows.map((s) => safeDocId(s.uid!)));
-
-    for (let i = 0; i < rows.length; i += CHUNK) {
-      await Promise.all(
-        rows.slice(i, i + CHUNK).map((s) => {
-          const uid = s.uid!;
-          const kept = next.ov[uid] || {};
-          return setDoc(doc(d, 'skus', safeDocId(uid)), {
-            uid,
-            line: s.line, model: s.model, colour: s.colour,
-            opening: s.opening, sold: s.sold, closing: s.closing,
-            ...(kept.reorder != null ? { reorder: kept.reorder } : {}),
-            ...(kept.note ? { note: kept.note } : {}),
-          });
-        }),
-      );
+    if (payload.catalogUpserts?.length) {
+      const ups = payload.catalogUpserts;
+      for (let i = 0; i < ups.length; i += 40) {
+        await Promise.all(ups.slice(i, i + 40).map((c) =>
+          setDoc(doc(d, 'catalog', safeDocId(c.uid)),
+            { uid: c.uid, line: c.line, model: c.model, colour: c.colour }, { merge: true })));
+      }
     }
-
-    // Remove any docs no longer present (incl. legacy IDs from before this fix),
-    // so a re-import can't leave duplicates behind. Done after writes so the data
-    // is never momentarily empty.
-    const orphans = this.skuDocIds.filter((id) => !newIds.has(id));
-    for (let i = 0; i < orphans.length; i += CHUNK) {
-      await Promise.all(orphans.slice(i, i + CHUNK).map((id) => deleteDoc(doc(d, 'skus', id))));
+    if (payload.snapshot) {
+      const snap = payload.snapshot;
+      const rows: Record<string, RowVal> = {};
+      for (const r of snap.rows) rows[safeDocId(r.uid)] = { uid: r.uid, o: r.opening, s: r.sold, c: r.closing };
+      await setDoc(doc(d, 'periods', snap.key), { key: snap.key, label: snap.label, machines: snap.machines, rows });
     }
-
-    await setDoc(
-      doc(d, 'settings', 'app'),
-      { lines: norm.lines, machines: norm.machines, period: next.period },
-      { merge: true },
-    );
+    if (payload.machinesFor) {
+      await setDoc(doc(d, 'periods', payload.machinesFor.key), { machines: payload.machinesFor.machines }, { merge: true });
+    }
     await this.writeAudit(audit);
+  }
+
+  async scrubYear(audit: AuditEntry): Promise<void> {
+    const d = this.db();
+    const snap = await getDocs(collection(d, 'periods'));
+    for (const x of snap.docs) await deleteDoc(doc(d, 'periods', x.id));
+    await this.writeAudit(audit); // catalog kept intact
   }
 }

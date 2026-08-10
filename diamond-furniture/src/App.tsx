@@ -2,10 +2,12 @@ import { useState } from 'react';
 import { useApp } from './store/store';
 import { useToast } from './components/Toast';
 import type { Role, EffSku } from './domain/types';
+import { periodLabel } from './domain/period';
 import type { View } from './views/types';
 import { Dashboard } from './views/Dashboard';
 import { Inventory } from './views/Inventory';
 import { Production } from './views/Production';
+import { Trends } from './views/Trends';
 import { Alerts } from './views/Alerts';
 import { Reports } from './views/Reports';
 import { Activity } from './views/Activity';
@@ -18,6 +20,7 @@ const NAV: { id: View; label: string; ownerOnly?: boolean; firebaseOnly?: boolea
   { id: 'dashboard', label: 'Dashboard' },
   { id: 'inventory', label: 'Inventory' },
   { id: 'production', label: 'Production' },
+  { id: 'trends', label: 'Trends' },
   { id: 'alerts', label: 'Alerts' },
   { id: 'reports', label: 'Reports' },
   { id: 'activity', label: 'Activity', ownerOnly: true },
@@ -56,7 +59,22 @@ export function App({ onSignOut }: { onSignOut?: () => void }) {
         </nav>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginLeft: 'auto' }}>
           <button className="btn btn-secondary" onClick={openImport} disabled={!app.canEdit} style={{ whiteSpace: 'nowrap' }}>↑ Import Excel</button>
-          <span className="tag tag-neutral" style={{ whiteSpace: 'nowrap' }}>{app.period}</span>
+          {app.periodKeys.length > 0 ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <label style={{ fontSize: 9, letterSpacing: '.12em', textTransform: 'uppercase', color: 'var(--color-accent)' }}>Month</label>
+              <select
+                className="input" value={app.currentPeriodKey} onChange={(e) => app.setPeriod(e.target.value)}
+                style={{ minHeight: 32, padding: '2px 8px', fontSize: 13, minWidth: 130 }}
+                title="Choose which month to view"
+              >
+                {app.periodKeys.map((k) => (
+                  <option key={k} value={k}>{periodLabel(k)}{k === app.latestPeriodKey ? ' (latest)' : ''}</option>
+                ))}
+              </select>
+            </div>
+          ) : (
+            <span className="tag tag-neutral" style={{ whiteSpace: 'nowrap' }}>No data yet</span>
+          )}
           {app.mode === 'demo' ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               <label style={{ fontSize: 9, letterSpacing: '.12em', textTransform: 'uppercase', color: 'var(--color-accent)' }}>Signed in as</label>
@@ -84,6 +102,7 @@ export function App({ onSignOut }: { onSignOut?: () => void }) {
         {view === 'dashboard' && <Dashboard setView={setView} />}
         {view === 'inventory' && <Inventory onEdit={setEditing} />}
         {view === 'production' && <Production onLog={openProd} />}
+        {view === 'trends' && <Trends />}
         {view === 'alerts' && <Alerts onEdit={setEditing} />}
         {view === 'reports' && <Reports />}
         {view === 'activity' && app.isOwner && <Activity />}

@@ -28,7 +28,19 @@ service cloud.firestore {
     function isOwner()  { return signedIn() && role() == 'owner'; }
     function canEdit()  { return signedIn() && (role() == 'owner' || role() == 'manager'); }
 
-    // Inventory SKUs: everyone signed in can read; owner/manager can write.
+    // Permanent SKU catalogue: everyone signed in can read; owner/manager write.
+    match /catalog/{id} {
+      allow read:  if signedIn();
+      allow write: if canEdit();
+    }
+
+    // Monthly snapshots (one doc per month): read all, editors write/delete.
+    match /periods/{key} {
+      allow read:  if signedIn();
+      allow write: if canEdit();
+    }
+
+    // Legacy per-SKU collection, kept as a migration backup. Read-only now.
     match /skus/{id} {
       allow read:  if signedIn();
       allow write: if canEdit();

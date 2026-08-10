@@ -75,6 +75,28 @@ describe('SKU writes', () => {
   });
 });
 
+describe('catalogue + monthly periods (new model)', () => {
+  const cat = { uid: 'XUV||m||c', line: 'XUV', model: 'm', colour: 'c' };
+  const period = { key: '2026-04', label: 'April 2026', machines: [], rows: {} };
+  it('owner can write the catalogue and a month; viewer cannot', async () => {
+    await assertSucceeds(setDoc(doc(as(OWNER), 'catalog', 'k1'), cat));
+    await assertSucceeds(setDoc(doc(as(OWNER), 'periods', '2026-04'), period));
+    await assertFails(setDoc(doc(as(VIEWER), 'catalog', 'k2'), cat));
+    await assertFails(setDoc(doc(as(VIEWER), 'periods', '2026-05'), period));
+  });
+  it('everyone signed in can read catalogue + periods', async () => {
+    await assertSucceeds(setDoc(doc(as(OWNER), 'catalog', 'k3'), cat));
+    await assertSucceeds(setDoc(doc(as(OWNER), 'periods', '2026-06'), period));
+    await assertSucceeds(getDoc(doc(as(VIEWER), 'catalog', 'k3')));
+    await assertSucceeds(getDoc(doc(as(VIEWER), 'periods', '2026-06')));
+  });
+  it('owner can delete a month (year-end scrub); viewer cannot', async () => {
+    await assertSucceeds(setDoc(doc(as(OWNER), 'periods', '2026-07'), period));
+    await assertFails(deleteDoc(doc(as(VIEWER), 'periods', '2026-07')));
+    await assertSucceeds(deleteDoc(doc(as(OWNER), 'periods', '2026-07')));
+  });
+});
+
 describe('settings + production log', () => {
   it('manager can write settings; viewer cannot', async () => {
     await assertSucceeds(setDoc(doc(as(MANAGER), 'settings', 'app'), { period: 'May 2026' }));

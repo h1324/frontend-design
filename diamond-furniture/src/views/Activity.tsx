@@ -8,6 +8,7 @@ const ACTION_LABEL: Record<AuditEntry['action'], string> = {
   'log-production': 'Logged production',
   'set-threshold': 'Changed threshold',
   import: 'Imported data',
+  'scrub-year': 'Started new financial year',
 };
 
 function when(ts: number): string {
