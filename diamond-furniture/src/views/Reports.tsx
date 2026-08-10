@@ -5,10 +5,15 @@ import { useToast } from '../components/Toast';
 import { fmt } from '../domain/format';
 import { downloadCsv } from '../lib/csv';
 import { kpis, lineSummaries } from '../domain/logic';
+import { sellThrough, avgDaysCover, valuation, deadStock } from '../domain/metrics';
+import { trailingPeriods } from '../domain/period';
 import { STATUS_META } from '../domain/status';
+import type { PeriodSnapshot } from '../domain/types';
+
+const inr = (n: number) => '₹' + Math.round(n).toLocaleString('en-IN');
 
 export function Reports() {
-  const { effs, dataset, prodLog, period, isOwner, catalog, periods, financialYearLabel, scrubYear } = useApp();
+  const { effs, dataset, prodLog, period, isOwner, catalog, periods, currentPeriodKey, financialYearLabel, scrubYear } = useApp();
   const flash = useToast();
   const [confirmScrub, setConfirmScrub] = useState(false);
   const [scrubbing, setScrubbing] = useState(false);
@@ -16,6 +21,17 @@ export function Reports() {
   const machinesFresh = dataset?.machines.reduce((a, m) => a + m.fresh, 0) ?? 0;
   const loggedTotal = prodLog.reduce((a, l) => a + l.qty, 0);
   const rows = [...lineSummaries(effs)].sort((a, b) => b.stock - a.stock);
+
+  // ── Phase C metrics ──────────────────────────────────────────────────────
+  const st = sellThrough(effs);
+  const daysCover = avgDaysCover(effs);
+  const val = valuation(effs);
+  const trailing = currentPeriodKey
+    ? trailingPeriods(currentPeriodKey, 3).map((key) => periods.find((p) => p.key === key)).filter((p): p is PeriodSnapshot => !!p)
+    : [];
+  const dead = deadStock(effs, trailing);
+  const deadUnits = dead.reduce((a, d) => a + d.closing, 0);
+  const deadValue = dead.reduce((a, d) => a + d.closing * d.price, 0);
 
   const kpiCards = [
     { label: 'Units in stock', value: fmt(k.totalStock), sub: `across ${fmt(effs.length)} SKUs`, color: 'var(--color-text)' },
@@ -58,6 +74,56 @@ export function Reports() {
             <span className="card-meta" style={{ margin: 0 }}>{c.sub}</span>
           </Blueprint>
         ))}
+      </div>
+
+      {/* ── Insights (Phase C) ── */}
+      <div className="grid-cards" style={{ marginBottom: 22 }}>
+        <Blueprint className="card" style={{ gap: 10 }}>
+          <h4 style={{ margin: 0 }}>Movement</h4>
+          <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
+            <div><div className="kpi-value" style={{ fontSize: 28 }}>{st}%</div><span className="card-meta" style={{ margin: 0 }}>sell-through (sold ÷ available)</span></div>
+            <div><div className="kpi-value" style={{ fontSize: 28 }}>{daysCover ? fmt(daysCover) : '—'}</div><span className="card-meta" style={{ margin: 0 }}>avg days of stock cover</span></div>
+          </div>
+        </Blueprint>
+
+        <Blueprint className="card" style={{ gap: 10 }}>
+          <h4 style={{ margin: 0 }}>Stock value</h4>
+          {val.hasPrice ? (
+            <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
+              <div><div className="kpi-value" style={{ fontSize: 26 }}>{inr(val.stockValue)}</div><span className="card-meta" style={{ margin: 0 }}>total stock on hand</span></div>
+              <div><div className="kpi-value" style={{ fontSize: 26, color: STATUS_META.Overstock.accent }}>{inr(val.overstockValue)}</div><span className="card-meta" style={{ margin: 0 }}>tied up in overstock</span></div>
+              <div><div className="kpi-value" style={{ fontSize: 26, color: '#4e7d78' }}>{inr(val.idleValue)}</div><span className="card-meta" style={{ margin: 0 }}>tied up in idle stock</span></div>
+            </div>
+          ) : (
+            <p className="text-muted" style={{ margin: 0, fontSize: 13, lineHeight: 1.5 }}>
+              Add a <strong>Price</strong> (or Rate / MRP) column to your Master import and ₹-values
+              — stock value and cash tied up in overstock &amp; idle stock — appear here automatically.
+            </p>
+          )}
+        </Blueprint>
+
+        <Blueprint className="card" style={{ gap: 10, gridColumn: '1/-1' }}>
+          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 8, flexWrap: 'wrap' }}>
+            <h4 style={{ margin: 0 }}>Dead stock <span className="text-muted" style={{ fontSize: 12, fontWeight: 400 }}>· no sales in the last {trailing.length} month{trailing.length === 1 ? '' : 's'}</span></h4>
+            <span className="card-meta" style={{ margin: 0 }}>{fmt(dead.length)} SKUs · {fmt(deadUnits)} units{val.hasPrice ? ` · ${inr(deadValue)}` : ''}</span>
+          </div>
+          {trailing.length < 2 ? (
+            <p className="text-muted" style={{ margin: 0, fontSize: 13 }}>Import more months to detect true dead stock (this needs a few months of history).</p>
+          ) : dead.length === 0 ? (
+            <p className="text-muted" style={{ margin: 0, fontSize: 13 }}>Nothing sitting completely unsold — good.</p>
+          ) : (
+            <div style={{ overflow: 'auto', maxHeight: 280 }}>
+              <table className="table"><tbody>
+                {dead.slice(0, 30).map((d) => (
+                  <tr key={d.id}>
+                    <td style={{ fontSize: 12.5 }}><strong>{d.model}</strong> · {d.colour || '—'}<br /><span className="text-muted">{d.line}</span></td>
+                    <td style={{ textAlign: 'right', fontVariantNumeric: 'tabular-nums', fontWeight: 600 }}>{fmt(d.closing)}<br /><span className="text-muted" style={{ fontWeight: 400, fontSize: 11 }}>in stock</span></td>
+                  </tr>
+                ))}
+              </tbody></table>
+            </div>
+          )}
+        </Blueprint>
       </div>
 
       <Blueprint className="card" style={{ padding: 0, overflow: 'auto' }}>

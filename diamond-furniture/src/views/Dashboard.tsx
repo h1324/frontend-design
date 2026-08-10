@@ -6,6 +6,7 @@ import { BarList } from '../components/BarList';
 import { useApp } from '../store/store';
 import { fmt } from '../domain/format';
 import { kpis, lineSummaries, statusCounts } from '../domain/logic';
+import { valuation } from '../domain/metrics';
 import { STATUS_META, STATUS_ORDER, IDLE_META } from '../domain/status';
 import type { View } from './types';
 
@@ -16,11 +17,14 @@ export function Dashboard({ setView }: { setView: (v: View) => void }) {
   const machinesFresh = dataset?.machines.reduce((a, m) => a + m.fresh, 0) ?? 0;
   const loggedTotal = prodLog.reduce((a, l) => a + l.qty, 0);
 
+  const val = valuation(effs);
+  const inr = (n: number) => '₹' + Math.round(n).toLocaleString('en-IN');
   const kpiCards = [
     { label: 'Units in stock', value: fmt(k.totalStock), sub: `across ${fmt(effs.length)} SKUs`, color: 'var(--color-text)' },
     { label: 'Sold this period', value: fmt(k.totalSold), sub: `${period} dispatches`, color: 'var(--color-text)' },
     { label: 'Urgent alerts', value: fmt(k.urgent), sub: `${k.negativeCount} negative · ${k.lowCount} low`, color: k.urgent ? STATUS_META.Negative.accent : 'var(--color-text)' },
     { label: 'Fresh produced', value: fmt(machinesFresh + loggedTotal), sub: `${dataset?.machines.length ?? 0} machines logged`, color: 'var(--color-accent-700)' },
+    ...(val.hasPrice ? [{ label: 'Stock value', value: inr(val.stockValue), sub: `${inr(val.overstockValue)} in overstock`, color: 'var(--color-accent-700)' }] : []),
   ];
 
   const tiles = [

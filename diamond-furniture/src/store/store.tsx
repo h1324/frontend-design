@@ -179,7 +179,7 @@ export function AppProvider({
       if (parsed.skus.length) {
         const norm = normalizeDataset({ skus: parsed.skus, lines: parsed.lines, machines: parsed.machines });
         const payload: ImportPayload = {
-          catalogUpserts: norm.skus.map((s) => ({ uid: s.uid!, line: s.line, model: s.model, colour: s.colour })),
+          catalogUpserts: norm.skus.map((s) => ({ uid: s.uid!, line: s.line, model: s.model, colour: s.colour, ...(s.price ? { price: s.price } : {}) })),
           snapshot: {
             key, label: periodLabelStr, machines: parsed.machines,
             rows: norm.skus.map((s) => ({ uid: s.uid!, opening: s.opening, sold: s.sold, closing: s.closing })),

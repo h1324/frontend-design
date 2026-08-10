@@ -188,7 +188,7 @@ export class FirebaseRepo implements Repo {
       for (let i = 0; i < ups.length; i += 40) {
         await Promise.all(ups.slice(i, i + 40).map((c) =>
           setDoc(doc(d, 'catalog', safeDocId(c.uid)),
-            { uid: c.uid, line: c.line, model: c.model, colour: c.colour }, { merge: true })));
+            { uid: c.uid, line: c.line, model: c.model, colour: c.colour, ...(c.price != null ? { price: c.price } : {}) }, { merge: true })));
       }
     }
     if (payload.snapshot) {

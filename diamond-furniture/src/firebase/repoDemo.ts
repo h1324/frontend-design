@@ -120,8 +120,10 @@ export class DemoRepo implements Repo {
       const byId = new Map(catalog.map((c) => [c.uid, c]));
       for (const up of payload.catalogUpserts) {
         const existing = byId.get(up.uid);
-        // preserve reorder/note/price on existing entries; add new ones
-        byId.set(up.uid, existing ? { ...existing, line: up.line, model: up.model, colour: up.colour } : up);
+        // preserve reorder/note on existing entries; update names + price; add new ones
+        byId.set(up.uid, existing
+          ? { ...existing, line: up.line, model: up.model, colour: up.colour, ...(up.price != null ? { price: up.price } : {}) }
+          : up);
       }
       catalog = [...byId.values()];
     }

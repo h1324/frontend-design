@@ -89,6 +89,7 @@ function deriveEff(
   demand: number,
   reorderOverride: number | undefined,
   note: string,
+  price: number,
   lowMonths: number,
   overMonths: number,
 ): EffSku {
@@ -102,7 +103,7 @@ function deriveEff(
   const idle = sold <= 0 && closing > 0;
   return {
     uid: base.uid, id: base.uid, line: base.line, model: base.model, colour: base.colour,
-    opening, sold, closing, reorder, note, produced, demand, cover, status, idle, lowMonths, overMonths,
+    opening, sold, closing, reorder, note, produced, demand, cover, status, price: price || 0, idle, lowMonths, overMonths,
   };
 }
 
@@ -116,7 +117,7 @@ export function effOne(raw: RawSku, ov: Overrides, thresholds: Thresholds): EffS
   // Single-month path: demand = this month's sold.
   return deriveEff(
     { uid: id, line: raw.line, model: raw.model, colour: raw.colour, opening: raw.opening, sold, closing },
-    sold, o.reorder, o.note || '', lowMonths, overMonths,
+    sold, o.reorder, o.note || '', raw.price ?? 0, lowMonths, overMonths,
   );
 }
 
@@ -153,7 +154,7 @@ export function effWithHistory(
       : sold;
     return deriveEff(
       { uid: c.uid, line: c.line, model: c.model, colour: c.colour, opening, sold, closing },
-      demand, o.reorder ?? c.reorder, o.note || c.note || '', lowMonths, overMonths,
+      demand, o.reorder ?? c.reorder, o.note || c.note || '', c.price ?? 0, lowMonths, overMonths,
     );
   });
 }

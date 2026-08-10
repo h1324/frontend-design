@@ -179,6 +179,8 @@ export async function parseWorkbook(blob: Blob): Promise<ParsedWorkbook> {
     if (ci.opening < 0) ci.opening = 3;
     if (ci.sold < 0) ci.sold = 4;
     if (ci.closing < 0 || ci.closing === ci.opening) ci.closing = 5;
+    // Optional price column (for ₹-value metrics) — only if the sheet has one.
+    const priceCol = findIdx('price|rate|mrp|selling|unit value');
 
     let curLine = '';
     for (let i = hr + 1; i < rows.length; i++) {
@@ -190,11 +192,13 @@ export async function parseWorkbook(blob: Blob): Promise<ParsedWorkbook> {
       const model = (r[ci.model] || '').trim();
       const colour = (r[ci.colour] || '').trim();
       if (!model && !colour) continue;
+      const price = priceCol >= 0 ? num(r[priceCol]) : 0;
       skus.push({
         line, model, colour,
         opening: piecesIn(r[ci.opening]),
         sold: piecesIn(r[ci.sold]),
         closing: piecesIn(r[ci.closing]),
+        ...(price > 0 ? { price } : {}),
       });
     }
     lines = [...new Set(skus.map((s) => s.line).filter(Boolean))];

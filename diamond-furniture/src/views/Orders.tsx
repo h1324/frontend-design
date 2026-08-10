@@ -3,6 +3,7 @@ import { Blueprint } from '../components/Blueprint';
 import { useApp } from '../store/store';
 import { fmt } from '../domain/format';
 import { orderStatus, orderProgress, orderBook } from '../domain/orders';
+import { pendingOrderValue } from '../domain/metrics';
 import type { OrderStatus } from '../domain/types';
 import { NewOrderDialog } from '../components/dialogs/NewOrderDialog';
 import { OrderDetailDialog } from '../components/dialogs/OrderDetailDialog';
@@ -23,12 +24,19 @@ function ProgressBar({ pct }: { pct: number }) {
 }
 
 export function Orders() {
-  const { orders, canEdit, period } = useApp();
+  const { orders, effs, canEdit, period } = useApp();
   const [statusFilter, setStatusFilter] = useState<'all' | OrderStatus>('all');
   const [newOpen, setNewOpen] = useState(false);
   const [detailId, setDetailId] = useState<string | null>(null);
 
   const book = useMemo(() => orderBook(orders), [orders]);
+  const priceInfo = useMemo(() => {
+    const byUid = new Map<string, number>();
+    let hasPrice = false;
+    for (const e of effs) { if (e.price > 0) { byUid.set(e.uid ?? e.id, e.price); hasPrice = true; } }
+    return { hasPrice, value: pendingOrderValue(orders, byUid) };
+  }, [effs, orders]);
+  const inr = (n: number) => '₹' + Math.round(n).toLocaleString('en-IN');
   const rows = useMemo(() => {
     const withStatus = orders.map((o) => ({ o, status: orderStatus(o), progress: orderProgress(o) }));
     return withStatus
@@ -60,6 +68,7 @@ export function Orders() {
         {kpi('Open orders', fmt(book.openOrders), 'awaiting dispatch')}
         {kpi('Pending units', fmt(book.pendingUnits), `${fmt(book.pendingLines)} lines to ship`, 'var(--color-accent-700)')}
         {kpi('Fill rate', `${book.fillRate}%`, 'units dispatched ÷ ordered', book.fillRate >= 90 ? '#4e8055' : book.fillRate >= 60 ? '#b5852a' : '#a63a3a')}
+        {priceInfo.hasPrice && kpi('Pending value', inr(priceInfo.value), 'undispatched order value', 'var(--color-accent-700)')}
       </div>
 
       <div className="no-print" style={{ display: 'flex', gap: 10, alignItems: 'flex-end', marginBottom: 14 }}>

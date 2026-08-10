@@ -18,6 +18,8 @@ export interface RawSku {
   opening: number;
   sold: number;
   closing: number;
+  /** Optional unit price/value if the import has a price column (₹-value metrics). */
+  price?: number;
   /**
    * Stable unique id. The natural key `line||model||colour` is NOT unique in the
    * real data (9 duplicate rows in the sample), so normalizeDataset() assigns a
@@ -98,6 +100,8 @@ export interface EffSku extends RawSku {
   demand: number;
   cover: number;
   status: Status;
+  /** Unit price if known (0 when no price data), for ₹-value metrics. */
+  price: number;
   /** Insight flag (not a status): has stock on hand but no sales this period. */
   idle: boolean;
   /** thresholds actually used for this SKU's line (resolved from per-line + default) */
