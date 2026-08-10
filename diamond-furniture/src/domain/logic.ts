@@ -1,5 +1,6 @@
 import type {
   Dataset, EffSku, Overrides, RawSku, Status, Thresholds, LineThreshold,
+  CatalogSku, PeriodSnapshot,
 } from './types';
 import { pieces } from './format';
 
@@ -65,17 +66,44 @@ export function computeCover(closing: number, sold: number): number {
  */
 export function classify(args: {
   closing: number;
-  sold: number;
+  demand: number; // current-month sold, or trailing-avg demand once history exists
   reorder: number;
   cover: number;
   overMonths: number;
 }): Status {
-  const { closing, sold, reorder, cover, overMonths } = args;
+  const { closing, demand, reorder, cover, overMonths } = args;
   if (closing < 0) return 'Negative';
-  if (sold <= 0) return closing === 0 ? 'No activity' : 'OK';
+  if (demand <= 0) return closing === 0 ? 'No activity' : 'OK';
   if (closing <= reorder) return 'Low';
   if (cover > overMonths) return 'Overstock';
   return 'OK';
+}
+
+/**
+ * Core derivation shared by the single-month and history-aware paths.
+ * `demand` is the expected monthly demand (current-month sold, or a trailing
+ * average); `soldThisPeriod` drives the idle flag ("did it sell this month").
+ */
+function deriveEff(
+  base: { uid: string; line: string; model: string; colour: string; opening: number; sold: number; closing: number },
+  demand: number,
+  reorderOverride: number | undefined,
+  note: string,
+  lowMonths: number,
+  overMonths: number,
+): EffSku {
+  const opening = pieces(base.opening);
+  const sold = pieces(base.sold);
+  const closing = pieces(base.closing);
+  const reorder = pieces(reorderOverride != null ? reorderOverride : reorderDefault(demand, lowMonths));
+  const produced = closing + sold - opening;
+  const cover = computeCover(closing, demand);
+  const status = classify({ closing, demand, reorder, cover, overMonths });
+  const idle = sold <= 0 && closing > 0;
+  return {
+    uid: base.uid, id: base.uid, line: base.line, model: base.model, colour: base.colour,
+    opening, sold, closing, reorder, note, produced, demand, cover, status, idle, lowMonths, overMonths,
+  };
 }
 
 /** Apply overrides + per-line thresholds and compute every derived field for one SKU. */
@@ -83,24 +111,114 @@ export function effOne(raw: RawSku, ov: Overrides, thresholds: Thresholds): EffS
   const id = effectiveId(raw);
   const o = ov[id] || {};
   const { lowMonths, overMonths } = resolveThreshold(thresholds, raw.line);
-
-  const opening = pieces(raw.opening);
-  const sold = pieces(o.sold != null ? o.sold : raw.sold);
-  const closing = pieces(o.closing != null ? o.closing : raw.closing);
-  const reorder = pieces(o.reorder != null ? o.reorder : reorderDefault(sold, lowMonths));
-  const note = o.note || '';
-  const produced = closing + sold - opening;
-  const cover = computeCover(closing, sold);
-  const status = classify({ closing, sold, reorder, cover, overMonths });
-  const idle = sold <= 0 && closing > 0; // stock sitting with no sales this period
-
-  return { ...raw, id, opening, sold, closing, reorder, note, produced, cover, status, idle, lowMonths, overMonths };
+  const sold = o.sold != null ? o.sold : raw.sold;
+  const closing = o.closing != null ? o.closing : raw.closing;
+  // Single-month path: demand = this month's sold.
+  return deriveEff(
+    { uid: id, line: raw.line, model: raw.model, colour: raw.colour, opening: raw.opening, sold, closing },
+    sold, o.reorder, o.note || '', lowMonths, overMonths,
+  );
 }
 
-/** Compute effective SKUs for the whole dataset. */
+/** Compute effective SKUs for the whole dataset (single-month). */
 export function eff(dataset: Dataset | null, ov: Overrides, thresholds: Thresholds): EffSku[] {
   if (!dataset) return [];
   return dataset.skus.map((s) => effOne(s, ov, thresholds));
+}
+
+/**
+ * History-aware effective SKUs. Demand for cover/reorder/status is the average
+ * sold across the trailing snapshots (which include the current month), so
+ * months-of-cover becomes a rolling forecast. With one month on file this equals
+ * the single-month result (so it still reconciles with the workbook).
+ */
+export function effWithHistory(
+  catalog: CatalogSku[],
+  current: PeriodSnapshot | null,
+  trailing: PeriodSnapshot[],
+  ov: Overrides,
+  thresholds: Thresholds,
+): EffSku[] {
+  const curRows = new Map((current?.rows ?? []).map((r) => [r.uid, r]));
+  const soldMaps = trailing.map((p) => new Map(p.rows.map((r) => [r.uid, r.sold])));
+  return catalog.map((c) => {
+    const o = ov[c.uid] || {};
+    const { lowMonths, overMonths } = resolveThreshold(thresholds, c.line);
+    const row = curRows.get(c.uid);
+    const sold = o.sold != null ? o.sold : row?.sold ?? 0;
+    const closing = o.closing != null ? o.closing : row?.closing ?? 0;
+    const opening = row?.opening ?? 0;
+    const demand = soldMaps.length
+      ? soldMaps.reduce((a, m) => a + (m.get(c.uid) ?? 0), 0) / soldMaps.length
+      : sold;
+    return deriveEff(
+      { uid: c.uid, line: c.line, model: c.model, colour: c.colour, opening, sold, closing },
+      demand, o.reorder ?? c.reorder, o.note || c.note || '', lowMonths, overMonths,
+    );
+  });
+}
+
+/** Split a single-month dataset (+ overrides) into the permanent catalog. */
+export function catalogFromDataset(dataset: Dataset, ov: Overrides = {}): CatalogSku[] {
+  const norm = normalizeDataset(dataset);
+  return norm.skus.map((s) => {
+    const o = ov[s.uid!] || {};
+    const c: CatalogSku = { uid: s.uid!, line: s.line, model: s.model, colour: s.colour };
+    if (o.reorder != null) c.reorder = o.reorder;
+    if (o.note) c.note = o.note;
+    return c;
+  });
+}
+
+/** Split a single-month dataset into one period snapshot (the month's numbers). */
+export function snapshotFromDataset(dataset: Dataset, key: string, label: string): PeriodSnapshot {
+  const norm = normalizeDataset(dataset);
+  return {
+    key, label,
+    machines: dataset.machines,
+    rows: norm.skus.map((s) => ({ uid: s.uid!, opening: s.opening, sold: s.sold, closing: s.closing })),
+  };
+}
+
+export interface PeriodTotals {
+  key: string;
+  label: string;
+  sold: number;
+  stock: number;
+  fresh: number;
+}
+
+/** Per-month totals for the overall trend charts (oldest → newest by key). */
+export function periodTotals(snapshots: PeriodSnapshot[]): PeriodTotals[] {
+  return [...snapshots]
+    .sort((a, b) => (a.key < b.key ? -1 : 1))
+    .map((p) => ({
+      key: p.key,
+      label: p.label,
+      sold: p.rows.reduce((a, r) => a + r.sold, 0),
+      stock: p.rows.reduce((a, r) => a + Math.max(0, r.closing), 0),
+      fresh: p.machines.reduce((a, m) => a + m.fresh, 0),
+    }));
+}
+
+/** Per-month sold + stock for one product line (for the line trend chart). */
+export function lineTrend(
+  catalog: CatalogSku[],
+  snapshots: PeriodSnapshot[],
+  line: string,
+): PeriodTotals[] {
+  const uidsInLine = new Set(catalog.filter((c) => c.line === line).map((c) => c.uid));
+  return [...snapshots]
+    .sort((a, b) => (a.key < b.key ? -1 : 1))
+    .map((p) => {
+      const rows = p.rows.filter((r) => uidsInLine.has(r.uid));
+      return {
+        key: p.key, label: p.label,
+        sold: rows.reduce((a, r) => a + r.sold, 0),
+        stock: rows.reduce((a, r) => a + Math.max(0, r.closing), 0),
+        fresh: 0,
+      };
+    });
 }
 
 // ── Aggregations used by dashboard / reports (kept pure + testable) ──────────

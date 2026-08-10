@@ -63,25 +63,25 @@ describe('computeCover (months of cover)', () => {
 describe('classify — status precedence (matches the Master workbook formula)', () => {
   const base = { reorder: 10, overMonths: 3 };
   it('Negative wins whenever closing < 0 (even with sales)', () => {
-    expect(classify({ ...base, closing: -1, sold: 5, cover: -0.2 })).toBe('Negative');
+    expect(classify({ ...base, closing: -1, demand: 5, cover: -0.2 })).toBe('Negative');
   });
   it('No activity: no sales AND no stock (0/0 dormant SKU)', () => {
-    expect(classify({ ...base, closing: 0, sold: 0, cover: 0 })).toBe('No activity');
+    expect(classify({ ...base, closing: 0, demand: 0, cover: 0 })).toBe('No activity');
   });
   it('OK: stock on hand but no sales this period (per the workbook)', () => {
-    expect(classify({ ...base, closing: 100, sold: 0, cover: 999 })).toBe('OK');
+    expect(classify({ ...base, closing: 100, demand: 0, cover: 999 })).toBe('OK');
   });
   it('Low: demand and at/below reorder point', () => {
-    expect(classify({ ...base, closing: 10, sold: 20, cover: 0.5, reorder: 20 })).toBe('Low');
+    expect(classify({ ...base, closing: 10, demand: 20, cover: 0.5, reorder: 20 })).toBe('Low');
   });
   it('Overstock: demand and cover beyond overMonths', () => {
-    expect(classify({ ...base, closing: 700, sold: 100, cover: 7, reorder: 100 })).toBe('Overstock');
+    expect(classify({ ...base, closing: 700, demand: 100, cover: 7, reorder: 100 })).toBe('Overstock');
   });
   it('Low takes precedence over Overstock when both would trigger', () => {
-    expect(classify({ closing: 100, sold: 10, cover: 10, reorder: 200, overMonths: 3 })).toBe('Low');
+    expect(classify({ closing: 100, demand: 10, cover: 10, reorder: 200, overMonths: 3 })).toBe('Low');
   });
   it('OK otherwise', () => {
-    expect(classify({ ...base, closing: 100, sold: 50, cover: 2, reorder: 40 })).toBe('OK');
+    expect(classify({ ...base, closing: 100, demand: 50, cover: 2, reorder: 40 })).toBe('OK');
   });
 });
 

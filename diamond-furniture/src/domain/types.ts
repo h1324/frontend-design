@@ -32,6 +32,35 @@ export interface Machine {
   activeDays: number;
 }
 
+/** Permanent SKU catalog entry — survives the year-end scrub (names + settings). */
+export interface CatalogSku {
+  uid: string;
+  line: string;
+  model: string;
+  colour: string;
+  reorder?: number;
+  note?: string;
+  /** Optional, price-ready: unit cost / selling price for ₹-value metrics. */
+  cost?: number;
+  price?: number;
+}
+
+/** One month's numbers for one SKU (scrubbable). */
+export interface MonthRow {
+  uid: string;
+  opening: number;
+  sold: number;
+  closing: number;
+}
+
+/** A month snapshot: the per-SKU numbers plus that month's machine output. */
+export interface PeriodSnapshot {
+  key: string;        // 'YYYY-MM'
+  label: string;      // 'April 2026'
+  machines: Machine[];
+  rows: MonthRow[];
+}
+
 export interface Dataset {
   skus: RawSku[];
   lines: string[];
@@ -64,6 +93,9 @@ export interface EffSku extends RawSku {
   reorder: number;
   note: string;
   produced: number;
+  /** Expected monthly demand used for cover/reorder — current month, or a
+   *  trailing 3-month average once history exists. */
+  demand: number;
   cover: number;
   status: Status;
   /** Insight flag (not a status): has stock on hand but no sales this period. */
