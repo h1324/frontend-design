@@ -112,6 +112,29 @@ export interface ProdLogEntry {
   qty: number;
 }
 
+// ── Orders (Phase B) ─────────────────────────────────────────────────────────
+export type OrderStatus = 'open' | 'partial' | 'fulfilled' | 'cancelled';
+
+export interface OrderItem {
+  uid: string;
+  line: string;
+  model: string;
+  colour: string;
+  qtyOrdered: number;
+  qtyFulfilled: number;
+}
+
+export interface Order {
+  id: string;        // 'ORD-0007' (also the Firestore doc id)
+  no: number;        // sequential number, for ordering + the next id
+  dealer: string;
+  date: string;      // order date (YYYY-MM-DD)
+  note?: string;
+  createdAt: number;
+  cancelled?: boolean;
+  items: OrderItem[];
+}
+
 /** Parsed workbook result from the XLSX importer. */
 export interface ParsedWorkbook {
   skus: RawSku[];
