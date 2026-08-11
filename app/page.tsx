@@ -74,6 +74,9 @@ export default async function Home() {
               <Link href="/production/aging">Aging</Link>
             </Button>
             <Button asChild variant="outline" size="sm">
+              <Link href="/converting">Converting</Link>
+            </Button>
+            <Button asChild variant="outline" size="sm">
               <Link href="/dispatch">Dispatch</Link>
             </Button>
             {session?.user?.role === "ADMIN" ? (

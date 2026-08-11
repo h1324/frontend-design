@@ -1,6 +1,6 @@
 # Spec S17 — Converting Orders (lamination / slitting / bag-making)
 
-**Status:** Draft — confirm which converting operations are live at launch
+**Status:** Built — lamination, slitting and bag-making all wired (defaults)
 
 ## Purpose
 

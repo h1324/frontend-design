@@ -155,6 +155,14 @@ enum PurchaseOrderStatus {
   CANCELLED
 }
 
+/// Post-extrusion converting operation (spec S17). Lamination bonds sheets (children re-cure);
+/// slitting/bag-making cut without re-curing (children inherit the parents' aged status).
+enum ConvertingOperation {
+  LAMINATION
+  SLITTING
+  BAG_MAKING
+}
+
 // --- company / plant -----------------------------------------------------------------
 
 /// The operating entity. Single company at launch, but every table carries companyId
@@ -192,6 +200,7 @@ model Company {
   purchaseOrders   PurchaseOrder[]
   goodsReceipts    GoodsReceipt[]
   qcInspections    QcInspection[]
+  convertingOrders ConvertingOrder[]
 }
 
 model Plant {
@@ -335,6 +344,7 @@ model Item {
   purchaseOrderLines   PurchaseOrderLine[]
   goodsReceiptLines    GoodsReceiptLine[]
   qcInspections        QcInspection[]
+  convertedInOrders    ConvertingOrder[]
 
   @@unique([companyId, code])
   @@index([companyId])
@@ -552,7 +562,8 @@ model Machine {
   isActive          Boolean  @default(true)
   createdAt         DateTime @default(now())
 
-  lots Lot[]
+  lots             Lot[]
+  convertingOrders ConvertingOrder[]
 
   @@unique([companyId, code])
   @@index([companyId])
@@ -570,7 +581,8 @@ model Shift {
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
 
-  lots Lot[]
+  lots             Lot[]
+  convertingOrders ConvertingOrder[]
 
   @@unique([companyId, code])
   @@index([companyId])
@@ -586,7 +598,8 @@ model Operator {
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
 
-  lots Lot[]
+  lots             Lot[]
+  convertingOrders ConvertingOrder[]
 
   @@unique([companyId, code])
   @@index([companyId])
@@ -636,6 +649,11 @@ model Roll {
   qcStatus      QcLineStatus @default(PENDING)
   qcInspectedAt DateTime?
 
+  // Converting genealogy (spec S17). A child roll points at the ConvertingOrder that produced
+  // it; a parent roll is referenced by that order's ConvertingInput rows (→ convertingInputs).
+  convertingOrderId String?
+  convertingOrder   ConvertingOrder? @relation("ConvertingChildren", fields: [convertingOrderId], references: [id])
+
   state      RollState @default(CURING)
   length_m   Decimal   @db.Decimal(12, 3)
   width_m    Decimal   @db.Decimal(12, 3)
@@ -649,8 +667,9 @@ model Roll {
 
   createdAt DateTime @default(now())
 
-  ledgerEntries StockLedger[]
-  dispatchRolls DispatchRoll[]
+  ledgerEntries    StockLedger[]
+  dispatchRolls    DispatchRoll[]
+  convertingInputs ConvertingInput[]
 
   @@unique([companyId, rollNo])
   @@index([companyId])
@@ -982,4 +1001,54 @@ model QcReading {
   withinSpec   Boolean      @default(true)
 
   @@index([inspectionId])
+}
+
+// --- Converting orders (spec S17) ----------------------------------------------------
+
+/// A post-extrusion converting run: consumes parent rolls and produces child rolls, with the
+/// parent→child genealogy complaint tracing needs. Reuses LotStatus (OPEN|CLOSED|CANCELLED).
+/// Material balance (parents vs children + scrap + trim) is surfaced, not reconciled.
+model ConvertingOrder {
+  id           String              @id @default(cuid())
+  companyId    String
+  company      Company             @relation(fields: [companyId], references: [id])
+  docNo        String // CV/FY/seq
+  operation    ConvertingOperation
+  machineId    String
+  machine      Machine             @relation(fields: [machineId], references: [id])
+  shiftId      String
+  shift        Shift               @relation(fields: [shiftId], references: [id])
+  operatorId   String
+  operator     Operator            @relation(fields: [operatorId], references: [id])
+  targetItemId String
+  targetItem   Item                @relation(fields: [targetItemId], references: [id])
+  status       LotStatus           @default(OPEN)
+  inputKg      Decimal             @default(0) @db.Decimal(14, 3)
+  outputKg     Decimal             @default(0) @db.Decimal(14, 3)
+  scrapKg      Decimal             @default(0) @db.Decimal(14, 3)
+  trimKg       Decimal             @default(0) @db.Decimal(14, 3)
+  startedAt    DateTime?
+  endedAt      DateTime?
+  createdById  String?
+  createdAt    DateTime            @default(now())
+
+  inputs   ConvertingInput[]
+  children Roll[]            @relation("ConvertingChildren")
+
+  @@unique([companyId, docNo])
+  @@index([companyId])
+  @@index([companyId, status])
+}
+
+/// A parent roll consumed by a converting order (the genealogy anchor on the input side).
+model ConvertingInput {
+  id      String          @id @default(cuid())
+  orderId String
+  order   ConvertingOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  rollId  String
+  roll    Roll            @relation(fields: [rollId], references: [id])
+
+  @@unique([orderId, rollId])
+  @@index([orderId])
+  @@index([rollId])
 }
