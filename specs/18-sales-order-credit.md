@@ -1,6 +1,6 @@
 # Spec S18 — Sales Order, Credit Control & Customer Tier
 
-**Status:** Draft — confirm credit-block authority and tier inputs
+**Status:** Built — defaults applied (ACCOUNTS/ADMIN override, equal-weight tier bands, SO optional)
 
 ## Purpose
 

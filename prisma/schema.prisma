@@ -201,6 +201,7 @@ model Company {
   goodsReceipts    GoodsReceipt[]
   qcInspections    QcInspection[]
   convertingOrders ConvertingOrder[]
+  salesOrders      SalesOrder[]
 }
 
 model Plant {
@@ -345,6 +346,7 @@ model Item {
   goodsReceiptLines    GoodsReceiptLine[]
   qcInspections        QcInspection[]
   convertedInOrders    ConvertingOrder[]
+  salesOrderLines      SalesOrderLine[]
 
   @@unique([companyId, code])
   @@index([companyId])
@@ -399,6 +401,7 @@ model Customer {
   shipTos       ShipToAddress[]
   dispatchNotes DispatchNote[]
   invoices      Invoice[]
+  salesOrders   SalesOrder[]
 
   @@unique([companyId, code])
   @@index([companyId])
@@ -418,6 +421,7 @@ model ShipToAddress {
 
   dispatchNotes DispatchNote[]
   invoices      Invoice[]
+  salesOrders   SalesOrder[]
 
   @@index([customerId])
 }
@@ -670,6 +674,7 @@ model Roll {
   ledgerEntries    StockLedger[]
   dispatchRolls    DispatchRoll[]
   convertingInputs ConvertingInput[]
+  salesOrderRolls  SalesOrderRoll[]
 
   @@unique([companyId, rollNo])
   @@index([companyId])
@@ -752,6 +757,24 @@ enum InvoiceStatus {
   CANCELLED
 }
 
+/// Sales-order lifecycle (spec S18). DRAFT → CONFIRMED (credit-checked) → PARTIALLY_FULFILLED
+/// as dispatches ship against it → FULFILLED. Cancellable from any non-terminal state.
+enum SalesOrderStatus {
+  DRAFT
+  CONFIRMED
+  PARTIALLY_FULFILLED
+  FULFILLED
+  CANCELLED
+}
+
+/// Credit standing of a sales order at confirmation (spec S18). OK within the limit; BLOCKED
+/// over it; OVERRIDDEN when an ACCOUNTS/ADMIN user cleared the block with a logged reason.
+enum CreditStatus {
+  OK
+  BLOCKED
+  OVERRIDDEN
+}
+
 /// A shipment of specific rolls to a customer/ship-to. Picking allocates rolls; issuing the
 /// invoice posts the SERIAL-OUT and flips them DISPATCHED.
 model DispatchNote {
@@ -763,6 +786,9 @@ model DispatchNote {
   customer     Customer       @relation(fields: [customerId], references: [id])
   shipToId     String
   shipTo       ShipToAddress  @relation(fields: [shipToId], references: [id])
+  // Optional link to the sales order this shipment fulfils (spec S18); null for ad-hoc dispatch.
+  salesOrderId String?
+  salesOrder   SalesOrder?    @relation(fields: [salesOrderId], references: [id])
   dispatchedAt DateTime?
   transporter  String?
   vehicleNo    String?
@@ -852,6 +878,72 @@ model InvoiceLine {
   igstPaise         BigInt  @default(0)
 
   @@index([invoiceId])
+}
+
+// --- sales order & credit control (spec S18) -----------------------------------------
+
+/// A customer order layered over direct dispatch (spec S18). Captures the order, reserves
+/// stock against it, and enforces the credit limit (S7) at confirmation with a logged
+/// override. Dispatch (S13) fulfils an SO instead of being raised ad-hoc. Numbers are
+/// gapless per FY; cancel-not-delete.
+model SalesOrder {
+  id                   String           @id @default(cuid())
+  companyId            String
+  company              Company          @relation(fields: [companyId], references: [id])
+  docNo                String // SO/FY/seq
+  customerId           String
+  customer             Customer         @relation(fields: [customerId], references: [id])
+  shipToId             String
+  shipTo               ShipToAddress    @relation(fields: [shipToId], references: [id])
+  orderDate            DateTime         @default(now())
+  status               SalesOrderStatus @default(DRAFT)
+  creditStatus         CreditStatus     @default(OK)
+  creditOverrideById   String? // user who cleared a credit block (ACCOUNTS/ADMIN)
+  creditOverrideReason String?
+  createdById          String?
+  createdAt            DateTime         @default(now())
+
+  lines         SalesOrderLine[]
+  allocations   SalesOrderRoll[]
+  dispatchNotes DispatchNote[]
+
+  @@unique([companyId, docNo])
+  @@index([companyId])
+  @@index([companyId, status])
+  @@index([customerId])
+}
+
+/// One ordered line. `qtyFulfilled` is a denormalised running total maintained by dispatch
+/// (S13) as shipments ship against the order; `ratePaise` is the agreed price per billed unit.
+model SalesOrderLine {
+  id           String     @id @default(cuid())
+  soId         String
+  so           SalesOrder @relation(fields: [soId], references: [id], onDelete: Cascade)
+  itemId       String
+  item         Item       @relation(fields: [itemId], references: [id])
+  qtyOrdered   Decimal    @db.Decimal(14, 4)
+  uom          String
+  ratePaise    BigInt
+  gstRatePct   Decimal    @db.Decimal(5, 2)
+  qtyFulfilled Decimal    @default(0) @db.Decimal(14, 4)
+
+  @@index([soId])
+  @@index([itemId])
+}
+
+/// A specific roll reserved against a sales order (spec S18 rule 2). Allocation flips the
+/// roll AVAILABLE→ALLOCATED (S3); dispatch consumes the reservation. Cancelling the SO
+/// releases the roll back to AVAILABLE.
+model SalesOrderRoll {
+  id     String     @id @default(cuid())
+  soId   String
+  so     SalesOrder @relation(fields: [soId], references: [id], onDelete: Cascade)
+  rollId String
+  roll   Roll       @relation(fields: [rollId], references: [id])
+
+  @@unique([soId, rollId])
+  @@index([soId])
+  @@index([rollId])
 }
 
 // --- Purchase orders (spec S14) ------------------------------------------------------
