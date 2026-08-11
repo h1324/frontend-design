@@ -12,6 +12,7 @@ export type Area =
   | "DISPATCH"
   | "COSTING"
   | "QC"
+  | "RECEIVABLES"
   | "USER_ADMIN";
 
 export type Access = "NONE" | "R" | "RW";
@@ -28,6 +29,7 @@ export const ACCESS_MATRIX: Record<Role, Record<Area, Access>> = {
     DISPATCH: "RW",
     COSTING: "RW",
     QC: "RW",
+    RECEIVABLES: "RW",
     USER_ADMIN: "RW",
   },
   PRODUCTION: {
@@ -38,6 +40,7 @@ export const ACCESS_MATRIX: Record<Role, Record<Area, Access>> = {
     DISPATCH: "R",
     COSTING: "R",
     QC: "R",
+    RECEIVABLES: "R",
     USER_ADMIN: "NONE",
   },
   STORES: {
@@ -48,6 +51,7 @@ export const ACCESS_MATRIX: Record<Role, Record<Area, Access>> = {
     DISPATCH: "R",
     COSTING: "R",
     QC: "R",
+    RECEIVABLES: "R",
     USER_ADMIN: "NONE",
   },
   SALES: {
@@ -58,6 +62,7 @@ export const ACCESS_MATRIX: Record<Role, Record<Area, Access>> = {
     DISPATCH: "R",
     COSTING: "R",
     QC: "R",
+    RECEIVABLES: "R",
     USER_ADMIN: "NONE",
   },
   DISPATCH: {
@@ -68,6 +73,7 @@ export const ACCESS_MATRIX: Record<Role, Record<Area, Access>> = {
     DISPATCH: "RW",
     COSTING: "R",
     QC: "R",
+    RECEIVABLES: "R",
     USER_ADMIN: "NONE",
   },
   ACCOUNTS: {
@@ -78,6 +84,7 @@ export const ACCESS_MATRIX: Record<Role, Record<Area, Access>> = {
     DISPATCH: "RW",
     COSTING: "RW",
     QC: "R",
+    RECEIVABLES: "RW",
     USER_ADMIN: "NONE",
   },
   QC: {
@@ -88,6 +95,7 @@ export const ACCESS_MATRIX: Record<Role, Record<Area, Access>> = {
     DISPATCH: "R",
     COSTING: "R",
     QC: "RW",
+    RECEIVABLES: "R",
     USER_ADMIN: "NONE",
   },
   VIEWER: {
@@ -98,6 +106,7 @@ export const ACCESS_MATRIX: Record<Role, Record<Area, Access>> = {
     DISPATCH: "R",
     COSTING: "R",
     QC: "R",
+    RECEIVABLES: "R",
     USER_ADMIN: "NONE",
   },
 };

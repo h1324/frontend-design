@@ -202,6 +202,7 @@ model Company {
   qcInspections    QcInspection[]
   convertingOrders ConvertingOrder[]
   salesOrders      SalesOrder[]
+  receipts         Receipt[]
 }
 
 model Plant {
@@ -402,6 +403,7 @@ model Customer {
   dispatchNotes DispatchNote[]
   invoices      Invoice[]
   salesOrders   SalesOrder[]
+  receipts      Receipt[]
 
   @@unique([companyId, code])
   @@index([companyId])
@@ -842,6 +844,11 @@ model Invoice {
   roundOffPaise          BigInt @default(0)
   totalPaise             BigInt
 
+  // Receivables ageing (spec S19). dueDate = invoiceDate + customer.creditDays (IST);
+  // amountSettledPaise is a maintained running total of receipt allocations to this invoice.
+  dueDate            DateTime?
+  amountSettledPaise BigInt    @default(0)
+
   // e-invoice / e-way-bill fields — populated by Phase 3 API calls; null until then.
   irn          String?
   signedQr     String?
@@ -852,7 +859,8 @@ model Invoice {
   createdById String?
   createdAt   DateTime      @default(now())
 
-  lines InvoiceLine[]
+  lines              InvoiceLine[]
+  receiptAllocations ReceiptAllocation[]
 
   @@unique([companyId, docNo])
   @@index([companyId])
@@ -877,6 +885,71 @@ model InvoiceLine {
   sgstPaise         BigInt  @default(0)
   igstPaise         BigInt  @default(0)
 
+  @@index([invoiceId])
+}
+
+// --- receivables ageing (spec S19) ---------------------------------------------------
+
+/// How a receipt was tendered (spec S19). ADJUSTMENT covers credit/debit notes and write-offs.
+enum ReceiptMode {
+  CASH
+  BANK
+  UPI
+  CHEQUE
+  ADJUSTMENT
+}
+
+/// Where a receipt originated. MANUAL now; a one-way Tally→ERP sync (Phase 3) will mark TALLY
+/// so the two are never double-counted (spec S19 open question).
+enum ReceiptSource {
+  MANUAL
+  TALLY
+}
+
+enum ReceiptStatus {
+  POSTED
+  CANCELLED
+}
+
+/// A customer payment recorded for credit control only (spec S19) — NOT a ledger posting; the
+/// statutory books stay in Tally (CLAUDE.md). Outstanding = issued invoices − posted receipts.
+/// Reversible by cancellation, never edited. Gapless FY numbers.
+model Receipt {
+  id          String        @id @default(cuid())
+  companyId   String
+  company     Company       @relation(fields: [companyId], references: [id])
+  docNo       String // RCT/FY/seq
+  customerId  String
+  customer    Customer      @relation(fields: [customerId], references: [id])
+  receivedAt  DateTime      @default(now())
+  mode        ReceiptMode   @default(BANK)
+  amountPaise BigInt
+  reference   String? // cheque/UTR/UPI ref
+  source      ReceiptSource @default(MANUAL)
+  status      ReceiptStatus @default(POSTED)
+  createdById String?
+  createdAt   DateTime      @default(now())
+
+  allocations ReceiptAllocation[]
+
+  @@unique([companyId, docNo])
+  @@index([companyId])
+  @@index([companyId, customerId])
+}
+
+/// Which invoices a receipt settles (spec S19). The sum of a receipt's allocations cannot
+/// exceed its amount; an invoice cannot be settled beyond its total. Unallocated amount is
+/// "on account".
+model ReceiptAllocation {
+  id          String  @id @default(cuid())
+  receiptId   String
+  receipt     Receipt @relation(fields: [receiptId], references: [id], onDelete: Cascade)
+  invoiceId   String
+  invoice     Invoice @relation(fields: [invoiceId], references: [id])
+  amountPaise BigInt
+
+  @@unique([receiptId, invoiceId])
+  @@index([receiptId])
   @@index([invoiceId])
 }
 

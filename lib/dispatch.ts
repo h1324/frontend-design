@@ -159,6 +159,7 @@ export async function generateInvoice(
     where: { id: noteId, companyId: actor.companyId },
     include: {
       company: true,
+      customer: true,
       shipTo: true,
       rolls: { include: { roll: { include: { item: true } } } },
     },
@@ -261,6 +262,11 @@ export async function generateInvoice(
     ...(input.invoiceDate ? { now: input.invoiceDate } : {}),
   });
 
+  // Receivables due date (S19): invoiceDate + customer credit days.
+  const invoiceDate = input.invoiceDate ?? new Date();
+  const dueDate = new Date(invoiceDate);
+  dueDate.setDate(dueDate.getDate() + (note.customer.creditDays ?? 0));
+
   const invoice = await tx.invoice.create({
     data: {
       companyId: actor.companyId,
@@ -269,6 +275,7 @@ export async function generateInvoice(
       customerId: note.customerId,
       shipToId: note.shipToId,
       ...(input.invoiceDate ? { invoiceDate: input.invoiceDate } : {}),
+      dueDate,
       placeOfSupplyStateCode: note.shipTo.gstStateCode,
       taxableValuePaise: BigInt(totals.taxableValuePaise),
       cgstPaise: BigInt(totals.cgstPaise),

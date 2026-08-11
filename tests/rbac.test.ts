@@ -71,6 +71,11 @@ describe("can()", () => {
     expect(can("STORES", "QC", "write")).toBe(false);
     expect(can("ADMIN", "QC", "write")).toBe(true);
     expect(can("VIEWER", "QC", "read")).toBe(true);
+    // RECEIVABLES: ACCOUNTS + ADMIN write; SALES (and everyone) reads
+    expect(can("ACCOUNTS", "RECEIVABLES", "write")).toBe(true);
+    expect(can("ADMIN", "RECEIVABLES", "write")).toBe(true);
+    expect(can("SALES", "RECEIVABLES", "write")).toBe(false);
+    expect(can("SALES", "RECEIVABLES", "read")).toBe(true);
   });
 });
 
