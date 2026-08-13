@@ -235,21 +235,28 @@ export class FirebaseRepo implements Repo {
   async fulfilLine(orderId: string, itemIndex: number, qty: number, periodKey: string, audit: AuditEntry): Promise<void> {
     const d = this.db();
     const orderRef = doc(d, 'orders', orderId);
-    const snap = await getDoc(orderRef);
-    const order = snap.data() as Order | undefined;
-    const item = order?.items[itemIndex];
-    if (!order || !item) return;
-    const dispatched = Math.min(qty, item.qtyOrdered - item.qtyFulfilled);
-    if (dispatched <= 0) return;
-    const items = order.items.map((it, i) => (i === itemIndex ? { ...it, qtyFulfilled: it.qtyFulfilled + dispatched } : it));
-    await setDoc(orderRef, { items }, { merge: true });
-    const id = safeDocId(item.uid);
-    await setDoc(
-      doc(d, 'periods', periodKey),
-      { rows: { [id]: { uid: item.uid, c: increment(-dispatched), s: increment(dispatched) } } },
-      { merge: true },
-    );
-    await this.writeAudit(audit);
+    // Transaction: read the order, advance the line, and adjust stock atomically.
+    // A plain read-then-write could let two people fulfilling different lines of
+    // the same order overwrite each other's items array; the transaction retries
+    // on conflict so no dispatch is lost.
+    let did = 0;
+    await runTransaction(d, async (tx) => {
+      const snap = await tx.get(orderRef);
+      const order = snap.data() as Order | undefined;
+      const item = order?.items[itemIndex];
+      if (!order || !item) return;
+      const dispatched = Math.min(qty, item.qtyOrdered - item.qtyFulfilled);
+      if (dispatched <= 0) return;
+      did = dispatched;
+      const items = order.items.map((it, i) => (i === itemIndex ? { ...it, qtyFulfilled: it.qtyFulfilled + dispatched } : it));
+      tx.set(orderRef, { items }, { merge: true });
+      tx.set(
+        doc(d, 'periods', periodKey),
+        { rows: { [safeDocId(item.uid)]: { uid: item.uid, c: increment(-dispatched), s: increment(dispatched) } } },
+        { merge: true },
+      );
+    });
+    if (did > 0) await this.writeAudit(audit);
   }
 
   async cancelOrder(orderId: string, audit: AuditEntry): Promise<void> {

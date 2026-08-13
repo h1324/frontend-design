@@ -149,9 +149,14 @@ export function effWithHistory(
     const sold = o.sold != null ? o.sold : row?.sold ?? 0;
     const closing = o.closing != null ? o.closing : row?.closing ?? 0;
     const opening = row?.opening ?? 0;
-    const demand = soldMaps.length
-      ? soldMaps.reduce((a, m) => a + (m.get(c.uid) ?? 0), 0) / soldMaps.length
-      : sold;
+    // Demand = average sold across ONLY the trailing months this SKU actually
+    // existed in. A month where the SKU isn't on file yet (a newly-added product)
+    // must not be counted as a zero-sales month — that would halve/third a new
+    // SKU's true demand, overstating cover and understating its reorder point.
+    let soldSum = 0;
+    let monthsPresent = 0;
+    for (const m of soldMaps) if (m.has(c.uid)) { soldSum += m.get(c.uid) ?? 0; monthsPresent += 1; }
+    const demand = monthsPresent ? soldSum / monthsPresent : sold;
     return deriveEff(
       { uid: c.uid, line: c.line, model: c.model, colour: c.colour, opening, sold, closing },
       demand, o.reorder ?? c.reorder, o.note || c.note || '', c.price ?? 0, lowMonths, overMonths,

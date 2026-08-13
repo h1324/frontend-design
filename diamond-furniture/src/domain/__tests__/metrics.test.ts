@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { sellThrough, valuation, deadStock, pendingOrderValue } from '../metrics';
+import { sellThrough, avgDaysCover, valuation, deadStock, pendingOrderValue } from '../metrics';
 import { effWithHistory } from '../logic';
 import type { CatalogSku, EffSku, Order, PeriodSnapshot, Thresholds } from '../types';
 
@@ -15,6 +15,20 @@ describe('sellThrough', () => {
     expect(sellThrough([e({ sold: 40, closing: 60 })])).toBe(40);      // 40/100
     expect(sellThrough([e({ sold: 100, closing: 0 })])).toBe(100);
     expect(sellThrough([e({ sold: 0, closing: 0 })])).toBe(0);
+  });
+});
+
+describe('avgDaysCover', () => {
+  it('uses the median so one dormant pile does not dominate', () => {
+    // Three normal SKUs (~1 month) + one slow-mover holding 500 months of stock.
+    const effs = [
+      e({ demand: 10, cover: 1 }), e({ demand: 10, cover: 1 }),
+      e({ demand: 10, cover: 2 }), e({ demand: 1, cover: 500 }),
+    ];
+    expect(avgDaysCover(effs)).toBe(45); // median cover 1.5 mo × 30 — not skewed by the 500
+  });
+  it('ignores SKUs with no demand and returns 0 when none qualify', () => {
+    expect(avgDaysCover([e({ demand: 0, cover: 999 })])).toBe(0);
   });
 });
 

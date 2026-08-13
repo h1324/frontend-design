@@ -33,12 +33,22 @@ describe('effWithHistory — 3-month demand forecast', () => {
     expect(e.idle).toBe(true);                 // stock, no sales this month
   });
 
-  it('a SKU absent from a month counts as 0 sold that month', () => {
+  it('a SKU absent from a month is NOT counted as a zero-sales month', () => {
+    // The SKU only exists in April (m4), so its demand is April's alone — the
+    // empty March must not drag the average down (a new-product forecast fix).
     const m3: PeriodSnapshot = { key: '2026-03', label: 'x', machines: [], rows: [] };
     const m4 = snap('2026-04', 60, 10);
     const [e] = effWithHistory(catalog, m4, [m3, m4], {}, T);
-    expect(e.demand).toBe(30);     // (0 + 60) / 2
-    expect(e.status).toBe('Low');  // reorder round(30*0.5)=15; closing 10 <= 15 → Low
+    expect(e.demand).toBe(60);     // 60 / 1 (present in one month only)
+    expect(e.status).toBe('Low');  // reorder round(60*0.5)=30; closing 10 <= 30 → Low
+  });
+
+  it('counts a month where the SKU exists but sold zero', () => {
+    // Present in both months (April sold 0) → averaged over 2, not treated as absent.
+    const m3 = snap('2026-03', 40, 200);
+    const m4 = snap('2026-04', 0, 200);
+    const [e] = effWithHistory(catalog, m4, [m3, m4], {}, T);
+    expect(e.demand).toBe(20);     // (40 + 0) / 2
   });
 });
 

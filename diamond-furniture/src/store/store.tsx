@@ -24,6 +24,9 @@ interface AppContextValue {
   currentPeriodKey: string;
   setPeriod: (key: string) => void;
   latestPeriodKey: string;
+  latestPeriodLabel: string;
+  /** Stock on hand (closing) per uid in the LATEST month — orders always act on "now". */
+  latestStock: Map<string, number>;
   financialYearLabel: string;
   dataset: { skus: never[]; lines: string[]; machines: Machine[] } | null;
   effs: EffSku[];
@@ -125,6 +128,20 @@ export function AppProvider({
   const periodLabelText = currentSnapshot?.label ?? (currentPeriodKey ? periodLabel(currentPeriodKey) : '—');
   const financialYearLabel = currentPeriodKey ? financialYearOf(currentPeriodKey).label : '';
 
+  // The latest month is where order dispatch always lands — an operational action
+  // acts on "now", never on whichever historical month happens to be on screen.
+  const latestSnapshot = useMemo(
+    () => state.periods.find((p) => p.key === state.latestPeriodKey) ?? null,
+    [state.periods, state.latestPeriodKey],
+  );
+  const latestPeriodLabel = latestSnapshot?.label
+    ?? (state.latestPeriodKey ? periodLabel(state.latestPeriodKey) : '—');
+  const latestStock = useMemo(() => {
+    const m = new Map<string, number>();
+    for (const r of latestSnapshot?.rows ?? []) m.set(r.uid, r.closing);
+    return m;
+  }, [latestSnapshot]);
+
   const mkAudit = useCallback(
     (action: AuditEntry['action'], target?: string, detail?: string): AuditEntry => ({
       id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
@@ -211,10 +228,13 @@ export function AppProvider({
 
   const fulfilLine = useCallback<AppContextValue['fulfilLine']>(
     async (orderId, itemIndex, qty) => {
-      await repo.fulfilLine(orderId, itemIndex, qty, currentPeriodKey,
-        mkAudit('fulfil-order', orderId, `dispatched ${qty} (into ${periodLabelText})`));
+      // Always dispatch into the latest month — not the month being viewed — so
+      // shipping an order never rewrites a past month's stock by accident.
+      const target = state.latestPeriodKey || currentPeriodKey;
+      await repo.fulfilLine(orderId, itemIndex, qty, target,
+        mkAudit('fulfil-order', orderId, `dispatched ${qty} (into ${latestPeriodLabel})`));
     },
-    [repo, mkAudit, currentPeriodKey, periodLabelText],
+    [repo, mkAudit, state.latestPeriodKey, currentPeriodKey, latestPeriodLabel],
   );
 
   const cancelOrder = useCallback<AppContextValue['cancelOrder']>(
@@ -227,7 +247,8 @@ export function AppProvider({
   const value: AppContextValue = {
     loading, mode,
     catalog: state.catalog, periods: state.periods, periodKeys, currentPeriodKey,
-    setPeriod: setSelectedKey, latestPeriodKey: state.latestPeriodKey, financialYearLabel,
+    setPeriod: setSelectedKey, latestPeriodKey: state.latestPeriodKey, latestPeriodLabel, latestStock,
+    financialYearLabel,
     dataset, effs, prodLog: state.prodLog, orders: state.orders, thresholds: state.thresholds,
     period: periodLabelText, audit: state.audit,
     role, uid, userName, canEdit, isOwner,

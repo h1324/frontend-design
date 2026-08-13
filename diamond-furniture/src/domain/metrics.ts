@@ -7,12 +7,18 @@ export function sellThrough(effs: EffSku[]): number {
   return avail > 0 ? Math.round((sold / avail) * 100) : 0;
 }
 
-/** Average days of stock cover across SKUs with demand (turnover proxy). */
+/**
+ * Typical days of stock cover across SKUs with demand (turnover proxy).
+ * Uses the MEDIAN, not the mean: a single slow-mover holding a huge pile of
+ * stock (e.g. sells 1, holds 5,000 → 5,000 months of cover) would otherwise
+ * drag a mean into the tens of thousands of days and misrepresent the business.
+ */
 export function avgDaysCover(effs: EffSku[]): number {
-  const withDemand = effs.filter((e) => e.demand > 0 && e.cover < 999);
-  if (!withDemand.length) return 0;
-  const meanMonths = withDemand.reduce((a, e) => a + e.cover, 0) / withDemand.length;
-  return Math.round(meanMonths * 30);
+  const covers = effs.filter((e) => e.demand > 0 && e.cover < 999).map((e) => e.cover).sort((a, b) => a - b);
+  if (!covers.length) return 0;
+  const mid = Math.floor(covers.length / 2);
+  const medianMonths = covers.length % 2 ? covers[mid] : (covers[mid - 1] + covers[mid]) / 2;
+  return Math.round(medianMonths * 30);
 }
 
 export interface Valuation {

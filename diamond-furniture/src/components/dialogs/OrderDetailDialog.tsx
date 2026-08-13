@@ -6,7 +6,7 @@ import { fmt } from '../../domain/format';
 import { orderStatus, orderProgress, itemPending } from '../../domain/orders';
 
 export function OrderDetailDialog({ orderId, onClose }: { orderId: string; onClose: () => void }) {
-  const { orders, canEdit, fulfilLine, cancelOrder, period } = useApp();
+  const { orders, canEdit, fulfilLine, cancelOrder, latestPeriodLabel, latestStock } = useApp();
   const flash = useToast();
   const order = orders.find((o) => o.id === orderId);
   const [qty, setQty] = useState<Record<number, string>>({});
@@ -19,6 +19,18 @@ export function OrderDetailDialog({ orderId, onClose }: { orderId: string; onClo
 
   const dispatch = async (index: number, amount: number) => {
     if (busy || amount <= 0) return;
+    // Warn before shipping more than the latest month holds (it would drive stock
+    // negative). Overriding is allowed — negative stock is a tracked state — but
+    // it should be a deliberate choice, not a silent typo.
+    const uid = order.items[index]?.uid;
+    const onHand = uid ? latestStock.get(uid) ?? 0 : 0;
+    if (amount > onHand) {
+      const ok = window.confirm(
+        `Only ${fmt(onHand)} in stock for this item, but you're dispatching ${fmt(amount)}.\n`
+        + `This will leave the stock negative in ${latestPeriodLabel}. Continue?`,
+      );
+      if (!ok) return;
+    }
     setBusy(true);
     try {
       await fulfilLine(order.id, index, amount);
@@ -50,7 +62,7 @@ export function OrderDetailDialog({ orderId, onClose }: { orderId: string; onClo
             <span className="status-pill" style={{ background: '#eef6ff', color: '#2c455d' }}>{status} · {progress.pct}%</span>
           </div>
           {order.note && <p className="text-muted" style={{ margin: 0, fontSize: 12.5 }}>{order.note}</p>}
-          {active && <p className="text-muted" style={{ margin: 0, fontSize: 12 }}>Dispatching reduces stock in <strong>{period}</strong>.</p>}
+          {active && <p className="text-muted" style={{ margin: 0, fontSize: 12 }}>Dispatching reduces stock in <strong>{latestPeriodLabel}</strong> (the current month).</p>}
 
           <div style={{ border: '1px solid var(--color-divider)', overflow: 'auto', maxHeight: 320 }}>
             <table className="table"><thead><tr>

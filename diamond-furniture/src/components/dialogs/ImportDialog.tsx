@@ -1,9 +1,10 @@
-import { useState, type ChangeEvent } from 'react';
+import { useMemo, useState, type ChangeEvent } from 'react';
 import { Blueprint } from '../Blueprint';
 import { useApp } from '../../store/store';
 import { useToast } from '../Toast';
 import { parseWorkbook } from '../../domain/parseWorkbook';
 import { summarizeParse } from '../../domain/applyImport';
+import { periodKeyFromLabel } from '../../domain/period';
 import type { ParsedWorkbook } from '../../domain/types';
 
 const OK = '#4e8055';
@@ -21,7 +22,7 @@ function detectPeriod(fileName: string, sheetNames: string[], fallback: string):
 }
 
 export function ImportDialog({ onClose }: { onClose: () => void }) {
-  const { applyImport, period } = useApp();
+  const { applyImport, period, periods } = useApp();
   const flash = useToast();
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState('');
@@ -56,12 +57,22 @@ export function ImportDialog({ onClose }: { onClose: () => void }) {
 
   const [applying, setApplying] = useState(false);
 
+  // Validate + describe the chosen target month so the user always knows where
+  // the numbers will land (the detected name can be wrong, or absent on a Master
+  // file — this makes it visible and correctable before anything is written).
+  const targetKey = periodKeyFromLabel(detectedPeriod);
+  const existingLabels = useMemo(
+    () => [...new Set(periods.map((p) => p.label))].sort(),
+    [periods],
+  );
+  const overwrites = targetKey != null && periods.some((p) => p.key === targetKey);
+
   const apply = async () => {
-    if (!parsed || applying) return;
+    if (!parsed || applying || !targetKey) return;
     setApplying(true);
     try {
       await applyImport(parsed, detectedPeriod);
-      flash(`Imported ${parsed.skus.length} SKUs — data refreshed`);
+      flash(`Imported ${parsed.skus.length} SKUs into ${detectedPeriod} — data refreshed`);
       onClose();
     } catch (err) {
       console.error('Import apply failed:', err);
@@ -104,9 +115,30 @@ export function ImportDialog({ onClose }: { onClose: () => void }) {
             </div>
           )}
 
+          {parsed && (
+            <div className="field" style={{ margin: 0 }}>
+              <label>Import into month</label>
+              <input
+                className="input" list="import-months" value={detectedPeriod}
+                onChange={(e) => setDetectedPeriod(e.target.value)}
+                placeholder="e.g. April 2026"
+              />
+              <datalist id="import-months">
+                {existingLabels.map((l) => <option key={l} value={l} />)}
+              </datalist>
+              <p className="text-muted" style={{ margin: '6px 0 0', fontSize: 12, lineHeight: 1.5, color: targetKey ? undefined : ERR }}>
+                {!targetKey
+                  ? 'Type a month and year, e.g. “April 2026”, so the app knows which month this file belongs to.'
+                  : overwrites
+                    ? `This replaces the stock & sold numbers already saved for ${detectedPeriod} (reorder points and notes are kept).`
+                    : `This adds ${detectedPeriod} as a new month.`}
+              </p>
+            </div>
+          )}
+
           <div className="dialog-actions">
             <button className="btn btn-ghost" onClick={onClose} disabled={applying}>{parsed ? 'Cancel' : 'Close'}</button>
-            <button className="btn btn-primary" onClick={apply} disabled={!parsed || applying}>
+            <button className="btn btn-primary" onClick={apply} disabled={!parsed || applying || !targetKey}>
               {applying ? 'Saving…' : 'Apply to app'}
             </button>
           </div>
