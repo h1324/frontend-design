@@ -6,12 +6,15 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
 import { requireActor } from "@/lib/rbac";
 import { StockError } from "@/lib/stock-ledger";
+import { Decimal } from "@/lib/decimal";
+import type { ApportionBasis, ChargeType } from "@prisma/client";
 import {
   createGRN,
   cancelGRN,
   GrnValidationError,
   type GrnLineInput,
 } from "@/lib/goods-receipt";
+import { addGrnCharges, LandedCostError, type ChargeInput } from "@/lib/landed-cost";
 
 async function currentActor() {
   return requireActor(await auth());
@@ -19,6 +22,47 @@ async function currentActor() {
 function str(v: FormDataEntryValue | null): string | undefined {
   const s = typeof v === "string" ? v.trim() : "";
   return s === "" ? undefined : s;
+}
+function rupeesToPaise(v: string | undefined): bigint | null {
+  if (!v) return null;
+  try {
+    return BigInt(new Decimal(v).times(100).toFixed(0));
+  } catch {
+    return null;
+  }
+}
+
+/** Zip the parallel charge-row arrays, keeping only rows with a positive amount. */
+function readCharges(fd: FormData): ChargeInput[] {
+  const types = fd.getAll("chargeType").map(String);
+  const amounts = fd.getAll("chargeAmount").map(String);
+  const bases = fd.getAll("chargeBasis").map(String);
+  const charges: ChargeInput[] = [];
+  for (let i = 0; i < types.length; i++) {
+    const paise = rupeesToPaise(amounts[i]?.trim());
+    if (!paise || paise <= 0n) continue;
+    charges.push({
+      chargeType: (types[i]?.trim() || "OTHER") as ChargeType,
+      amountPaise: paise,
+      apportionBasis: (bases[i]?.trim() || "VALUE") as ApportionBasis,
+    });
+  }
+  return charges;
+}
+
+export async function addChargesAction(fd: FormData) {
+  const actor = await currentActor();
+  const grnId = String(fd.get("grnId"));
+  try {
+    await prisma.$transaction((tx) => addGrnCharges(tx, actor, grnId, readCharges(fd)));
+  } catch (err) {
+    if (err instanceof LandedCostError || err instanceof GrnValidationError) {
+      redirect(`/purchasing/grn/${grnId}?error=${encodeURIComponent(err.message)}`);
+    }
+    throw err;
+  }
+  revalidatePath(`/purchasing/grn/${grnId}`);
+  redirect(`/purchasing/grn/${grnId}`);
 }
 
 /** Zip the parallel receive-line arrays, keeping only rows with a positive quantity. */

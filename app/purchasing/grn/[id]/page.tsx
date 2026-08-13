@@ -5,8 +5,22 @@ import { prisma } from "@/lib/db";
 import { requireActor, requireAccess, can } from "@/lib/rbac";
 import { formatPaise } from "@/lib/gst";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { cancelGRNAction } from "../actions";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { cancelGRNAction, addChargesAction } from "../actions";
+
+const selectClass =
+  "h-10 w-full rounded-md border border-input bg-background px-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
+
+const CHARGE_TYPES = ["FREIGHT", "DUTY", "INSURANCE", "CLEARING", "OTHER"] as const;
+const BASES = ["VALUE", "QTY", "WEIGHT"] as const;
+const CHARGE_ROWS = 3;
 
 function fmtDate(d: Date | null): string {
   if (!d) return "—";
@@ -39,6 +53,7 @@ export default async function GrnDetailPage({
       supplier: true,
       po: true,
       lines: { include: { item: true, location: true } },
+      charges: true,
     },
   });
   if (!grn) notFound();
@@ -47,6 +62,13 @@ export default async function GrnDetailPage({
     canWrite &&
     grn.status === "POSTED" &&
     grn.lines.every((l) => l.qcStatus === "PENDING");
+
+  const costed = grn.lines.some((l) => l.landedUnitCostPaise != null);
+  const canCost =
+    canWrite &&
+    grn.status === "POSTED" &&
+    !costed &&
+    grn.lines.every((l) => l.ratePaise != null);
 
   return (
     <main className="mx-auto flex min-h-screen max-w-4xl flex-col gap-6 px-6 py-12">
@@ -87,6 +109,7 @@ export default async function GrnDetailPage({
                 <th className="py-2 pr-4 font-medium">Received</th>
                 <th className="py-2 pr-4 font-medium">Location</th>
                 <th className="py-2 pr-4 font-medium">Rate</th>
+                <th className="py-2 pr-4 font-medium">Landed/unit</th>
                 <th className="py-2 font-medium">QC</th>
               </tr>
             </thead>
@@ -104,6 +127,11 @@ export default async function GrnDetailPage({
                   <td className="py-2 pr-4 tabular-nums">
                     {l.ratePaise != null ? formatPaise(l.ratePaise) : "—"}
                   </td>
+                  <td className="py-2 pr-4 tabular-nums">
+                    {l.landedUnitCostPaise != null
+                      ? formatPaise(l.landedUnitCostPaise)
+                      : "—"}
+                  </td>
                   <td className={`py-2 ${qcTone[l.qcStatus] ?? ""}`}>{l.qcStatus}</td>
                 </tr>
               ))}
@@ -111,6 +139,96 @@ export default async function GrnDetailPage({
           </table>
         </CardContent>
       </Card>
+
+      {grn.charges.length > 0 ? (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Charges</CardTitle>
+          </CardHeader>
+          <CardContent className="text-sm">
+            <ul className="flex flex-col gap-1">
+              {grn.charges.map((c) => (
+                <li key={c.id} className="flex justify-between">
+                  <span>
+                    {c.chargeType}{" "}
+                    <span className="text-muted-foreground">by {c.apportionBasis}</span>
+                  </span>
+                  <span className="tabular-nums">{formatPaise(c.amountPaise)}</span>
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
+      ) : null}
+
+      {canCost ? (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Finalize landed cost</CardTitle>
+            <CardDescription>
+              Add inbound charges (freight/duty/…) to apportion across the lines, then
+              post. This sets each line&apos;s landed unit cost and rolls it into the
+              item&apos;s moving average. One-shot — recompute by cancelling and
+              re-receiving.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form action={addChargesAction} className="flex flex-col gap-4">
+              <input type="hidden" name="grnId" value={grn.id} />
+              <div className="rounded-md border">
+                <div className="grid grid-cols-[1fr_140px_120px] gap-2 border-b px-3 py-2 text-xs font-medium text-muted-foreground">
+                  <span>Charge</span>
+                  <span className="text-right">Amount (₹)</span>
+                  <span>Apportion by</span>
+                </div>
+                {Array.from({ length: CHARGE_ROWS }).map((_, i) => (
+                  <div
+                    key={i}
+                    className="grid grid-cols-[1fr_140px_120px] items-center gap-2 border-b px-3 py-1.5 last:border-0"
+                  >
+                    <select name="chargeType" className={selectClass}>
+                      {CHARGE_TYPES.map((t) => (
+                        <option key={t} value={t}>
+                          {t}
+                        </option>
+                      ))}
+                    </select>
+                    <Input
+                      name="chargeAmount"
+                      inputMode="decimal"
+                      placeholder="0.00"
+                      className="text-right"
+                    />
+                    <select
+                      name="chargeBasis"
+                      className={selectClass}
+                      defaultValue="VALUE"
+                    >
+                      {BASES.map((b) => (
+                        <option key={b} value={b}>
+                          {b}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Leave charges blank to cost at the supplier rate only. Excludes
+                recoverable GST (input tax credit is not a cost).
+              </p>
+              <div>
+                <Button type="submit">Post landed cost</Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      ) : costed ? (
+        <p className="text-xs text-muted-foreground">
+          Landed cost posted — line costs above feed the item moving average and stock
+          valuation.
+        </p>
+      ) : null}
 
       <p className="text-xs text-muted-foreground">
         Received stock sits on QC hold and is not issuable until QC (S16) passes it.

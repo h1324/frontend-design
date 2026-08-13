@@ -1,6 +1,6 @@
 # Spec S20 — Landed-Cost Valuation
 
-**Status:** Draft — confirm valuation method (moving weighted-average vs FIFO) and default apportionment basis
+**Status:** Built — moving weighted-average, VALUE-basis default (open questions defaulted)
 
 ## Purpose
 

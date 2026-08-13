@@ -203,6 +203,8 @@ model Company {
   convertingOrders ConvertingOrder[]
   salesOrders      SalesOrder[]
   receipts         Receipt[]
+  grnCharges       GrnCharge[]
+  itemCostHistory  ItemCostHistory[]
 }
 
 model Plant {
@@ -333,6 +335,11 @@ model Item {
   agingDays    Int?
   reorderLevel Decimal? @db.Decimal(16, 3)
 
+  // landed-cost valuation (spec S20): moving weighted-average landed cost and the quantity it
+  // was averaged over. Maintained by lib/landed-cost.ts on each costed receipt; never floats.
+  movingAvgCostPaise BigInt  @default(0)
+  costedQtyBase      Decimal @default(0) @db.Decimal(16, 3)
+
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
 
@@ -348,6 +355,7 @@ model Item {
   qcInspections        QcInspection[]
   convertedInOrders    ConvertingOrder[]
   salesOrderLines      SalesOrderLine[]
+  costHistory          ItemCostHistory[]
 
   @@unique([companyId, code])
   @@index([companyId])
@@ -1095,7 +1103,8 @@ model GoodsReceipt {
   createdById String?
   createdAt   DateTime          @default(now())
 
-  lines GoodsReceiptLine[]
+  lines   GoodsReceiptLine[]
+  charges GrnCharge[]
 
   @@unique([companyId, docNo])
   @@index([companyId])
@@ -1106,24 +1115,82 @@ model GoodsReceipt {
 /// One received line. Posts a BULK IN (reason GRN) to a QC-hold location; `qcStatus` starts
 /// PENDING and S16 sets `qtyAccepted` + disposition. `ledgerId` is the posting for reversal.
 model GoodsReceiptLine {
-  id          String             @id @default(cuid())
-  grnId       String
-  grn         GoodsReceipt       @relation(fields: [grnId], references: [id], onDelete: Cascade)
-  poLineId    String?
-  poLine      PurchaseOrderLine? @relation(fields: [poLineId], references: [id])
-  itemId      String
-  item        Item               @relation(fields: [itemId], references: [id])
-  locationId  String
-  location    Location           @relation(fields: [locationId], references: [id])
-  qtyReceived Decimal            @db.Decimal(14, 3)
-  qtyAccepted Decimal            @default(0) @db.Decimal(14, 3)
-  ratePaise   BigInt?
-  qcStatus    QcLineStatus       @default(PENDING)
-  ledgerId    String?
+  id                  String             @id @default(cuid())
+  grnId               String
+  grn                 GoodsReceipt       @relation(fields: [grnId], references: [id], onDelete: Cascade)
+  poLineId            String?
+  poLine              PurchaseOrderLine? @relation(fields: [poLineId], references: [id])
+  itemId              String
+  item                Item               @relation(fields: [itemId], references: [id])
+  locationId          String
+  location            Location           @relation(fields: [locationId], references: [id])
+  qtyReceived         Decimal            @db.Decimal(14, 3)
+  qtyAccepted         Decimal            @default(0) @db.Decimal(14, 3)
+  ratePaise           BigInt?
+  // Per-unit landed cost (supplier rate + apportioned charges), set by S20 when the receipt is
+  // costed. Null until then. Money in paise (BigInt).
+  landedUnitCostPaise BigInt?
+  qcStatus            QcLineStatus       @default(PENDING)
+  ledgerId            String?
 
   @@index([grnId])
   @@index([poLineId])
   @@index([itemId])
+}
+
+// --- landed-cost valuation (spec S20) ------------------------------------------------
+
+/// Inbound charge categories loaded onto landed cost. Recoverable GST is never a charge here
+/// (it is input tax credit, not a cost).
+enum ChargeType {
+  FREIGHT
+  DUTY
+  INSURANCE
+  CLEARING
+  OTHER
+}
+
+/// How a charge is spread across a GRN's lines (spec S20).
+enum ApportionBasis {
+  VALUE
+  QTY
+  WEIGHT
+}
+
+/// A charge on a goods receipt (freight/duty/…) apportioned across its lines to build landed
+/// cost (spec S20). Money in paise (BigInt).
+model GrnCharge {
+  id             String         @id @default(cuid())
+  companyId      String
+  company        Company        @relation(fields: [companyId], references: [id])
+  grnId          String
+  grn            GoodsReceipt   @relation(fields: [grnId], references: [id], onDelete: Cascade)
+  chargeType     ChargeType
+  amountPaise    BigInt
+  apportionBasis ApportionBasis @default(VALUE)
+  note           String?
+  createdAt      DateTime       @default(now())
+
+  @@index([companyId])
+  @@index([grnId])
+}
+
+/// Append-only audit of an item's moving-average landed cost — one row per costed receipt or
+/// its reversal (spec S20). `qtyIn` is negative on a reversal. Never updated or deleted.
+model ItemCostHistory {
+  id                String   @id @default(cuid())
+  companyId         String
+  company           Company  @relation(fields: [companyId], references: [id])
+  itemId            String
+  item              Item     @relation(fields: [itemId], references: [id])
+  grnLineId         String?
+  asOf              DateTime @default(now())
+  qtyIn             Decimal  @db.Decimal(16, 3)
+  unitCostPaise     BigInt
+  newMovingAvgPaise BigInt
+
+  @@index([companyId, itemId])
+  @@index([grnLineId])
 }
 
 // --- Quality control (spec S16) ------------------------------------------------------
