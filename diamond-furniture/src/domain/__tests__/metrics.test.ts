@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { sellThrough, avgDaysCover, valuation, deadStock, pendingOrderValue } from '../metrics';
+import { sellThrough, avgDaysCover, valuation, deadStock, pendingOrderValue, lastSaleInfo, productionPlan } from '../metrics';
 import { effWithHistory } from '../logic';
 import type { CatalogSku, EffSku, Order, PeriodSnapshot, Thresholds } from '../types';
 
@@ -62,6 +62,38 @@ describe('deadStock', () => {
     const effs = effWithHistory(catalog, m4, [m3, m4], {}, T);
     const dead = deadStock(effs, [m3, m4]);
     expect(dead.map((d) => d.uid)).toEqual(['a']);
+  });
+});
+
+describe('lastSaleInfo', () => {
+  const snap = (key: string, rows: PeriodSnapshot['rows']): PeriodSnapshot => ({ key, label: key, machines: [], rows });
+  const snaps = [
+    snap('2026-02', [{ uid: 'a', opening: 0, sold: 5, closing: 100 }]),
+    snap('2026-03', [{ uid: 'a', opening: 0, sold: 0, closing: 100 }]),
+    snap('2026-04', [{ uid: 'a', opening: 0, sold: 0, closing: 100 }]),
+  ];
+  it('reports months since the last month with a sale', () => {
+    expect(lastSaleInfo('a', snaps, '2026-04')).toEqual({ lastKey: '2026-02', lastLabel: '2026-02', monthsSince: 2 });
+  });
+  it('is 0 when sold in the current month', () => {
+    expect(lastSaleInfo('a', snaps, '2026-02').monthsSince).toBe(0);
+  });
+  it('is null when never sold', () => {
+    expect(lastSaleInfo('b', snaps, '2026-04')).toEqual({ lastKey: null, lastLabel: null, monthsSince: null });
+  });
+});
+
+describe('productionPlan', () => {
+  it('suggests making up to demand + reorder, biggest need first', () => {
+    const plan = productionPlan([
+      e({ uid: 'x', demand: 100, reorder: 50, closing: 40 }), // 100+50-40 = 110
+      e({ uid: 'y', demand: 20, reorder: 10, closing: 5 }),   // 20+10-5  = 25
+      e({ uid: 'z', demand: 30, reorder: 15, closing: 500 }), // overstocked → 0, dropped
+    ]);
+    expect(plan.map((p) => [p.eff.uid, p.make])).toEqual([['x', 110], ['y', 25]]);
+  });
+  it('replenishes negative stock', () => {
+    expect(productionPlan([e({ uid: 'n', demand: 100, reorder: 50, closing: -20 })])[0].make).toBe(170);
   });
 });
 

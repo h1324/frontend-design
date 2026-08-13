@@ -1,4 +1,5 @@
 import type { EffSku, Order, PeriodSnapshot } from './types';
+import { parsePeriodKey } from './period';
 
 /** Sell-through %: units sold ÷ units that were available to sell (sold + stock on hand). */
 export function sellThrough(effs: EffSku[]): number {
@@ -52,6 +53,46 @@ export function deadStock(effs: EffSku[], trailing: PeriodSnapshot[]): EffSku[] 
   return effs
     .filter((e) => e.closing > 0 && (soldByUid.get(e.uid ?? e.id) ?? 0) === 0)
     .sort((a, b) => b.closing - a.closing);
+}
+
+/** Whole months between two period keys (b − a). '2026-01'→'2026-04' = 3. */
+function monthsBetween(a: string, b: string): number {
+  const pa = parsePeriodKey(a);
+  const pb = parsePeriodKey(b);
+  return (pb.year * 12 + pb.month) - (pa.year * 12 + pa.month);
+}
+
+export interface LastSale {
+  lastKey: string | null;   // most recent month (≤ current) with a sale, or null if never
+  lastLabel: string | null;
+  monthsSince: number | null; // 0 = sold this month; N = last sale N months ago; null = never
+}
+
+/** When a SKU last sold, looking only at months up to and including `currentKey`. */
+export function lastSaleInfo(uid: string, snapshots: PeriodSnapshot[], currentKey: string): LastSale {
+  let best: PeriodSnapshot | null = null;
+  for (const p of snapshots) {
+    if (p.key > currentKey) continue;
+    const r = p.rows.find((x) => x.uid === uid);
+    if (r && r.sold > 0 && (!best || p.key > best.key)) best = p;
+  }
+  if (!best) return { lastKey: null, lastLabel: null, monthsSince: null };
+  return { lastKey: best.key, lastLabel: best.label, monthsSince: monthsBetween(best.key, currentKey) };
+}
+
+export interface PlanRow { eff: EffSku; make: number; }
+
+/**
+ * Production plan: for each SKU, how much to make so that after next month's
+ * expected sales (its trailing-average demand) it still sits at its reorder
+ * point — i.e. target stock = demand + reorder. Only items that need making
+ * appear, biggest need first. Overstocked / well-covered items suggest nothing.
+ */
+export function productionPlan(effs: EffSku[]): PlanRow[] {
+  return effs
+    .map((e) => ({ eff: e, make: Math.max(0, Math.round(e.demand + e.reorder - e.closing)) }))
+    .filter((r) => r.make > 0)
+    .sort((a, b) => b.make - a.make);
 }
 
 /** ₹ value of units still to dispatch across open/partial orders. */

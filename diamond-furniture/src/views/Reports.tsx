@@ -5,7 +5,7 @@ import { useToast } from '../components/Toast';
 import { fmt } from '../domain/format';
 import { downloadCsv } from '../lib/csv';
 import { kpis, lineSummaries } from '../domain/logic';
-import { sellThrough, avgDaysCover, valuation, deadStock } from '../domain/metrics';
+import { sellThrough, avgDaysCover, valuation, deadStock, productionPlan } from '../domain/metrics';
 import { trailingPeriods } from '../domain/period';
 import { STATUS_META } from '../domain/status';
 import type { PeriodSnapshot } from '../domain/types';
@@ -32,6 +32,16 @@ export function Reports() {
   const dead = deadStock(effs, trailing);
   const deadUnits = dead.reduce((a, d) => a + d.closing, 0);
   const deadValue = dead.reduce((a, d) => a + d.closing * d.price, 0);
+
+  // Production plan: what to make next month so each SKU still sits at its reorder
+  // point after its expected (forecast) sales. Biggest need first.
+  const plan = productionPlan(effs);
+  const planUnits = plan.reduce((a, r) => a + r.make, 0);
+  const planSlug = period.replace(/\s+/g, '_').toLowerCase();
+  const exportPlan = () =>
+    downloadCsv(`diamond_production_plan_${planSlug}.csv`,
+      ['Line', 'Model', 'Colour', 'Current stock', 'Avg monthly demand', 'Reorder point', 'Suggested make'],
+      plan.map((r) => [r.eff.line, r.eff.model, r.eff.colour, r.eff.closing, Math.round(r.eff.demand), r.eff.reorder, r.make]));
 
   const kpiCards = [
     { label: 'Units in stock', value: fmt(k.totalStock), sub: `across ${fmt(effs.length)} SKUs`, color: 'var(--color-text)' },
@@ -63,6 +73,7 @@ export function Reports() {
       <div className="no-print" style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 22 }}>
         <button className="btn btn-primary" onClick={exportInv}>Export full inventory (CSV)</button>
         <button className="btn btn-secondary" onClick={exportAlerts}>Export alerts (CSV)</button>
+        <button className="btn btn-secondary" onClick={exportPlan} disabled={plan.length === 0}>Export production plan (CSV)</button>
         <button className="btn btn-secondary" onClick={() => window.print()}>Print / Save as PDF</button>
       </div>
 
@@ -121,6 +132,32 @@ export function Reports() {
                   </tr>
                 ))}
               </tbody></table>
+            </div>
+          )}
+        </Blueprint>
+
+        <Blueprint className="card" style={{ gap: 10, gridColumn: '1/-1' }}>
+          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 8, flexWrap: 'wrap' }}>
+            <h4 style={{ margin: 0 }}>Suggested production for next month <span className="text-muted" style={{ fontSize: 12, fontWeight: 400 }}>· to stay above the reorder point after forecast sales</span></h4>
+            <span className="card-meta" style={{ margin: 0 }}>{fmt(plan.length)} SKUs · {fmt(planUnits)} units to make</span>
+          </div>
+          {plan.length === 0 ? (
+            <p className="text-muted" style={{ margin: 0, fontSize: 13 }}>Nothing is running low against its forecast — no production needed right now.</p>
+          ) : (
+            <div style={{ overflow: 'auto', maxHeight: 280 }}>
+              <table className="table"><thead><tr>
+                <th>Product</th><th style={{ textAlign: 'right' }}>Stock</th><th style={{ textAlign: 'right' }}>Demand/mo</th><th style={{ textAlign: 'right' }}>Make</th>
+              </tr></thead><tbody>
+                {plan.slice(0, 30).map((r) => (
+                  <tr key={r.eff.id}>
+                    <td style={{ fontSize: 12.5 }}><strong>{r.eff.model}</strong> · {r.eff.colour || '—'}<br /><span className="text-muted">{r.eff.line}</span></td>
+                    <td style={{ textAlign: 'right', fontVariantNumeric: 'tabular-nums', color: r.eff.closing < 0 ? '#a63a3a' : 'var(--color-text)' }}>{fmt(r.eff.closing)}</td>
+                    <td style={{ textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>{fmt(Math.round(r.eff.demand))}</td>
+                    <td style={{ textAlign: 'right', fontVariantNumeric: 'tabular-nums', fontWeight: 700, color: 'var(--color-accent-700)' }}>{fmt(r.make)}</td>
+                  </tr>
+                ))}
+              </tbody></table>
+              {plan.length > 30 && <p className="text-muted" style={{ margin: '8px 0 0', fontSize: 12 }}>Showing the top 30 — the full list is in the CSV export.</p>}
             </div>
           )}
         </Blueprint>

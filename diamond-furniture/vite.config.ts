@@ -40,6 +40,19 @@ export default defineConfig({
   // Pin PostCSS locally so Vite doesn't inherit the unrelated Tailwind config
   // at the monorepo root (this app uses plain CSS, no PostCSS plugins).
   css: { postcss: {} },
+  build: {
+    // Split the big, rarely-changing vendor libraries into their own chunks so a
+    // code change only re-downloads app code — Firebase and Recharts stay cached
+    // across deploys, which also makes PWA updates lighter over the plant network.
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          firebase: ['firebase/app', 'firebase/auth', 'firebase/firestore'],
+          charts: ['recharts'],
+        },
+      },
+    },
+  },
   test: {
     globals: true,
     environment: 'node',

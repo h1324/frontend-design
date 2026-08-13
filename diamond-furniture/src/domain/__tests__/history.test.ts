@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { effWithHistory, periodTotals, lineTrend } from '../logic';
+import { effWithHistory, periodTotals, lineTrend, skuHistory } from '../logic';
 import type { CatalogSku, PeriodSnapshot, Thresholds } from '../types';
 
 const T: Thresholds = { lowMonths: 0.5, overMonths: 3, byLine: {} };
@@ -65,5 +65,13 @@ describe('trend aggregations', () => {
     const t = lineTrend(catalog, snaps, 'XUV');
     expect(t.map((x) => x.sold)).toEqual([40, 20, 100]);
     expect(lineTrend(catalog, snaps, 'OTHER').every((x) => x.sold === 0)).toBe(true);
+  });
+  it('skuHistory returns one SKU across months, oldest → newest', () => {
+    const h = skuHistory('XUV||m||c', snaps);
+    expect(h.map((x) => x.key)).toEqual(['2026-02', '2026-03', '2026-04']);
+    expect(h.map((x) => x.sold)).toEqual([40, 20, 100]);
+    expect(h.map((x) => x.closing)).toEqual([400, 300, 500]);
+    // A uid not in the data reads as zeros, not a crash.
+    expect(skuHistory('nope', snaps).every((x) => x.sold === 0 && x.closing === 0)).toBe(true);
   });
 });

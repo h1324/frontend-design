@@ -1,8 +1,10 @@
 import { useMemo, useState } from 'react';
 import { Blueprint } from '../components/Blueprint';
 import { StatusPill } from '../components/StatusPill';
+import { SkuHistoryDialog } from '../components/dialogs/SkuHistoryDialog';
 import { useApp } from '../store/store';
 import { fmt, coverLabel } from '../domain/format';
+import { lastSaleInfo } from '../domain/metrics';
 import { downloadCsv } from '../lib/csv';
 import { ALL_STATUSES } from '../domain/status';
 import type { EffSku, Status } from '../domain/types';
@@ -11,11 +13,12 @@ const PAGE = 40;
 const IDLE_FILTER = 'Idle stock (no sales)';
 
 export function Inventory({ onEdit }: { onEdit: (s: EffSku) => void }) {
-  const { effs, dataset, canEdit, period } = useApp();
+  const { effs, dataset, canEdit, period, periods, currentPeriodKey } = useApp();
   const [q, setQ] = useState('');
   const [lineFilter, setLineFilter] = useState('All lines');
   const [statusFilter, setStatusFilter] = useState('All statuses');
   const [page, setPage] = useState(0);
+  const [historySku, setHistorySku] = useState<EffSku | null>(null);
 
   const filtered = useMemo(() => {
     const query = q.trim().toLowerCase();
@@ -38,8 +41,11 @@ export function Inventory({ onEdit }: { onEdit: (s: EffSku) => void }) {
   const exportInv = () =>
     downloadCsv(
       `diamond_inventory_${period.replace(/\s+/g, '_').toLowerCase()}.csv`,
-      ['Line', 'Model', 'Colour', 'Stock', 'Sold', 'MonthsCover', 'Reorder', 'Status', 'Note'],
-      effs.map((s) => [s.line, s.model, s.colour, s.closing, s.sold, s.cover >= 999 ? '' : s.cover.toFixed(1), s.reorder, s.status, s.note]),
+      ['Line', 'Model', 'Colour', 'Stock', 'Sold', 'MonthsCover', 'Reorder', 'Status', 'LastSold', 'Note'],
+      effs.map((s) => {
+        const last = lastSaleInfo(s.uid ?? s.id, periods, currentPeriodKey);
+        return [s.line, s.model, s.colour, s.closing, s.sold, s.cover >= 999 ? '' : s.cover.toFixed(1), s.reorder, s.status, last.lastLabel ?? 'never', s.note];
+      }),
     );
 
   const setFilter = (fn: () => void) => { fn(); setPage(0); };
@@ -74,31 +80,42 @@ export function Inventory({ onEdit }: { onEdit: (s: EffSku) => void }) {
       </div>
 
       <Blueprint className="card" style={{ padding: 0, overflow: 'auto' }}>
-        <table className="table" style={{ minWidth: 820 }}>
+        <table className="table" style={{ minWidth: 900 }}>
           <thead>
             <tr>
               <th>Line</th><th>Model / Variant</th><th>Colour</th>
               <th style={{ textAlign: 'right' }}>Stock</th><th style={{ textAlign: 'right' }}>Demand/mo</th>
               <th style={{ textAlign: 'right' }}>Cover</th><th style={{ textAlign: 'right' }}>Reorder</th>
+              <th style={{ textAlign: 'right' }}>Last sold</th>
               <th>Status</th><th className="no-print" />
             </tr>
           </thead>
           <tbody>
-            {pageRows.map((s) => (
+            {pageRows.map((s) => {
+              const last = lastSaleInfo(s.uid ?? s.id, periods, currentPeriodKey);
+              const idleFlag = last.monthsSince == null || last.monthsSince >= 3;
+              return (
               <tr key={s.id}>
                 <td style={{ whiteSpace: 'nowrap', fontSize: 12.5, color: 'var(--color-neutral-700)' }}>{s.line}</td>
-                <td style={{ whiteSpace: 'nowrap', fontWeight: 500 }}>{s.model}</td>
+                <td style={{ whiteSpace: 'nowrap', fontWeight: 500 }}>
+                  <button className="linkish" onClick={() => setHistorySku(s)} title="View month-by-month history">{s.model}</button>
+                </td>
                 <td><span className="tag tag-neutral">{s.colour || '—'}</span></td>
                 <td style={{ textAlign: 'right', fontVariantNumeric: 'tabular-nums', fontWeight: 600, color: s.closing < 0 ? '#a63a3a' : 'var(--color-text)' }}>{fmt(s.closing)}</td>
                 <td style={{ textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>{fmt(s.sold)}</td>
                 <td style={{ textAlign: 'right', fontVariantNumeric: 'tabular-nums', color: 'var(--color-neutral-700)' }}>{coverLabel(s.cover, s.closing)}</td>
                 <td style={{ textAlign: 'right', fontVariantNumeric: 'tabular-nums', color: 'var(--color-neutral-600)' }}>{fmt(s.reorder)}</td>
+                <td style={{ textAlign: 'right', whiteSpace: 'nowrap', fontSize: 12, color: idleFlag ? '#b5852a' : 'var(--color-neutral-600)' }}
+                  title={last.lastLabel ? `Last sold ${last.lastLabel}` : 'No sale on record'}>
+                  {last.monthsSince == null ? 'never' : last.monthsSince === 0 ? 'this mo' : `${last.monthsSince} mo ago`}
+                </td>
                 <td><StatusPill status={s.status as Status} /></td>
                 <td className="no-print" style={{ textAlign: 'right' }}>
                   <button className="btn btn-ghost" onClick={() => onEdit(s)} style={{ fontSize: 12 }}>{canEdit ? 'Edit' : 'View'}</button>
                 </td>
               </tr>
-            ))}
+              );
+            })}
           </tbody>
         </table>
       </Blueprint>
@@ -110,6 +127,8 @@ export function Inventory({ onEdit }: { onEdit: (s: EffSku) => void }) {
           <button className="btn btn-secondary" onClick={() => setPage((x) => x + 1)} disabled={p >= pageCount - 1}>Next →</button>
         </div>
       </div>
+
+      {historySku && <SkuHistoryDialog sku={historySku} onClose={() => setHistorySku(null)} />}
     </section>
   );
 }

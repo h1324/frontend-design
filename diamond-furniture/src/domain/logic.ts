@@ -227,6 +227,18 @@ export function lineTrend(
     });
 }
 
+export interface SkuMonth { key: string; label: string; sold: number; closing: number; }
+
+/** One SKU's month-by-month sold + stock across all snapshots (oldest → newest). */
+export function skuHistory(uid: string, snapshots: PeriodSnapshot[]): SkuMonth[] {
+  return [...snapshots]
+    .sort((a, b) => (a.key < b.key ? -1 : 1))
+    .map((p) => {
+      const r = p.rows.find((x) => x.uid === uid);
+      return { key: p.key, label: p.label, sold: r?.sold ?? 0, closing: r?.closing ?? 0 };
+    });
+}
+
 // ── Aggregations used by dashboard / reports (kept pure + testable) ──────────
 
 export interface LineSummary {
