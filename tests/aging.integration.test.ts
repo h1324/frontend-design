@@ -67,8 +67,9 @@ suite("aging queue (integration)", () => {
     await prisma.$disconnect();
   });
 
-  /** A CURING roll with a specific aging-ready date. */
-  async function curingRoll(readyDate: Date) {
+  /** A CURING roll with a specific aging-ready date. QC pass is the other, independent gate
+   *  (S16); default these test rolls QC-passed so the sweep tests exercise aging in isolation. */
+  async function curingRoll(readyDate: Date, qcStatus: "PASSED" | "PENDING" = "PASSED") {
     const { roll } = await prisma.$transaction((tx) =>
       receiveRoll(tx, {
         companyId,
@@ -81,6 +82,7 @@ suite("aging queue (integration)", () => {
         actorUserId: prod.userId,
       }),
     );
+    await prisma.roll.update({ where: { id: roll.id }, data: { qcStatus } });
     return roll;
   }
 
@@ -99,6 +101,15 @@ suite("aging queue (integration)", () => {
     expect(await states(dueA.id)).toBe("AVAILABLE");
     expect(await states(dueB.id)).toBe("AVAILABLE");
     expect(await states(notDue.id)).toBe("CURING");
+
+    // QC gate (S16): an aged roll that is NOT QC-passed is left curing by the sweep.
+    const agedButPending = await curingRoll(
+      new Date("2026-08-09T06:00:00.000Z"),
+      "PENDING",
+    );
+    const res2 = await prisma.$transaction((tx) => agingSweep(tx, companyId, asOf));
+    expect(res2.rollIds).not.toContain(agedButPending.id);
+    expect(await states(agedButPending.id)).toBe("CURING");
 
     // One CURE_COMPLETE audit per flipped roll.
     expect(

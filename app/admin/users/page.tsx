@@ -20,6 +20,7 @@ const ROLES = [
   "SALES",
   "DISPATCH",
   "ACCOUNTS",
+  "QC",
   "VIEWER",
 ] as const;
 

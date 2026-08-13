@@ -114,6 +114,15 @@ export function ItemFields({
         />
       </Field>
 
+      <Field label="Density tolerance (± kg/m³)">
+        <Input
+          name="densityTolerance"
+          inputMode="decimal"
+          defaultValue={d("densityTolerance")}
+          placeholder="QC band"
+        />
+      </Field>
+
       <Field label="Colour">
         <Input name="colour" defaultValue={d("colour")} />
       </Field>

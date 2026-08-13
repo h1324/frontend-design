@@ -5,7 +5,15 @@ import type { Role } from "@prisma/client";
 import type { Session } from "next-auth";
 
 export type Area =
-  "MASTERS" | "PRODUCTION" | "STORES" | "SALES" | "DISPATCH" | "COSTING" | "USER_ADMIN";
+  | "MASTERS"
+  | "PRODUCTION"
+  | "STORES"
+  | "SALES"
+  | "DISPATCH"
+  | "COSTING"
+  | "QC"
+  | "RECEIVABLES"
+  | "USER_ADMIN";
 
 export type Access = "NONE" | "R" | "RW";
 export type Action = "read" | "write";
@@ -20,6 +28,8 @@ export const ACCESS_MATRIX: Record<Role, Record<Area, Access>> = {
     SALES: "RW",
     DISPATCH: "RW",
     COSTING: "RW",
+    QC: "RW",
+    RECEIVABLES: "RW",
     USER_ADMIN: "RW",
   },
   PRODUCTION: {
@@ -29,6 +39,8 @@ export const ACCESS_MATRIX: Record<Role, Record<Area, Access>> = {
     SALES: "R",
     DISPATCH: "R",
     COSTING: "R",
+    QC: "R",
+    RECEIVABLES: "R",
     USER_ADMIN: "NONE",
   },
   STORES: {
@@ -38,6 +50,8 @@ export const ACCESS_MATRIX: Record<Role, Record<Area, Access>> = {
     SALES: "R",
     DISPATCH: "R",
     COSTING: "R",
+    QC: "R",
+    RECEIVABLES: "R",
     USER_ADMIN: "NONE",
   },
   SALES: {
@@ -47,6 +61,8 @@ export const ACCESS_MATRIX: Record<Role, Record<Area, Access>> = {
     SALES: "RW",
     DISPATCH: "R",
     COSTING: "R",
+    QC: "R",
+    RECEIVABLES: "R",
     USER_ADMIN: "NONE",
   },
   DISPATCH: {
@@ -56,6 +72,8 @@ export const ACCESS_MATRIX: Record<Role, Record<Area, Access>> = {
     SALES: "R",
     DISPATCH: "RW",
     COSTING: "R",
+    QC: "R",
+    RECEIVABLES: "R",
     USER_ADMIN: "NONE",
   },
   ACCOUNTS: {
@@ -65,6 +83,19 @@ export const ACCESS_MATRIX: Record<Role, Record<Area, Access>> = {
     SALES: "R",
     DISPATCH: "RW",
     COSTING: "RW",
+    QC: "R",
+    RECEIVABLES: "RW",
+    USER_ADMIN: "NONE",
+  },
+  QC: {
+    MASTERS: "R",
+    PRODUCTION: "R",
+    STORES: "R",
+    SALES: "R",
+    DISPATCH: "R",
+    COSTING: "R",
+    QC: "RW",
+    RECEIVABLES: "R",
     USER_ADMIN: "NONE",
   },
   VIEWER: {
@@ -74,6 +105,8 @@ export const ACCESS_MATRIX: Record<Role, Record<Area, Access>> = {
     SALES: "R",
     DISPATCH: "R",
     COSTING: "R",
+    QC: "R",
+    RECEIVABLES: "R",
     USER_ADMIN: "NONE",
   },
 };

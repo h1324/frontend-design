@@ -1,6 +1,27 @@
 # Spec S16 — Quality Control (QC)
 
-**Status:** Draft — confirm the finished-goods QC trigger and spec source
+**Status:** Built — `QcInspection`/`QcReading` models (+ `QcRefType`/`QcResult`/`QcMetric`
+enums); a **`QC` role** and a `QC` area added to the RBAC matrix (QC role writes QC, everyone
+reads it, ADMIN writes); `Location.isReject`, `Item.densityTolerance`, and `Roll.qcStatus`/
+`qcInspectedAt`; `StockReason` gains `QC_PASS`/`QC_FAIL`, `RollState` gains `REJECTED`.
+`lib/qc.ts` — pure `densityVariance`/`withinDensityTolerance`/`validSplit`, and QC-write-gated,
+audited services: `inspectGrnLine` (PASS transfers hold→free, FAIL hold→reject, PARTIAL splits
+— every leg a BULK posting via S3; sets the GRN line's qcStatus), `inspectLot` (per-lot
+sign-off: each pending CURING roll passes unless failed; a pass clears the QC gate and, if the
+roll is already aged, flips it AVAILABLE, else it stays CURING for the sweep; a fail →
+REJECTED; each roll gets a density reading + variance), plus `grnLinesPendingQc`/`rollsPendingQc`
+queue queries. The **availability gate is now two independent gates**: `agingSweep` (S12) only
+flips CURING→AVAILABLE for rolls that are `qcStatus = PASSED`, and a QC pass releases an
+already-aged roll — so a roll needs both. UI: `/qc/queue` (incoming-RM dispositions + per-lot
+roll sign-off with per-roll fail) and `/qc/[id]` (readings + disposition); QC home nav; seed
+adds a `REJECT` location + `densityTolerance` field on the item form. Locked open-question
+defaults: add a QC role; per-lot sign-off with individual-roll fail; SKU target ± item
+`densityTolerance` (fallback ±2 kg/m³). Verified: 3 pure + 5 DB tests (hold→free/reject/partial,
+the two-gate availability rule, REJECTED on fail, density reading + in-spec, gapless numbering
+
+- audit, role gating), `npm run check` green (186 tests), build OK, pages render.
+
+## Original plan
 
 ## Purpose
 

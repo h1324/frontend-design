@@ -46,21 +46,21 @@ invoice), every movement on the append-only ledger with audit trail and gapless 
 | S12 | [12-aging-queue.md](12-aging-queue.md)               | Aging queue (curing → available)      | Built  |
 | S13 | [13-dispatch-invoice.md](13-dispatch-invoice.md)     | Dispatch & tax invoice                | Built  |
 
-## Phase 2 build order (+4 weeks) — **specs Draft**
+## Phase 2 build order (+4 weeks) — **complete**
 
 The "can run on paper for a few weeks" work: close the procurement side, add quality gates,
 model converting/genealogy, and put the sales-order + credit + receivables layer over the
-direct dispatch built in Phase 1. Dependency-ordered; each spec has open questions to lock
-before its session.
+direct dispatch built in Phase 1. Built with spec defaults applied where open questions
+remained (documented in each spec's Status line) — to be refined as requirements firm up.
 
 | #   | Spec                                                 | Module                                     | Status |
 | --- | ---------------------------------------------------- | ------------------------------------------ | ------ |
-| S14 | [14-purchase-order.md](14-purchase-order.md)         | Purchase orders (to suppliers)             | Draft  |
-| S15 | [15-goods-receipt.md](15-goods-receipt.md)           | Goods receipt (GRN) against a PO           | Draft  |
-| S16 | [16-quality-control.md](16-quality-control.md)       | QC inspection & hold (incoming + finished) | Draft  |
-| S17 | [17-converting.md](17-converting.md)                 | Converting orders (lamination/slitting)    | Draft  |
-| S18 | [18-sales-order-credit.md](18-sales-order-credit.md) | Sales order, credit control, customer tier | Draft  |
-| S19 | [19-receivables.md](19-receivables.md)               | Receivables ageing (credit control)        | Draft  |
+| S14 | [14-purchase-order.md](14-purchase-order.md)         | Purchase orders (to suppliers)             | Built  |
+| S15 | [15-goods-receipt.md](15-goods-receipt.md)           | Goods receipt (GRN) against a PO           | Built  |
+| S16 | [16-quality-control.md](16-quality-control.md)       | QC inspection & hold (incoming + finished) | Built  |
+| S17 | [17-converting.md](17-converting.md)                 | Converting orders (lamination/slitting)    | Built  |
+| S18 | [18-sales-order-credit.md](18-sales-order-credit.md) | Sales order, credit control, customer tier | Built  |
+| S19 | [19-receivables.md](19-receivables.md)               | Receivables ageing (credit control)        | Built  |
 
 Phase 3 (batch costing, KPI dashboards, Tally sync, e-invoice/e-way-bill APIs) and Phase 4
 (portal, mobile, predictive reorder, cross-entity view) get their specs later. See

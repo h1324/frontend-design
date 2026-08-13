@@ -56,6 +56,15 @@ export default async function Home() {
               <Link href="/stores/receipts">Stores</Link>
             </Button>
             <Button asChild variant="outline" size="sm">
+              <Link href="/purchasing/orders">Purchasing</Link>
+            </Button>
+            <Button asChild variant="outline" size="sm">
+              <Link href="/purchasing/grn">Receiving</Link>
+            </Button>
+            <Button asChild variant="outline" size="sm">
+              <Link href="/qc/queue">QC</Link>
+            </Button>
+            <Button asChild variant="outline" size="sm">
               <Link href="/production/lots">Lots</Link>
             </Button>
             <Button asChild variant="outline" size="sm">
@@ -65,7 +74,16 @@ export default async function Home() {
               <Link href="/production/aging">Aging</Link>
             </Button>
             <Button asChild variant="outline" size="sm">
+              <Link href="/converting">Converting</Link>
+            </Button>
+            <Button asChild variant="outline" size="sm">
+              <Link href="/sales/orders">Sales orders</Link>
+            </Button>
+            <Button asChild variant="outline" size="sm">
               <Link href="/dispatch">Dispatch</Link>
+            </Button>
+            <Button asChild variant="outline" size="sm">
+              <Link href="/receivables">Receivables</Link>
             </Button>
             {session?.user?.role === "ADMIN" ? (
               <Button asChild variant="outline" size="sm">

@@ -1,6 +1,23 @@
 # Spec S14 — Purchase Order
 
-**Status:** Draft — confirm approval workflow and multi-currency need
+**Status:** Built — `PurchaseOrder` (+ `PurchaseOrderStatus` DRAFT/OPEN/CLOSED/CANCELLED) and
+`PurchaseOrderLine` models; money in paise (BigInt), quantities `Decimal`, `currency`/`fxRate`
+columns present (default INR) for later imports. `lib/purchasing.ts` — pure helpers
+(`lineAmountPaise`, `poCommitmentPaise`, `lineBalance`, `isFullyReceived`) and STORES-write-
+gated, audited services: `createPO` (gapless `PO/FY/seq`; line `uom`/`gstRatePct`/description
+default from the item, terms from the supplier; created OPEN or DRAFT), `updatePO` (amend
+header, replace lines while nothing received, DRAFT→OPEN release), `closePO` (clean full-
+receipt close; short-close needs a reason), `cancelPO` (keeps the number; refused once goods
+are received), `poBalance` (per-line ordered/received/outstanding + commitment). UI:
+`/purchasing/orders` (list + multi-line create) and `/purchasing/orders/[id]` (line balance +
+release/close/cancel); home nav link. `qtyReceived` is maintained by S15 (GRN). Locked
+open-question defaults: single status flip (no maker/checker), INR-only now, block over-
+receipt, freight as a note. Verified: 4 pure + 5 DB tests (gapless numbering, defaults,
+commitment, amend/release + post-receipt line lock, short-close-needs-reason, cancel keeps
+number + blocked after receipt, role gating), `npm run check` green (171 tests), build OK,
+pages render with Indian ₹ grouping.
+
+## Original plan
 
 ## Purpose
 

@@ -68,8 +68,17 @@ export async function agingSweep(
   asOf: Date = new Date(),
   actorUserId: string | null = null,
 ): Promise<SweepResult> {
+  // Aging is one gate; QC pass (S16) is the other, independent, gate. A roll only becomes
+  // AVAILABLE once BOTH are satisfied — so the sweep flips only aged rolls that are also
+  // QC-passed. An aged-but-QC-pending roll stays CURING until QC passes it (which then flips
+  // it, S16). QC-failed/rejected rolls never appear here.
   const due = await tx.roll.findMany({
-    where: { companyId, state: "CURING", agingReadyDate: { not: null, lte: asOf } },
+    where: {
+      companyId,
+      state: "CURING",
+      qcStatus: "PASSED",
+      agingReadyDate: { not: null, lte: asOf },
+    },
     select: { id: true, agingReadyDate: true },
   });
   if (due.length === 0) return { flipped: 0, rollIds: [] };

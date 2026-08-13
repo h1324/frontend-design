@@ -1,6 +1,25 @@
 # Spec S15 — Goods Receipt (GRN) against a PO
 
-**Status:** Draft — confirm relationship to the S9 lightweight receipt
+**Status:** Built — `GoodsReceipt`/`GoodsReceiptLine` models (GRN status reuses
+`MaterialDocStatus`; `QcLineStatus` PENDING/PASSED/FAILED/PARTIAL) and an `isQcHold` flag on
+`Location`. `lib/goods-receipt.ts` — pure `remainingToReceive`/`wouldOverReceive`, and STORES-
+write-gated, audited services: `createGRN` (receive against an OPEN PO or direct; posts a
+**BULK IN into the company's QC-hold location** per line, reason GRN; bumps each linked PO
+line's `qtyReceived`; **blocks over-receipt** past the ordered balance; carries the PO rate
+onto the GRN line), `cancelGRN` (reverses each line's BULK IN via S3 and restores the PO
+balance — refused once QC has actioned a line or if the reversal would go negative), plus
+`freeBulkBalance`/`heldBulkBalance` (free = stock outside QC-hold locations — the "not
+issuable until QC" invariant made concrete). UI: `/purchasing/grn` (open-PO picker → receive
+form defaulting to the outstanding balance, + receipt list) and `/purchasing/grn/[id]`
+(lines, QC status, cancel); "Receive goods" link on the PO detail; home nav link; seed adds a
+`QC-HOLD` location. Locked open-question defaults: **QC-hold via a dedicated hold location**,
+**keep S9 for ad-hoc/regrind receipts** (no migration of S9 rows) while routing PO purchasing
+through S15, manual weight capture. QC release itself is S16. Verified: 2 pure + 5 DB tests
+(hold-not-free landing + PO bump, over-receipt block, cancel reversal + PO restore, cancel
+refused after QC/on underflow, hold-location required + role gating), `npm run check` green
+(178 tests), build OK, pages render.
+
+## Original plan
 
 ## Purpose
 

@@ -1,6 +1,6 @@
 # Spec S19 — Receivables Ageing (credit control)
 
-**Status:** Draft — confirm the payment source (Tally sync vs manual entry)
+**Status:** Built — defaults applied (manual receipts w/ source flag, 30/60/90 buckets, on-account allowed)
 
 ## Purpose
 
