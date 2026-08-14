@@ -3,20 +3,35 @@ import { Blueprint } from '../Blueprint';
 import { useApp } from '../../store/store';
 import { useToast } from '../Toast';
 import { parseWorkbook } from '../../domain/parseWorkbook';
-import { summarizeParse } from '../../domain/applyImport';
+import { mergeParsed, summarizeParse } from '../../domain/applyImport';
 import { periodKeyFromLabel } from '../../domain/period';
 import type { ParsedWorkbook } from '../../domain/types';
 
 const OK = '#4e8055';
 const ERR = '#a63a3a';
 
-/** Detect the period from the file name (e.g. "Production_update_APRIL_2026.xlsx"). */
-function detectPeriod(fileName: string, sheetNames: string[], fallback: string): string {
-  const hay = fileName + ' ' + sheetNames.join(' ');
-  const m = /([A-Za-z]+)[ _]?(\d{4})/.exec(hay);
-  if (m) {
+/** One file the user picked, with what we read out of it. */
+interface FileEntry {
+  name: string;
+  ok: boolean;
+  message: string;
+  skus: number;
+  machines: number;
+}
+
+/**
+ * Detect the month from any of the chosen file names or sheet names — the
+ * production file usually carries it (e.g. "Production_update_APRIL_2026"),
+ * while the master file does not. We take the first token that is a real month.
+ */
+function detectPeriod(names: string[], sheetNames: string[], fallback: string): string {
+  const hay = [...names, ...sheetNames].join('  ');
+  const re = /([A-Za-z]+)[ _-]?(\d{4})/g;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(hay))) {
     const month = m[1].charAt(0).toUpperCase() + m[1].slice(1).toLowerCase();
-    return `${month} ${m[2]}`;
+    const label = `${month} ${m[2]}`;
+    if (periodKeyFromLabel(label)) return label; // only accept a genuine month name
   }
   return fallback;
 }
@@ -27,52 +42,59 @@ export function ImportDialog({ onClose }: { onClose: () => void }) {
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState('');
   const [ok, setOk] = useState(true);
-  const [fileName, setFileName] = useState('No file selected');
-  const [parsed, setParsed] = useState<ParsedWorkbook | null>(null);
+  const [entries, setEntries] = useState<FileEntry[]>([]);
+  const [merged, setMerged] = useState<ParsedWorkbook | null>(null);
   const [detectedPeriod, setDetectedPeriod] = useState(period);
-
-  const onFile = async (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setBusy(true);
-    setMsg('');
-    setFileName(file.name);
-    setParsed(null);
-    try {
-      const res = await parseWorkbook(file);
-      const summary = summarizeParse(res);
-      setBusy(false);
-      setOk(summary.ok);
-      setMsg(summary.message);
-      if (summary.ok) {
-        setParsed(res);
-        setDetectedPeriod(detectPeriod(file.name, res.sheetNames, period));
-      }
-    } catch (err) {
-      setBusy(false);
-      setOk(false);
-      setMsg('Import failed: ' + (err instanceof Error ? err.message : String(err)));
-    }
-  };
-
   const [applying, setApplying] = useState(false);
 
-  // Validate + describe the chosen target month so the user always knows where
-  // the numbers will land (the detected name can be wrong, or absent on a Master
-  // file — this makes it visible and correctable before anything is written).
+  const onFiles = async (e: ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files ?? []);
+    if (!files.length) return;
+    setBusy(true);
+    setMsg('');
+    setEntries([]);
+    setMerged(null);
+
+    const rows: FileEntry[] = [];
+    const parts: ParsedWorkbook[] = [];
+    for (const file of files) {
+      try {
+        const res = await parseWorkbook(file);
+        const s = summarizeParse(res);
+        rows.push({ name: file.name, ok: s.ok, message: s.message, skus: s.skuCount, machines: s.machineCount });
+        if (s.ok) parts.push(res);
+      } catch (err) {
+        rows.push({ name: file.name, ok: false, message: err instanceof Error ? err.message : String(err), skus: 0, machines: 0 });
+      }
+    }
+    setBusy(false);
+    setEntries(rows);
+
+    if (!parts.length) {
+      setOk(false);
+      setMsg('None of the selected files had a Master SKU List or M-1…M-7 machine tabs. Check the sheet names match your usual layout.');
+      return;
+    }
+    const combined = mergeParsed(parts);
+    setMerged(combined);
+    const summary = summarizeParse(combined);
+    setOk(true);
+    setMsg(summary.message);
+    setDetectedPeriod(detectPeriod(files.map((f) => f.name), combined.sheetNames, period));
+  };
+
+  // Validate + describe the target month so the numbers always land where the
+  // user expects (the detected name can be wrong, or absent on a Master file).
   const targetKey = periodKeyFromLabel(detectedPeriod);
-  const existingLabels = useMemo(
-    () => [...new Set(periods.map((p) => p.label))].sort(),
-    [periods],
-  );
+  const existingLabels = useMemo(() => [...new Set(periods.map((p) => p.label))].sort(), [periods]);
   const overwrites = targetKey != null && periods.some((p) => p.key === targetKey);
 
   const apply = async () => {
-    if (!parsed || applying || !targetKey) return;
+    if (!merged || applying || !targetKey) return;
     setApplying(true);
     try {
-      await applyImport(parsed, detectedPeriod);
-      flash(`Imported ${parsed.skus.length} SKUs into ${detectedPeriod} — data refreshed`);
+      await applyImport(merged, detectedPeriod);
+      flash(`Imported ${merged.skus.length} SKUs into ${detectedPeriod} — data refreshed`);
       onClose();
     } catch (err) {
       console.error('Import apply failed:', err);
@@ -85,15 +107,15 @@ export function ImportDialog({ onClose }: { onClose: () => void }) {
 
   return (
     <div className="dialog-backdrop no-print" onClick={onClose}>
-      <Blueprint className="dialog" style={{ width: 'min(520px,100%)' }} onClick={(e) => e.stopPropagation()}>
+      <Blueprint className="dialog" style={{ width: 'min(540px,100%)' }} onClick={(e) => e.stopPropagation()}>
         <>
           <div className="dialog-title">Import production data (Excel)</div>
           <p className="text-muted" style={{ margin: 0, fontSize: 13, lineHeight: 1.5 }}>
-            Upload your <strong>.xlsx</strong> workbook. The app reads a <strong>Master SKU List</strong>{' '}
-            sheet (Line · Model · Colour · Opening · Sold · Closing) and any machine tabs{' '}
-            (<strong>M-1…M-7</strong>) for fresh output. A file only replaces the parts it contains,
-            so a production-only file updates machines without clearing your SKUs. Existing reorder
-            points and notes are kept.
+            Choose <strong>one or more .xlsx files</strong> for the same month — e.g. your{' '}
+            <strong>Master SKU List</strong> file and your <strong>Production</strong> file together.
+            The app reads the Master sheet (Line · Model · Colour · Opening · Sold · Closing) and any
+            machine tabs (<strong>M-1…M-7</strong>) for fresh output, then combines them into that
+            month. Existing reorder points and notes are kept.
           </p>
 
           <label
@@ -103,19 +125,41 @@ export function ImportDialog({ onClose }: { onClose: () => void }) {
               cursor: 'pointer', background: 'color-mix(in srgb, var(--color-accent) 4%, transparent)',
             }}
           >
-            <span style={{ fontFamily: 'var(--font-heading)', fontSize: 15 }}>{fileName}</span>
-            <span className="text-muted" style={{ fontSize: 12 }}>Click to choose a .xlsx file</span>
-            <input type="file" accept=".xlsx" onChange={onFile} style={{ display: 'none' }} />
+            <span style={{ fontFamily: 'var(--font-heading)', fontSize: 15 }}>
+              {entries.length ? `${entries.length} file${entries.length === 1 ? '' : 's'} selected` : 'No files selected'}
+            </span>
+            <span className="text-muted" style={{ fontSize: 12 }}>Click to choose one or more .xlsx files</span>
+            <input type="file" accept=".xlsx" multiple onChange={onFiles} style={{ display: 'none' }} />
           </label>
 
-          {busy && <p style={{ margin: 0, fontSize: 13, color: 'var(--color-accent-700)' }}>Reading workbook…</p>}
+          {entries.length > 0 && (
+            <div style={{ border: '1px solid var(--color-divider)', overflow: 'auto', maxHeight: 150 }}>
+              <table className="table"><tbody>
+                {entries.map((f) => (
+                  <tr key={f.name}>
+                    <td style={{ fontSize: 12.5 }}>
+                      <span style={{ color: f.ok ? OK : ERR, fontWeight: 600 }}>{f.ok ? '✓' : '✕'}</span>{' '}
+                      {f.name}
+                    </td>
+                    <td style={{ textAlign: 'right', fontSize: 12, whiteSpace: 'nowrap', color: 'var(--color-neutral-600)' }}>
+                      {f.ok
+                        ? [f.skus ? `${f.skus} SKUs` : '', f.machines ? `${f.machines} machines` : ''].filter(Boolean).join(' · ')
+                        : 'not recognised'}
+                    </td>
+                  </tr>
+                ))}
+              </tbody></table>
+            </div>
+          )}
+
+          {busy && <p style={{ margin: 0, fontSize: 13, color: 'var(--color-accent-700)' }}>Reading workbook{entries.length === 1 ? '' : 's'}…</p>}
           {msg && (
             <div style={{ border: `1px solid ${ok ? OK : ERR}`, background: `color-mix(in srgb, ${ok ? OK : ERR} 10%, transparent)`, padding: '11px 13px', fontSize: 13, lineHeight: 1.5, color: ok ? OK : ERR }}>
               {msg}
             </div>
           )}
 
-          {parsed && (
+          {merged && (
             <div className="field" style={{ margin: 0 }}>
               <label>Import into month</label>
               <input
@@ -128,7 +172,7 @@ export function ImportDialog({ onClose }: { onClose: () => void }) {
               </datalist>
               <p className="text-muted" style={{ margin: '6px 0 0', fontSize: 12, lineHeight: 1.5, color: targetKey ? undefined : ERR }}>
                 {!targetKey
-                  ? 'Type a month and year, e.g. “April 2026”, so the app knows which month this file belongs to.'
+                  ? 'Type a month and year, e.g. “April 2026”, so the app knows which month these files belong to.'
                   : overwrites
                     ? `This replaces the stock & sold numbers already saved for ${detectedPeriod} (reorder points and notes are kept).`
                     : `This adds ${detectedPeriod} as a new month.`}
@@ -137,8 +181,8 @@ export function ImportDialog({ onClose }: { onClose: () => void }) {
           )}
 
           <div className="dialog-actions">
-            <button className="btn btn-ghost" onClick={onClose} disabled={applying}>{parsed ? 'Cancel' : 'Close'}</button>
-            <button className="btn btn-primary" onClick={apply} disabled={!parsed || applying || !targetKey}>
+            <button className="btn btn-ghost" onClick={onClose} disabled={applying}>{merged ? 'Cancel' : 'Close'}</button>
+            <button className="btn btn-primary" onClick={apply} disabled={!merged || applying || !targetKey}>
               {applying ? 'Saving…' : 'Apply to app'}
             </button>
           </div>

@@ -1,4 +1,36 @@
-import type { Dataset, Overrides, Override, ParsedWorkbook } from './types';
+import type { Dataset, Machine, Overrides, Override, ParsedWorkbook, RawSku } from './types';
+
+/**
+ * Combine several parsed workbooks into one, for importing multiple files at
+ * once (e.g. a Master SKU file + a Production file for the same month).
+ *  - SKU rows are concatenated as-is. They are NOT deduped by natural key here:
+ *    the real master legitimately holds rows that share line||model||colour, and
+ *    normalizeDataset() disambiguates those downstream — collapsing them here
+ *    would silently drop stock. In practice only one file carries the master
+ *    list, so this is simply that file's rows.
+ *  - Machines merge by name (later file wins), so each file can carry a
+ *    different subset of the M-1…M-7 tabs without double-counting an overlap.
+ *  - Lines and sheet names are unioned/concatenated.
+ * Order of `parts` is the order the files were chosen.
+ */
+export function mergeParsed(parts: ParsedWorkbook[]): ParsedWorkbook {
+  const skus: RawSku[] = [];
+  const machineByName = new Map<string, Machine>();
+  const lines = new Set<string>();
+  const sheetNames: string[] = [];
+  for (const p of parts) {
+    skus.push(...p.skus);
+    for (const m of p.machines) machineByName.set(m.name, m);
+    for (const l of p.lines) lines.add(l);
+    sheetNames.push(...p.sheetNames);
+  }
+  return {
+    skus,
+    lines: [...lines],
+    machines: [...machineByName.values()].sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true })),
+    sheetNames,
+  };
+}
 
 /**
  * Merge a parsed workbook into the current dataset (Bug 2 fix).

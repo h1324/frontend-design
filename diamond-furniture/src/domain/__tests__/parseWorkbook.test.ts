@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { parseWorkbook } from '../parseWorkbook';
-import { applyParsedToDataset, preserveOverrides, summarizeParse } from '../applyImport';
+import { applyParsedToDataset, mergeParsed, preserveOverrides, summarizeParse } from '../applyImport';
 import { skuId, eff, normalizeDataset, statusCounts } from '../logic';
 import { DEFAULT_THRESHOLDS } from '../../store/types';
 import type { Dataset, ParsedWorkbook } from '../types';
@@ -134,6 +134,35 @@ describe('merge-aware apply (Bug 2 fix)', () => {
     const next = applyParsedToDataset(current, parsed);
     expect(next.skus.length).toBe(696);
     expect(next.machines).toBe(current.machines); // machines untouched
+  });
+});
+
+describe('mergeParsed — importing multiple files at once', () => {
+  it('combines a Master file and a Production file into one month', async () => {
+    const master = await parseWorkbook(fixture(MASTER));
+    const production = await parseWorkbook(fixture(PRODUCTION));
+    const merged = mergeParsed([master, production]);
+    expect(merged.skus.length).toBe(696);   // SKUs from the master
+    expect(merged.machines.length).toBe(7);  // machine tabs from the production file
+    // A merged workbook now carries BOTH, so applying it writes catalog + machines together.
+    expect(summarizeParse(merged).ok).toBe(true);
+  });
+
+  it('merges machine tabs by name without double-counting an overlap', () => {
+    const a: ParsedWorkbook = { skus: [], lines: [], machines: [{ name: 'M-1', fresh: 100, activeDays: 2 }], sheetNames: [] };
+    const b: ParsedWorkbook = { skus: [], lines: [], machines: [{ name: 'M-1', fresh: 150, activeDays: 3 }, { name: 'M-2', fresh: 50, activeDays: 1 }], sheetNames: [] };
+    const merged = mergeParsed([a, b]);
+    expect(merged.machines.map((m) => m.name)).toEqual(['M-1', 'M-2']); // one M-1, not two
+    expect(merged.machines.find((m) => m.name === 'M-1')!.fresh).toBe(150); // later file wins
+  });
+
+  it('keeps every SKU row (dedup of same-key rows happens later in normalizeDataset)', () => {
+    const row = { line: 'L', model: 'M', colour: 'C', opening: 0, sold: 1, closing: 10 };
+    const merged = mergeParsed([
+      { skus: [row], lines: ['L'], machines: [], sheetNames: [] },
+      { skus: [row], lines: ['L'], machines: [], sheetNames: [] },
+    ]);
+    expect(merged.skus.length).toBe(2); // no silent data loss
   });
 });
 
