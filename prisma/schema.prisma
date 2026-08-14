@@ -205,6 +205,9 @@ model Company {
   receipts         Receipt[]
   grnCharges       GrnCharge[]
   itemCostHistory  ItemCostHistory[]
+  costRates        CostRate[]
+  lotCosts         LotCost[]
+  convertingCosts  ConvertingOrderCost[]
 }
 
 model Plant {
@@ -471,6 +474,7 @@ model Lot {
   rolls          Roll[]
   materialIssues MaterialIssue[]
   downtimeLogs   DowntimeLog[]
+  cost           LotCost?
 
   @@unique([companyId, lotNo])
   @@index([companyId])
@@ -678,6 +682,10 @@ model Roll {
   qtyM2            Decimal   @db.Decimal(14, 4)
   densityKgM3      Decimal   @db.Decimal(9, 3)
   agingReadyDate   DateTime?
+
+  // Costing snapshot (spec S21): this roll's share of its lot/converting-order cost, allocated
+  // by weight. Null until the lot/order is costed. Money in paise (BigInt).
+  unitCostPaise BigInt?
 
   createdAt DateTime @default(now())
 
@@ -1193,6 +1201,82 @@ model ItemCostHistory {
   @@index([grnLineId])
 }
 
+// --- batch / production costing (spec S21) -------------------------------------------
+
+/// A costing rate category (spec S21). Energy, labour and a single overhead pool.
+enum CostRateKind {
+  LABOUR
+  OVERHEAD
+  ENERGY
+}
+
+/// What a costing rate is charged against (spec S21).
+enum CostRateBasis {
+  PER_KG
+  PER_HOUR
+  PER_KWH
+  PER_ROLL
+}
+
+/// An effective-dated conversion-cost rate (spec S21), so historical lots cost at the rate in
+/// force on their production date. Money in paise (BigInt).
+model CostRate {
+  id            String        @id @default(cuid())
+  companyId     String
+  company       Company       @relation(fields: [companyId], references: [id])
+  kind          CostRateKind
+  ratePaise     BigInt
+  basis         CostRateBasis @default(PER_KG)
+  effectiveFrom DateTime
+  effectiveTo   DateTime?
+  createdById   String?
+  createdAt     DateTime      @default(now())
+
+  @@index([companyId, kind])
+}
+
+/// The costed roll-up of an extrusion lot (spec S21): RM at landed cost (+ regrind memo) plus
+/// energy/labour/overhead → cost per kg and per m². Recomputed on demand and on lot close;
+/// a read model over actuals, never touching the stock ledger. Money in paise (BigInt).
+model LotCost {
+  id                 String   @id @default(cuid())
+  companyId          String
+  company            Company  @relation(fields: [companyId], references: [id])
+  lotId              String   @unique
+  lot                Lot      @relation(fields: [lotId], references: [id], onDelete: Cascade)
+  rmCostPaise        BigInt   @default(0)
+  regrindCreditPaise BigInt   @default(0)
+  energyCostPaise    BigInt   @default(0)
+  labourCostPaise    BigInt   @default(0)
+  overheadCostPaise  BigInt   @default(0)
+  totalCostPaise     BigInt   @default(0)
+  outputKg           Decimal  @default(0) @db.Decimal(14, 3)
+  outputM2           Decimal  @default(0) @db.Decimal(14, 4)
+  costPerKgPaise     BigInt   @default(0)
+  costPerM2Paise     BigInt   @default(0)
+  computedAt         DateTime @default(now())
+
+  @@index([companyId])
+}
+
+/// The costed roll-up of a converting order (spec S21): consumed parent-roll cost + the order's
+/// conversion cost, allocated to the child rolls by weight. Money in paise (BigInt).
+model ConvertingOrderCost {
+  id                  String          @id @default(cuid())
+  companyId           String
+  company             Company         @relation(fields: [companyId], references: [id])
+  orderId             String          @unique
+  order               ConvertingOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  inputCostPaise      BigInt          @default(0)
+  conversionCostPaise BigInt          @default(0)
+  totalCostPaise      BigInt          @default(0)
+  outputKg            Decimal         @default(0) @db.Decimal(14, 3)
+  costPerKgPaise      BigInt          @default(0)
+  computedAt          DateTime        @default(now())
+
+  @@index([companyId])
+}
+
 // --- Quality control (spec S16) ------------------------------------------------------
 
 /// A QC inspection of an incoming GRN line or a produced roll. Passing releases stock (RM:
@@ -1265,7 +1349,8 @@ model ConvertingOrder {
   createdAt    DateTime            @default(now())
 
   inputs   ConvertingInput[]
-  children Roll[]            @relation("ConvertingChildren")
+  children Roll[]               @relation("ConvertingChildren")
+  cost     ConvertingOrderCost?
 
   @@unique([companyId, docNo])
   @@index([companyId])

@@ -1,6 +1,6 @@
 # Spec S21 — Batch / Production Costing
 
-**Status:** Draft — confirm actual vs standard costing and the overhead-absorption basis
+**Status:** Built — actual costing, per-kg overhead default (open questions defaulted)
 
 ## Purpose
 

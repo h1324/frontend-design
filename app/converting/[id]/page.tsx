@@ -19,6 +19,8 @@ import {
   closeConvertingAction,
   cancelConvertingAction,
 } from "../actions";
+import { computeConvertingCostAction } from "@/app/costing/actions";
+import { formatPaise } from "@/lib/gst";
 
 const selectClass =
   "h-10 w-full rounded-md border border-input bg-background px-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
@@ -50,12 +52,14 @@ export default async function ConvertingDetailPage({
       targetItem: true,
       inputs: { include: { roll: { include: { item: true, lot: true } } } },
       children: { include: { item: true } },
+      cost: true,
     },
   });
   if (!order) notFound();
 
   const metrics = await convertingMetrics(prisma, order.id);
   const isOpen = order.status === "OPEN";
+  const canCost = can(actor.role, "COSTING", "write");
 
   // Parent picker: aged, AVAILABLE rolls in the company (any SKU), excluding those already
   // picked for this order. Curing/held rolls need the logged override, so they're not offered.
@@ -347,6 +351,47 @@ export default async function ConvertingDetailPage({
           )}
         </CardContent>
       </Card>
+
+      {order.status === "CLOSED" ? (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Cost (S21)</CardTitle>
+            <CardDescription>
+              Consumed parent-roll cost + this order&apos;s conversion cost, allocated to
+              the child rolls by weight. Cost the parent lots first.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-4">
+            {order.cost ? (
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+                <Metric
+                  label="Input cost"
+                  value={formatPaise(order.cost.inputCostPaise)}
+                />
+                <Metric
+                  label="Conversion"
+                  value={formatPaise(order.cost.conversionCostPaise)}
+                />
+                <Metric label="Total" value={formatPaise(order.cost.totalCostPaise)} />
+                <Metric
+                  label="Cost / kg"
+                  value={formatPaise(order.cost.costPerKgPaise)}
+                />
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground">Not costed yet.</p>
+            )}
+            {canCost ? (
+              <form action={computeConvertingCostAction}>
+                <input type="hidden" name="orderId" value={order.id} />
+                <Button type="submit" variant="secondary" size="sm">
+                  {order.cost ? "Recompute cost" : "Compute cost"}
+                </Button>
+              </form>
+            ) : null}
+          </CardContent>
+        </Card>
+      ) : null}
 
       {canWrite && order.status !== "CANCELLED" ? (
         <form action={cancelConvertingAction}>

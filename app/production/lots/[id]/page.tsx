@@ -86,6 +86,9 @@ export default async function LotDetailPage({
             {lot.status}
           </span>
           <Button asChild variant="ghost" size="sm">
+            <Link href={`/costing/lots/${lot.id}`}>Cost</Link>
+          </Button>
+          <Button asChild variant="ghost" size="sm">
             <Link href="/production/lots">All lots</Link>
           </Button>
         </div>
