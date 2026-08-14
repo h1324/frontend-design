@@ -74,7 +74,7 @@ connector is the default so nothing is blocked on external credentials.
 | --- | -------------------------------------------- | ------------------------------------------- | ------ |
 | S20 | [20-landed-cost.md](20-landed-cost.md)       | Landed-cost valuation (GRN charges → cost)  | Built  |
 | S21 | [21-batch-costing.md](21-batch-costing.md)   | Batch/production costing & margin           | Built  |
-| S22 | [22-kpi-dashboards.md](22-kpi-dashboards.md) | KPI dashboards & analytics (OEE, yield, AR) | Draft  |
+| S22 | [22-kpi-dashboards.md](22-kpi-dashboards.md) | KPI dashboards & analytics (OEE, yield, AR) | Built  |
 | S23 | [23-einvoice-eway.md](23-einvoice-eway.md)   | E-invoice (IRN) & e-way-bill APIs           | Draft  |
 | S24 | [24-tally-sync.md](24-tally-sync.md)         | Tally sync (invoices out, receipts in)      | Draft  |
 

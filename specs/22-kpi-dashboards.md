@@ -1,6 +1,6 @@
 # Spec S22 — KPI Dashboards & Analytics
 
-**Status:** Draft — confirm the KPI set and whether on-read aggregation is acceptable at plant scale
+**Status:** Built — on-read aggregation, default KPI set (open questions defaulted; Machine.ratedCapacityKgHr already present)
 
 ## Purpose
 
