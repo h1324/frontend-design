@@ -17,23 +17,24 @@ interface FileEntry {
   message: string;
   skus: number;
   machines: number;
+  month: string | null; // month detected from THIS file's name/sheets, or null
 }
 
 /**
- * Detect the month from any of the chosen file names or sheet names — the
+ * The month a single file belongs to, read from its name or sheet names — the
  * production file usually carries it (e.g. "Production_update_APRIL_2026"),
- * while the master file does not. We take the first token that is a real month.
+ * while the master file does not (→ null). Only a real month name is accepted.
  */
-function detectPeriod(names: string[], sheetNames: string[], fallback: string): string {
+function monthOf(names: string[], sheetNames: string[]): string | null {
   const hay = [...names, ...sheetNames].join('  ');
   const re = /([A-Za-z]+)[ _-]?(\d{4})/g;
   let m: RegExpExecArray | null;
   while ((m = re.exec(hay))) {
     const month = m[1].charAt(0).toUpperCase() + m[1].slice(1).toLowerCase();
     const label = `${month} ${m[2]}`;
-    if (periodKeyFromLabel(label)) return label; // only accept a genuine month name
+    if (periodKeyFromLabel(label)) return label;
   }
-  return fallback;
+  return null;
 }
 
 export function ImportDialog({ onClose }: { onClose: () => void }) {
@@ -61,10 +62,10 @@ export function ImportDialog({ onClose }: { onClose: () => void }) {
       try {
         const res = await parseWorkbook(file);
         const s = summarizeParse(res);
-        rows.push({ name: file.name, ok: s.ok, message: s.message, skus: s.skuCount, machines: s.machineCount });
+        rows.push({ name: file.name, ok: s.ok, message: s.message, skus: s.skuCount, machines: s.machineCount, month: monthOf([file.name], res.sheetNames) });
         if (s.ok) parts.push(res);
       } catch (err) {
-        rows.push({ name: file.name, ok: false, message: err instanceof Error ? err.message : String(err), skus: 0, machines: 0 });
+        rows.push({ name: file.name, ok: false, message: err instanceof Error ? err.message : String(err), skus: 0, machines: 0, month: null });
       }
     }
     setBusy(false);
@@ -80,7 +81,10 @@ export function ImportDialog({ onClose }: { onClose: () => void }) {
     const summary = summarizeParse(combined);
     setOk(true);
     setMsg(summary.message);
-    setDetectedPeriod(detectPeriod(files.map((f) => f.name), combined.sheetNames, period));
+    // One import = one month. Prefill the target from the (single) month the files
+    // point to; if they disagree, the conflict guard below blocks Apply.
+    const detected = [...new Set(rows.filter((r) => r.ok && r.month).map((r) => r.month as string))];
+    setDetectedPeriod(detected.length === 1 ? detected[0] : period);
   };
 
   // Validate + describe the target month so the numbers always land where the
@@ -89,8 +93,16 @@ export function ImportDialog({ onClose }: { onClose: () => void }) {
   const existingLabels = useMemo(() => [...new Set(periods.map((p) => p.label))].sort(), [periods]);
   const overwrites = targetKey != null && periods.some((p) => p.key === targetKey);
 
+  // Guard rail: one import writes one month. If the files name different months,
+  // block Apply and show which is which so the user fixes the selection.
+  const detectedMonths = useMemo(
+    () => [...new Set(entries.filter((e) => e.ok && e.month).map((e) => e.month as string))],
+    [entries],
+  );
+  const monthConflict = detectedMonths.length > 1;
+
   const apply = async () => {
-    if (!merged || applying || !targetKey) return;
+    if (!merged || applying || !targetKey || monthConflict) return;
     setApplying(true);
     try {
       await applyImport(merged, detectedPeriod);
@@ -159,7 +171,18 @@ export function ImportDialog({ onClose }: { onClose: () => void }) {
             </div>
           )}
 
-          {merged && (
+          {merged && monthConflict && (
+            <div style={{ border: `1px solid ${ERR}`, background: `color-mix(in srgb, ${ERR} 10%, transparent)`, padding: '11px 13px', fontSize: 13, lineHeight: 1.5, color: ERR }}>
+              <strong>These files look like different months.</strong> An import saves one month at a time, so please import them separately:
+              <ul style={{ margin: '6px 0 0', paddingLeft: 18 }}>
+                {entries.filter((e) => e.ok && e.month).map((e) => (
+                  <li key={e.name}><strong>{e.month}</strong> — {e.name}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {merged && !monthConflict && (
             <div className="field" style={{ margin: 0 }}>
               <label>Import into month</label>
               <input
@@ -182,7 +205,7 @@ export function ImportDialog({ onClose }: { onClose: () => void }) {
 
           <div className="dialog-actions">
             <button className="btn btn-ghost" onClick={onClose} disabled={applying}>{merged ? 'Cancel' : 'Close'}</button>
-            <button className="btn btn-primary" onClick={apply} disabled={!merged || applying || !targetKey}>
+            <button className="btn btn-primary" onClick={apply} disabled={!merged || applying || !targetKey || monthConflict}>
               {applying ? 'Saving…' : 'Apply to app'}
             </button>
           </div>
