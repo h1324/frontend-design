@@ -208,6 +208,7 @@ model Company {
   costRates        CostRate[]
   lotCosts         LotCost[]
   convertingCosts  ConvertingOrderCost[]
+  einvoiceLogs     EInvoiceLog[]
 }
 
 model Plant {
@@ -865,11 +866,14 @@ model Invoice {
   dueDate            DateTime?
   amountSettledPaise BigInt    @default(0)
 
-  // e-invoice / e-way-bill fields — populated by Phase 3 API calls; null until then.
-  irn          String?
-  signedQr     String?
-  ewbNo        String?
-  ewbValidTill DateTime?
+  // e-invoice / e-way-bill fields — populated by the S23 IRP/GSP calls; null until then.
+  irn            String?
+  signedQr       String?
+  ackNo          String?
+  ackDate        DateTime?
+  ewbNo          String?
+  ewbValidTill   DateTime?
+  einvoiceStatus EInvoiceStatus @default(NONE)
 
   status      InvoiceStatus @default(DRAFT)
   createdById String?
@@ -877,10 +881,55 @@ model Invoice {
 
   lines              InvoiceLine[]
   receiptAllocations ReceiptAllocation[]
+  einvoiceLogs       EInvoiceLog[]
 
   @@unique([companyId, docNo])
   @@index([companyId])
   @@index([companyId, status])
+}
+
+// --- e-invoice (IRN) & e-way bill (spec S23) -----------------------------------------
+
+/// E-invoice lifecycle on an invoice (spec S23). NONE = below threshold or not yet generated.
+enum EInvoiceStatus {
+  NONE
+  GENERATED
+  CANCELLED
+}
+
+/// An IRP/e-way-bill API action (spec S23).
+enum EInvoiceAction {
+  GEN_IRN
+  CANCEL_IRN
+  GEN_EWB
+  CANCEL_EWB
+}
+
+/// Outcome of an IRP/e-way-bill call (spec S23).
+enum EInvoiceLogStatus {
+  OK
+  ERROR
+}
+
+/// An attempt log for every IRP/NIC call (spec S23) — nothing is silently dropped. `provider`
+/// is free text (MOCK now; a real GSP later). Secrets never land here.
+model EInvoiceLog {
+  id           String            @id @default(cuid())
+  companyId    String
+  company      Company           @relation(fields: [companyId], references: [id])
+  invoiceId    String
+  invoice      Invoice           @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  action       EInvoiceAction
+  provider     String
+  status       EInvoiceLogStatus
+  requestHash  String
+  responseRef  String?
+  errorCode    String?
+  errorMessage String?
+  at           DateTime          @default(now())
+
+  @@index([companyId])
+  @@index([invoiceId])
 }
 
 /// One line per SKU on an invoice. Carries both kg and m² (CLAUDE.md 3) and its own HSN + rate.

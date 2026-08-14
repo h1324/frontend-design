@@ -14,6 +14,12 @@ import {
   cancelDispatch,
   DispatchValidationError,
 } from "@/lib/dispatch";
+import {
+  generateIrn,
+  generateEwayBill,
+  cancelIrn,
+  EInvoiceError,
+} from "@/lib/einvoice/einvoice";
 
 async function currentActor() {
   return requireActor(await auth());
@@ -123,4 +129,48 @@ export async function cancelDispatchAction(fd: FormData) {
   }
   revalidatePath(`/dispatch/${noteId}`);
   redirect(`/dispatch/${noteId}`);
+}
+
+// --- e-invoice (IRN) & e-way bill (S23) ----------------------------------------------
+
+async function einvoice(noteId: string, work: () => Promise<unknown>) {
+  try {
+    await work();
+  } catch (err) {
+    if (err instanceof EInvoiceError) {
+      redirect(`/dispatch/${noteId}?error=${encodeURIComponent(err.message)}`);
+    }
+    throw err;
+  }
+  revalidatePath(`/dispatch/${noteId}`);
+  redirect(`/dispatch/${noteId}`);
+}
+
+export async function generateIrnAction(fd: FormData) {
+  const actor = await currentActor();
+  const noteId = String(fd.get("noteId"));
+  const invoiceId = String(fd.get("invoiceId"));
+  await einvoice(noteId, () =>
+    prisma.$transaction((tx) => generateIrn(tx, actor, invoiceId)),
+  );
+}
+
+export async function generateEwayBillAction(fd: FormData) {
+  const actor = await currentActor();
+  const noteId = String(fd.get("noteId"));
+  const invoiceId = String(fd.get("invoiceId"));
+  const distanceKm = Number(str(fd.get("distanceKm")) ?? "0") || 0;
+  await einvoice(noteId, () =>
+    prisma.$transaction((tx) => generateEwayBill(tx, actor, invoiceId, { distanceKm })),
+  );
+}
+
+export async function cancelIrnAction(fd: FormData) {
+  const actor = await currentActor();
+  const noteId = String(fd.get("noteId"));
+  const invoiceId = String(fd.get("invoiceId"));
+  const reason = str(fd.get("reason")) ?? "";
+  await einvoice(noteId, () =>
+    prisma.$transaction((tx) => cancelIrn(tx, actor, invoiceId, { reason })),
+  );
 }

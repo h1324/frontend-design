@@ -1,6 +1,6 @@
 # Spec S23 — E-Invoice (IRN) & E-Way Bill
 
-**Status:** Draft — confirm the GSP/IRP provider; ships with a MOCK provider so nothing blocks offline
+**Status:** Built — MockProvider default; thresholds/cancel-window as config (open questions defaulted)
 
 ## Purpose
 

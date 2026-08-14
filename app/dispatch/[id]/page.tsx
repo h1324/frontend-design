@@ -18,7 +18,11 @@ import {
   generateInvoiceAction,
   cancelInvoiceAction,
   cancelDispatchAction,
+  generateIrnAction,
+  generateEwayBillAction,
+  cancelIrnAction,
 } from "../actions";
+import { isEwayBillRequired, DEFAULT_THRESHOLDS } from "@/lib/einvoice/einvoice";
 
 function fmtDate(d: Date | null): string {
   if (!d) return "—";
@@ -44,7 +48,12 @@ export default async function DispatchDetailPage({
       customer: true,
       shipTo: true,
       rolls: { include: { roll: { include: { item: true } } } },
-      invoice: { include: { lines: { include: { item: true } } } },
+      invoice: {
+        include: {
+          lines: { include: { item: true } },
+          einvoiceLogs: { orderBy: { at: "desc" }, take: 5 },
+        },
+      },
     },
   });
   if (!note) notFound();
@@ -240,10 +249,88 @@ export default async function DispatchDetailPage({
               </div>
             </div>
 
-            <div className="rounded-md border bg-muted/30 px-3 py-2 text-xs text-muted-foreground">
-              e-invoice / e-way-bill (Phase 3): IRN {inv.irn ?? "—"} · signed QR{" "}
-              {inv.signedQr ? "present" : "—"} · EWB {inv.ewbNo ?? "—"}
-              {inv.ewbValidTill ? ` (valid till ${fmtDate(inv.ewbValidTill)})` : ""}
+            <div className="flex flex-col gap-3 rounded-md border px-3 py-3">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium">e-invoice &amp; e-way bill</span>
+                <span className="text-xs text-muted-foreground">
+                  status: {inv.einvoiceStatus}
+                </span>
+              </div>
+              <div className="grid gap-1 text-xs text-muted-foreground sm:grid-cols-2">
+                <span className="break-all">IRN: {inv.irn ?? "—"}</span>
+                <span>Ack: {inv.ackNo ?? "—"}</span>
+                <span>Signed QR: {inv.signedQr ? "present" : "—"}</span>
+                <span>
+                  EWB: {inv.ewbNo ?? "—"}
+                  {inv.ewbValidTill ? ` (valid till ${fmtDate(inv.ewbValidTill)})` : ""}
+                </span>
+              </div>
+
+              {canWrite && inv.status === "ISSUED" ? (
+                <div className="flex flex-wrap items-end gap-3">
+                  {!inv.irn && inv.einvoiceStatus !== "CANCELLED" ? (
+                    <form action={generateIrnAction}>
+                      <input type="hidden" name="noteId" value={note.id} />
+                      <input type="hidden" name="invoiceId" value={inv.id} />
+                      <Button type="submit" size="sm">
+                        Generate IRN
+                      </Button>
+                    </form>
+                  ) : null}
+
+                  {inv.irn &&
+                  !inv.ewbNo &&
+                  isEwayBillRequired(inv.totalPaise, DEFAULT_THRESHOLDS) ? (
+                    <form
+                      action={generateEwayBillAction}
+                      className="flex items-end gap-2"
+                    >
+                      <input type="hidden" name="noteId" value={note.id} />
+                      <input type="hidden" name="invoiceId" value={inv.id} />
+                      <div className="flex flex-col gap-1">
+                        <Label className="text-xs">Distance (km)</Label>
+                        <Input
+                          name="distanceKm"
+                          inputMode="numeric"
+                          className="h-9 w-28"
+                          placeholder="0"
+                        />
+                      </div>
+                      <Button type="submit" size="sm" variant="secondary">
+                        Generate e-way bill
+                      </Button>
+                    </form>
+                  ) : null}
+
+                  {inv.irn && inv.einvoiceStatus === "GENERATED" ? (
+                    <form action={cancelIrnAction} className="flex items-end gap-2">
+                      <input type="hidden" name="noteId" value={note.id} />
+                      <input type="hidden" name="invoiceId" value={inv.id} />
+                      <div className="flex flex-col gap-1">
+                        <Label className="text-xs">Cancel reason</Label>
+                        <Input
+                          name="reason"
+                          className="h-9 w-56"
+                          placeholder="within 24h only"
+                        />
+                      </div>
+                      <Button type="submit" size="sm" variant="destructive">
+                        Cancel IRN
+                      </Button>
+                    </form>
+                  ) : null}
+                </div>
+              ) : null}
+
+              {inv.einvoiceLogs.length > 0 ? (
+                <p className="text-xs text-muted-foreground">
+                  Last: {inv.einvoiceLogs[0]!.action} · {inv.einvoiceLogs[0]!.provider} ·{" "}
+                  {inv.einvoiceLogs[0]!.status}
+                  {inv.einvoiceLogs[0]!.errorMessage
+                    ? ` — ${inv.einvoiceLogs[0]!.errorMessage}`
+                    : ""}
+                </p>
+              ) : null}
             </div>
 
             {canWrite && inv.status === "ISSUED" ? (
