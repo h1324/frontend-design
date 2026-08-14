@@ -62,13 +62,14 @@ remained (documented in each spec's Status line) — to be refined as requiremen
 | S18 | [18-sales-order-credit.md](18-sales-order-credit.md) | Sales order, credit control, customer tier | Built  |
 | S19 | [19-receivables.md](19-receivables.md)               | Receivables ageing (credit control)        | Built  |
 
-## Phase 3 build order (+later) — **specs Draft**
+## Phase 3 build order (+later) — **complete**
 
 Make the numbers real and cross the external boundaries: cost every batch, show the plant how
 it is running, and connect statutory compliance (e-invoice/e-way-bill) and the book of record
 (Tally). Dependency-ordered — costing first (it feeds margin and dashboards), then the two
-integrations. Each spec carries open questions to lock before its session; a `Mock` provider/
-connector is the default so nothing is blocked on external credentials.
+integrations. Built with spec defaults where open questions remained (documented in each spec's
+Status line); a `Mock` provider/connector is the default so nothing is blocked on external
+credentials — the real GSP/Tally adapters drop in behind the same interfaces.
 
 | #   | Spec                                         | Module                                      | Status |
 | --- | -------------------------------------------- | ------------------------------------------- | ------ |
@@ -76,7 +77,7 @@ connector is the default so nothing is blocked on external credentials.
 | S21 | [21-batch-costing.md](21-batch-costing.md)   | Batch/production costing & margin           | Built  |
 | S22 | [22-kpi-dashboards.md](22-kpi-dashboards.md) | KPI dashboards & analytics (OEE, yield, AR) | Built  |
 | S23 | [23-einvoice-eway.md](23-einvoice-eway.md)   | E-invoice (IRN) & e-way-bill APIs           | Built  |
-| S24 | [24-tally-sync.md](24-tally-sync.md)         | Tally sync (invoices out, receipts in)      | Draft  |
+| S24 | [24-tally-sync.md](24-tally-sync.md)         | Tally sync (invoices out, receipts in)      | Built  |
 
 Phase 4 (portal, mobile, predictive reorder, cross-entity view) gets its specs later. Sales-side
 pre-order work — quotations/enquiries and price contracts (deferred from S18) — is a Phase 3/4

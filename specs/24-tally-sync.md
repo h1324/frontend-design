@@ -1,6 +1,6 @@
 # Spec S24 — Tally Sync
 
-**Status:** Draft — confirm the connector mechanism (Tally HTTP XML vs file drop); ships with a MOCK connector
+**Status:** Built — MockConnector default, explicit CustomerTallyMap, receipts Tally→ERP only (open questions defaulted)
 
 ## Purpose
 

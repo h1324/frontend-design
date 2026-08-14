@@ -177,38 +177,40 @@ model Company {
   defaultAgingDays Int      @default(7)
   createdAt        DateTime @default(now())
 
-  users            User[]
-  plants           Plant[]
-  auditLogs        AuditLog[]
-  docSeries        DocSeries[]
-  locations        Location[]
-  items            Item[]
-  suppliers        Supplier[]
-  customers        Customer[]
-  machines         Machine[]
-  shifts           Shift[]
-  operators        Operator[]
-  downtimeReasons  DowntimeReason[]
-  materialReceipts MaterialReceipt[]
-  materialIssues   MaterialIssue[]
-  lots             Lot[]
-  rolls            Roll[]
-  stockLedger      StockLedger[]
-  stockBalances    StockBalance[]
-  dispatchNotes    DispatchNote[]
-  invoices         Invoice[]
-  purchaseOrders   PurchaseOrder[]
-  goodsReceipts    GoodsReceipt[]
-  qcInspections    QcInspection[]
-  convertingOrders ConvertingOrder[]
-  salesOrders      SalesOrder[]
-  receipts         Receipt[]
-  grnCharges       GrnCharge[]
-  itemCostHistory  ItemCostHistory[]
-  costRates        CostRate[]
-  lotCosts         LotCost[]
-  convertingCosts  ConvertingOrderCost[]
-  einvoiceLogs     EInvoiceLog[]
+  users             User[]
+  plants            Plant[]
+  auditLogs         AuditLog[]
+  docSeries         DocSeries[]
+  locations         Location[]
+  items             Item[]
+  suppliers         Supplier[]
+  customers         Customer[]
+  machines          Machine[]
+  shifts            Shift[]
+  operators         Operator[]
+  downtimeReasons   DowntimeReason[]
+  materialReceipts  MaterialReceipt[]
+  materialIssues    MaterialIssue[]
+  lots              Lot[]
+  rolls             Roll[]
+  stockLedger       StockLedger[]
+  stockBalances     StockBalance[]
+  dispatchNotes     DispatchNote[]
+  invoices          Invoice[]
+  purchaseOrders    PurchaseOrder[]
+  goodsReceipts     GoodsReceipt[]
+  qcInspections     QcInspection[]
+  convertingOrders  ConvertingOrder[]
+  salesOrders       SalesOrder[]
+  receipts          Receipt[]
+  grnCharges        GrnCharge[]
+  itemCostHistory   ItemCostHistory[]
+  costRates         CostRate[]
+  lotCosts          LotCost[]
+  convertingCosts   ConvertingOrderCost[]
+  einvoiceLogs      EInvoiceLog[]
+  tallySyncs        TallySync[]
+  customerTallyMaps CustomerTallyMap[]
 }
 
 model Plant {
@@ -416,6 +418,7 @@ model Customer {
   invoices      Invoice[]
   salesOrders   SalesOrder[]
   receipts      Receipt[]
+  tallyMap      CustomerTallyMap?
 
   @@unique([companyId, code])
   @@index([companyId])
@@ -1016,6 +1019,65 @@ model ReceiptAllocation {
   @@unique([receiptId, invoiceId])
   @@index([receiptId])
   @@index([invoiceId])
+}
+
+// --- Tally sync (spec S24) -----------------------------------------------------------
+
+/// What a sync row concerns (spec S24). Invoices flow OUT (ERP→Tally); receipts flow IN.
+enum TallyEntityType {
+  INVOICE
+  RECEIPT
+}
+
+enum TallySyncDirection {
+  OUT
+  IN
+}
+
+/// Lifecycle of a Tally sync attempt (spec S24). PENDING queued, SENT dispatched, ACK confirmed
+/// by Tally, ERROR failed (retryable), SKIPPED already synced / not applicable.
+enum TallySyncStatus {
+  PENDING
+  SENT
+  ACK
+  ERROR
+  SKIPPED
+}
+
+/// One marshalling attempt across the Tally boundary (spec S24) — NOT a ledger. Idempotency is
+/// by `payloadHash` (outbound invoices) and `externalRef` (inbound receipts); every attempt is
+/// logged and retryable. Balances live in Tally.
+model TallySync {
+  id          String             @id @default(cuid())
+  companyId   String
+  company     Company            @relation(fields: [companyId], references: [id])
+  entityType  TallyEntityType
+  entityId    String? // Invoice.id / Receipt.id; null for a not-yet-imported inbound voucher
+  direction   TallySyncDirection
+  status      TallySyncStatus    @default(PENDING)
+  externalRef String? // Tally voucher GUID / number
+  payloadHash String?
+  attempts    Int                @default(0)
+  lastError   String?
+  at          DateTime           @default(now())
+
+  @@index([companyId])
+  @@index([companyId, entityType, status])
+  @@index([companyId, externalRef])
+}
+
+/// Maps a customer to its Tally ledger name (spec S24). Falls back to the customer name when
+/// absent. Master data is assumed to already exist in Tally — this only names the party.
+model CustomerTallyMap {
+  id              String   @id @default(cuid())
+  companyId       String
+  company         Company  @relation(fields: [companyId], references: [id])
+  customerId      String   @unique
+  customer        Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  tallyLedgerName String
+  createdAt       DateTime @default(now())
+
+  @@index([companyId])
 }
 
 // --- sales order & credit control (spec S18) -----------------------------------------
