@@ -1,6 +1,6 @@
 # Spec S26 — Customer Portal
 
-**Status:** Draft — external-facing; auth model is the blocking decision (defaults proposed)
+**Status:** Ready — auth decided: separate `PortalUser` + password (invite-based), isolated from internal roles. Read-mostly self-service.
 
 ## Purpose
 
@@ -89,10 +89,9 @@ not just the UI.
 
 ## Open questions
 
-- ⚠️ **Auth model for external users.** Separate `PortalUser` table + credentials (proposed), magic-link
-  only, or federate to the customer's own identity? **Default: separate `PortalUser` with invite +
-  password + optional magic-link, isolated from internal Auth.js roles.** This is the blocking decision —
-  it sets the whole security boundary. Confirm.
+- ✅ **Auth model for external users — DECIDED.** Separate `PortalUser` table, invite + password,
+  structurally isolated from internal Auth.js roles (an external login can never hold an internal
+  `Area` grant). Magic-link may be added on top later, but password is the launch door.
 - ⚠️ **Exposure surface.** Is showing full ageing/overdue exposure to the customer desirable, or only the
   document-level balance? **Default: show their own ageing (it is their money), never internal cost/margin.**
   Confirm.

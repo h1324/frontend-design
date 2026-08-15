@@ -1,6 +1,6 @@
 # Spec S29 — Cross-Entity Consolidated View
 
-**Status:** Draft — activates the day-one `company_id`; second-entity data model & access are the decisions
+**Status:** Shelved — no second entity planned (2026-08). Spec kept ready-to-revive; do not build until a second company exists. The day-one `company_id` keeps the retrofit cheap whenever that changes.
 
 ## Purpose
 
@@ -87,9 +87,9 @@ companies)` (the fan-out-then-fold helper) reused across dashboards; each metric
 
 ## Open questions
 
-- ⚠️ **Is a second entity actually coming, and when?** This module is dormant until then. **Default:
-  build the read-only consolidation seam now (it is cheap because `company_id` already exists), defer the
-  UI polish until a real second entity is created.** Confirm whether to build now or hold.
+- ✅ **Is a second entity coming — DECIDED (for now): no / unsure, so this module is SHELVED.** Nothing
+  is built. `company_id` is already on every table, so reviving S29 is a from-spec build, not a
+  retrofit. Re-open this decision if/when a second plant or GSTIN is actually created.
 - ⚠️ **Inter-company transactions.** Will entities ever transfer stock or bill each other? That is a
   separate, much larger module (stock movement + tax between GSTINs). **Default: explicitly out of scope
   here — this spec is _view only_.** Confirm so expectations are set.

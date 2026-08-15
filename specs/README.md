@@ -11,7 +11,7 @@ requirement changes, change the spec in the same commit as the code.
 - Each spec follows the same template: Status · Purpose · Scope · Dependencies · Data
   model · Rules & invariants · Public API · Acceptance criteria · Open questions.
 - **Status** is one of `Draft` (needs decisions), `Ready` (buildable), `Built`,
-  `Superseded`.
+  `Shelved` (deliberately not built yet — a decision, not a gap), `Superseded`.
 - Open questions marked ⚠️ block the build; the rest have a stated default and can be
   overridden without reworking the schema.
 
@@ -79,23 +79,27 @@ credentials — the real GSP/Tally adapters drop in behind the same interfaces.
 | S23 | [23-einvoice-eway.md](23-einvoice-eway.md)   | E-invoice (IRN) & e-way-bill APIs           | Built  |
 | S24 | [24-tally-sync.md](24-tally-sync.md)         | Tally sync (invoices out, receipts in)      | Built  |
 
-## Phase 4 build order (later) — **specs drafted, needs decisions**
+## Phase 4 build order (later) — **three specs Ready, one Draft, one Shelved**
 
 Beyond the plant floor: the sales-side pre-order layer (quotations/price contracts, deferred from
 S18), then the outward-facing surfaces — customer portal, mobile order-taking — plus predictive
-reorder and the consolidated cross-entity view the day-one `company_id` was put there for. These are
-**Draft**: each states a default for its open questions, but several defaults (external auth model,
-offline-sync semantics, forecast method, whether a second entity is even coming) materially shape the
-data model, so confirm before building. Dependency-ordered — pricing first (it feeds portal and
-mobile), integrations/analytics after.
+reorder and the consolidated cross-entity view the day-one `company_id` was put there for.
+Dependency-ordered — pricing first (it feeds portal and mobile), integrations/analytics after.
 
-| #   | Spec                                                   | Module                                      | Status |
-| --- | ------------------------------------------------------ | ------------------------------------------- | ------ |
-| S25 | [25-quotations.md](25-quotations.md)                   | Quotations & price contracts                | Draft  |
-| S26 | [26-customer-portal.md](26-customer-portal.md)         | Customer portal (self-service, read-mostly) | Draft  |
-| S27 | [27-mobile-order-taking.md](27-mobile-order-taking.md) | Mobile order-taking (offline-first PWA)     | Draft  |
-| S28 | [28-predictive-reorder.md](28-predictive-reorder.md)   | Predictive reorder (RM/FG suggestions)      | Draft  |
-| S29 | [29-cross-entity-view.md](29-cross-entity-view.md)     | Cross-entity consolidated view (read-only)  | Draft  |
+The blocking decisions are settled (2026-08): **S25** adds order-value discounts on top of qty slabs;
+**S26** uses a separate `PortalUser` + password (isolated from internal roles); **S27** is internal
+SALES reps only (rides Auth.js, no S26 dependency, so it can ship first); **S29** is **shelved** — no
+second entity is planned, and `company_id` keeps it a cheap revival if that ever changes. **S28** stays
+Draft: its open questions (forecast method, consumption window, safety-stock basis) are tuning defaults,
+not schema-shaping, and can be confirmed at build time. Suggested build order: **S25 → S27 → S26 → S28**.
+
+| #   | Spec                                                   | Module                                      | Status  |
+| --- | ------------------------------------------------------ | ------------------------------------------- | ------- |
+| S25 | [25-quotations.md](25-quotations.md)                   | Quotations & price contracts                | Ready   |
+| S26 | [26-customer-portal.md](26-customer-portal.md)         | Customer portal (self-service, read-mostly) | Ready   |
+| S27 | [27-mobile-order-taking.md](27-mobile-order-taking.md) | Mobile order-taking (offline-first PWA)     | Ready   |
+| S28 | [28-predictive-reorder.md](28-predictive-reorder.md)   | Predictive reorder (RM/FG suggestions)      | Draft   |
+| S29 | [29-cross-entity-view.md](29-cross-entity-view.md)     | Cross-entity consolidated view (read-only)  | Shelved |
 
 See `docs/brief.md` §8 (Phase 4 line) for the original framing.
 

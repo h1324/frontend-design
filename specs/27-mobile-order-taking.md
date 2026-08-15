@@ -1,10 +1,10 @@
 # Spec S27 — Mobile Order-Taking (PWA)
 
-**Status:** Draft — offline-first sync is the hard part; conflict/idempotency defaults proposed
+**Status:** Ready — audience decided: internal SALES reps only (rides Auth.js, no S26 dependency). Offline-first, idempotent server sync.
 
 ## Purpose
 
-Let a field-sales rep (or a trusted dealer) take an order on a phone at the customer's premises —
+Let a field-sales rep take an order on a phone at the customer's premises —
 often on flaky or absent internet, per the brief's factory-connectivity reality — priced from the
 S25 contract, and have it land as a real S18 sales order once back online. This is the "mobile
 order-taking" line of Phase 4. The device is a thin capture layer; the server stays the source of
@@ -12,7 +12,7 @@ truth.
 
 ## Scope
 
-**In:** an installable **PWA** for SALES (and optionally a dealer role) that works **offline** —
+**In:** an installable **PWA** for internal SALES reps that works **offline** —
 browse a cached catalogue with contract prices (S25), build an order for a chosen customer + ship-to,
 capture it locally, and **sync** it to a `DRAFT`/`CONFIRMED` S18 SO when connectivity returns, with a
 visible pending/synced/failed queue. Idempotent submission so a retried sync never double-creates.
@@ -26,7 +26,7 @@ separate mobile app); editing masters offline.
 
 - S18 (`createSO`/`confirmSO` — the sync target and the authority on credit + allocation), S25
   (`resolvePrice` — device shows contract price, server re-resolves at sync as the authority), S7
-  (customers/ship-tos), S5 (items catalogue), S4 (SALES/dealer auth). The server exposes the existing
+  (customers/ship-tos), S5 (items catalogue), S4 (SALES auth). The server exposes the existing
   services behind an **idempotent submit endpoint**; the device adds no new business math — it can be
   wrong about price/credit and the server corrects it.
 
@@ -88,9 +88,9 @@ change being silent.
 
 ## Open questions
 
-- ⚠️ **Who uses it — reps only, or dealers too?** Dealer access widens the auth/trust boundary toward
-  S26's external-principal model. **Default: internal SALES reps only at launch;** dealer ordering, if
-  wanted, rides the S26 `PortalUser` boundary rather than the internal role. Confirm.
+- ✅ **Who uses it — DECIDED: internal SALES reps only.** Rides the existing Auth.js SALES role, so
+  S27 has no dependency on S26 and can ship first. Dealer self-ordering, if ever wanted, would be a
+  later feature on the S26 `PortalUser` boundary — not this module.
 - ⚠️ **Sync target status.** Do mobile orders arrive as `DRAFT` (staff confirm) or auto-`CONFIRMED`
   when within credit? **Default: auto-`CONFIRMED` when the server credit check passes, `DRAFT` when it
   doesn't** — reps get instant orders, risky ones wait for an override. Confirm.
