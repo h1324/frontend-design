@@ -79,9 +79,25 @@ credentials — the real GSP/Tally adapters drop in behind the same interfaces.
 | S23 | [23-einvoice-eway.md](23-einvoice-eway.md)   | E-invoice (IRN) & e-way-bill APIs           | Built  |
 | S24 | [24-tally-sync.md](24-tally-sync.md)         | Tally sync (invoices out, receipts in)      | Built  |
 
-Phase 4 (portal, mobile, predictive reorder, cross-entity view) gets its specs later. Sales-side
-pre-order work — quotations/enquiries and price contracts (deferred from S18) — is a Phase 3/4
-candidate not yet scheduled. See `docs/brief.md` §8.
+## Phase 4 build order (later) — **specs drafted, needs decisions**
+
+Beyond the plant floor: the sales-side pre-order layer (quotations/price contracts, deferred from
+S18), then the outward-facing surfaces — customer portal, mobile order-taking — plus predictive
+reorder and the consolidated cross-entity view the day-one `company_id` was put there for. These are
+**Draft**: each states a default for its open questions, but several defaults (external auth model,
+offline-sync semantics, forecast method, whether a second entity is even coming) materially shape the
+data model, so confirm before building. Dependency-ordered — pricing first (it feeds portal and
+mobile), integrations/analytics after.
+
+| #   | Spec                                                   | Module                                      | Status |
+| --- | ------------------------------------------------------ | ------------------------------------------- | ------ |
+| S25 | [25-quotations.md](25-quotations.md)                   | Quotations & price contracts                | Draft  |
+| S26 | [26-customer-portal.md](26-customer-portal.md)         | Customer portal (self-service, read-mostly) | Draft  |
+| S27 | [27-mobile-order-taking.md](27-mobile-order-taking.md) | Mobile order-taking (offline-first PWA)     | Draft  |
+| S28 | [28-predictive-reorder.md](28-predictive-reorder.md)   | Predictive reorder (RM/FG suggestions)      | Draft  |
+| S29 | [29-cross-entity-view.md](29-cross-entity-view.md)     | Cross-entity consolidated view (read-only)  | Draft  |
+
+See `docs/brief.md` §8 (Phase 4 line) for the original framing.
 
 ## Cross-cutting decisions (apply to every spec)
 
