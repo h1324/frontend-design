@@ -10,7 +10,7 @@ import { periodKeyFromLabel, periodLabel } from '../domain/period';
 import { db } from './config';
 import { safeDocId } from './docId';
 import {
-  DEFAULT_THRESHOLDS, type AuditEntry, type Identity, type ImportPayload,
+  DEFAULT_THRESHOLDS, type AuditEntry, type FyOpening, type Identity, type ImportPayload,
   type PersistedState, type Repo,
 } from '../store/types';
 
@@ -36,6 +36,7 @@ export class FirebaseRepo implements Repo {
   private settings: { thresholds?: Thresholds; orderSeq?: number } = {};
   private prodLog: ProdLogEntry[] = [];
   private orders: Order[] = [];
+  private fyOpening: FyOpening | null = null;
   private audit: AuditEntry[] = [];
   private ready = { catalog: false, periods: false, settings: false };
   private migrationTried = false;
@@ -57,6 +58,7 @@ export class FirebaseRepo implements Repo {
       orders: this.orders,
       orderSeq: this.settings.orderSeq ?? 1,
       thresholds: this.settings.thresholds ?? DEFAULT_THRESHOLDS,
+      fyOpening: this.fyOpening,
       role: this.identity.role,
       audit: this.audit,
     };
@@ -103,6 +105,10 @@ export class FirebaseRepo implements Repo {
       }),
       onSnapshot(collection(d, 'orders'), (snap) => {
         this.orders = snap.docs.map((x) => x.data() as Order).sort((a, b) => b.no - a.no);
+        this.emit();
+      }),
+      onSnapshot(doc(d, 'settings', 'fyOpening'), (snap) => {
+        this.fyOpening = snap.exists() ? (snap.data() as FyOpening) : null;
         this.emit();
       }),
       onSnapshot(collection(d, 'audit'), (snap) => {
@@ -256,6 +262,11 @@ export class FirebaseRepo implements Repo {
 
   async cancelOrder(orderId: string, audit: AuditEntry): Promise<void> {
     await setDoc(doc(this.db(), 'orders', orderId), { cancelled: true }, { merge: true });
+    await this.writeAudit(audit);
+  }
+
+  async setFyOpening(fy: FyOpening, audit: AuditEntry): Promise<void> {
+    await setDoc(doc(this.db(), 'settings', 'fyOpening'), fy);
     await this.writeAudit(audit);
   }
 }

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Blueprint } from '../components/Blueprint';
+import { FyOpeningDialog } from '../components/dialogs/FyOpeningDialog';
 import { useApp } from '../store/store';
 import { useToast } from '../components/Toast';
 import { fmt } from '../domain/format';
@@ -13,10 +14,11 @@ import type { PeriodSnapshot } from '../domain/types';
 const inr = (n: number) => '₹' + Math.round(n).toLocaleString('en-IN');
 
 export function Reports() {
-  const { effs, dataset, prodLog, period, isOwner, catalog, periods, currentPeriodKey, financialYearLabel, scrubYear } = useApp();
+  const { effs, dataset, prodLog, period, isOwner, catalog, periods, currentPeriodKey, financialYearLabel, scrubYear, fyOpening } = useApp();
   const flash = useToast();
   const [confirmScrub, setConfirmScrub] = useState(false);
   const [scrubbing, setScrubbing] = useState(false);
+  const [fyOpen, setFyOpen] = useState(false);
   const k = kpis(effs);
   const machinesFresh = dataset?.machines.reduce((a, m) => a + m.fresh, 0) ?? 0;
   const loggedTotal = prodLog.reduce((a, l) => a + l.qty, 0);
@@ -187,6 +189,25 @@ export function Reports() {
       </Blueprint>
 
       {isOwner && (
+        <Blueprint className="card no-print" style={{ gap: 12, marginTop: 22 }}>
+          <h4 style={{ margin: 0 }}>Financial-year opening stock</h4>
+          {fyOpening ? (
+            <p className="text-muted" style={{ margin: 0, fontSize: 13, lineHeight: 1.5 }}>
+              Baseline set for <strong>FY {fyOpening.fyLabel}</strong> — {fmt(Object.values(fyOpening.byUid).reduce((a, b) => a + b, 0))} units
+              across {fmt(Object.keys(fyOpening.byUid).length)} SKUs (from {fyOpening.capturedFrom}). This is the clean
+              starting point the year's produced &amp; in-stock figures build on.
+            </p>
+          ) : (
+            <p className="text-muted" style={{ margin: 0, fontSize: 13, lineHeight: 1.5 }}>
+              No opening baseline yet. It's captured automatically when you import the year's first month (April),
+              or set it here from a dedicated opening-stock file.
+            </p>
+          )}
+          <div><button className="btn btn-secondary" onClick={() => setFyOpen(true)}>Set / replace opening stock…</button></div>
+        </Blueprint>
+      )}
+
+      {isOwner && (
         <Blueprint className="card no-print" style={{ gap: 12, marginTop: 22, borderTop: '3px solid #a63a3a' }}>
           <h4 style={{ margin: 0 }}>Data management</h4>
           <p className="text-muted" style={{ margin: 0, fontSize: 13, lineHeight: 1.5 }}>
@@ -232,6 +253,8 @@ export function Reports() {
           </Blueprint>
         </div>
       )}
+
+      {fyOpen && <FyOpeningDialog onClose={() => setFyOpen(false)} />}
     </section>
   );
 }

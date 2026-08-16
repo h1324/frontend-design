@@ -12,6 +12,7 @@ const ACTION_LABEL: Record<AuditEntry['action'], string> = {
   'create-order': 'Created order',
   'fulfil-order': 'Dispatched order',
   'cancel-order': 'Cancelled order',
+  'set-fy-opening': 'Set FY opening stock',
 };
 
 function when(ts: number): string {

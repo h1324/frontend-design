@@ -5,7 +5,7 @@ import { catalogFromDataset, snapshotFromDataset } from '../domain/logic';
 import { orderNo, ordersToKeepOnScrub } from '../domain/orders';
 import { periodKeyFromLabel } from '../domain/period';
 import {
-  DEFAULT_THRESHOLDS, type AuditEntry, type ImportPayload, type PersistedState, type Repo,
+  DEFAULT_THRESHOLDS, type AuditEntry, type FyOpening, type ImportPayload, type PersistedState, type Repo,
 } from '../store/types';
 import seed from '../data/data.json';
 
@@ -19,6 +19,7 @@ interface StoredV2 {
   orders: Order[];
   orderSeq: number;
   thresholds: Thresholds;
+  fyOpening: FyOpening | null;
   role: Role;
   audit: AuditEntry[];
 }
@@ -33,6 +34,7 @@ function seedState(): StoredV2 {
     orders: [],
     orderSeq: 1,
     thresholds: DEFAULT_THRESHOLDS,
+    fyOpening: null,
     role: 'owner',
     audit: [],
   };
@@ -68,6 +70,7 @@ export class DemoRepo implements Repo {
       orders: this.s.orders ?? [],
       orderSeq: this.s.orderSeq ?? 1,
       thresholds: this.s.thresholds,
+      fyOpening: this.s.fyOpening ?? null,
       role: this.s.role,
       audit: this.s.audit,
     };
@@ -170,6 +173,10 @@ export class DemoRepo implements Repo {
   async cancelOrder(orderId: string, audit: AuditEntry): Promise<void> {
     const orders = (this.s.orders ?? []).map((o) => (o.id === orderId ? { ...o, cancelled: true } : o));
     this.commit({ orders }, audit);
+  }
+
+  async setFyOpening(fyOpening: FyOpening, audit: AuditEntry): Promise<void> {
+    this.commit({ fyOpening }, audit);
   }
 
   setDemoRole(role: Role): void {

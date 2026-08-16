@@ -8,7 +8,7 @@ import type {
 import { effWithHistory, normalizeDataset } from '../domain/logic';
 import { periodKeyFromLabel, periodLabel, trailingPeriods, financialYearOf } from '../domain/period';
 import {
-  DEFAULT_THRESHOLDS, type AuditEntry, type Identity, type ImportPayload,
+  DEFAULT_THRESHOLDS, type AuditEntry, type FyOpening, type Identity, type ImportPayload,
   type PersistedState, type Repo,
 } from './types';
 
@@ -48,6 +48,8 @@ interface AppContextValue {
   setDefaultThreshold: (field: 'lowMonths' | 'overMonths', value: number) => Promise<void>;
   setLineThreshold: (line: string, field: 'lowMonths' | 'overMonths', value: number | undefined) => Promise<void>;
   applyImport: (parsed: ParsedWorkbook, periodLabelStr: string) => Promise<void>;
+  fyOpening: FyOpening | null;
+  setFyOpening: (parsed: ParsedWorkbook, fyLabel: string) => Promise<void>;
   scrubYear: () => Promise<void>;
   createOrder: (input: { dealer: string; date: string; note?: string; items: OrderItem[] }) => Promise<void>;
   fulfilLine: (orderId: string, itemIndex: number, qty: number) => Promise<void>;
@@ -58,7 +60,7 @@ const Ctx = createContext<AppContextValue | null>(null);
 
 const empty: PersistedState = {
   catalog: [], periods: [], latestPeriodKey: '', prodLog: [], orders: [], orderSeq: 1,
-  thresholds: DEFAULT_THRESHOLDS, role: 'owner', audit: [],
+  thresholds: DEFAULT_THRESHOLDS, fyOpening: null, role: 'owner', audit: [],
 };
 
 function uniqueLines(catalog: CatalogSku[]): string[] {
@@ -203,12 +205,36 @@ export function AppProvider({
           },
         };
         await repo.applyImport(payload, audit);
+        // Auto-capture the financial-year opening baseline from the FY's first
+        // month (April), unless one already exists for that year (a manual
+        // override must not be clobbered by a re-import).
+        const fy = financialYearOf(key);
+        const isFyFirstMonth = key === `${fy.startYear}-04`;
+        if (isFyFirstMonth && state.fyOpening?.fyLabel !== fy.label) {
+          const byUid = Object.fromEntries(norm.skus.map((s) => [s.uid!, s.opening]));
+          await repo.setFyOpening(
+            { fyLabel: fy.label, capturedFrom: periodLabelStr, at: Date.now(), byUid },
+            mkAudit('set-fy-opening', fy.label, `auto-captured from ${periodLabelStr}`),
+          );
+        }
       } else if (parsed.machines.length) {
         await repo.applyImport({ machinesFor: { key: key || currentPeriodKey, machines: parsed.machines } }, audit);
       }
       setSelectedKey(key);
     },
-    [repo, mkAudit, currentPeriodKey, state.latestPeriodKey],
+    [repo, mkAudit, currentPeriodKey, state.latestPeriodKey, state.fyOpening],
+  );
+
+  const setFyOpening = useCallback<AppContextValue['setFyOpening']>(
+    async (parsed, fyLabel) => {
+      const norm = normalizeDataset({ skus: parsed.skus, lines: parsed.lines, machines: parsed.machines });
+      const byUid = Object.fromEntries(norm.skus.map((s) => [s.uid!, s.opening]));
+      await repo.setFyOpening(
+        { fyLabel, capturedFrom: 'manual upload', at: Date.now(), byUid },
+        mkAudit('set-fy-opening', fyLabel, `manual upload · ${norm.skus.length} SKUs`),
+      );
+    },
+    [repo, mkAudit],
   );
 
   const scrubYear = useCallback<AppContextValue['scrubYear']>(
@@ -250,6 +276,7 @@ export function AppProvider({
     financialYearLabel,
     dataset, effs, prodLog: state.prodLog, orders: state.orders, thresholds: state.thresholds,
     period: periodLabelText, audit: state.audit,
+    fyOpening: state.fyOpening, setFyOpening,
     role, uid, userName, canEdit, isOwner,
     setDemoRole, saveEdit, addProduction, setDefaultThreshold, setLineThreshold, applyImport, scrubYear,
     createOrder, fulfilLine, cancelOrder,

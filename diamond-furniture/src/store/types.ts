@@ -18,9 +18,22 @@ export interface AuditEntry {
     | 'scrub-year'
     | 'create-order'
     | 'fulfil-order'
-    | 'cancel-order';
+    | 'cancel-order'
+    | 'set-fy-opening';
   target?: string;
   detail?: string;
+}
+
+/**
+ * A clean opening-stock baseline for one financial year (Apr–Mar). Everything is
+ * built on top of this: in stock = opening + Σ produced − Σ sold. Captured
+ * automatically from the year's first month, or set from a dedicated file.
+ */
+export interface FyOpening {
+  fyLabel: string;                    // '2026-27'
+  capturedFrom: string;               // 'April 2026' or 'manual upload'
+  at: number;                         // when it was set
+  byUid: Record<string, number>;      // opening units per SKU uid
 }
 
 /**
@@ -35,6 +48,7 @@ export interface PersistedState {
   orders: Order[];
   orderSeq: number;            // next order number
   thresholds: Thresholds;
+  fyOpening: FyOpening | null; // current financial-year opening-stock baseline
   role: Role;
   audit: AuditEntry[];
 }
@@ -69,9 +83,11 @@ export interface Repo {
   scrubYear(audit: AuditEntry): Promise<void>;
   // Orders (Phase B)
   createOrder(input: { dealer: string; date: string; note?: string; items: OrderItem[] }, audit: AuditEntry): Promise<void>;
-  /** Dispatch `qty` of one order line: reduces stock/increases sold in `periodKey`, advances the line. */
+  /** Advance one order line by `qty` (order ledger only; does not touch periods). */
   fulfilLine(orderId: string, itemIndex: number, qty: number, periodKey: string, audit: AuditEntry): Promise<void>;
   cancelOrder(orderId: string, audit: AuditEntry): Promise<void>;
+  /** Set the financial-year opening-stock baseline. */
+  setFyOpening(fy: FyOpening, audit: AuditEntry): Promise<void>;
   setDemoRole?(role: Role): void;
 }
 
