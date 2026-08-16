@@ -80,6 +80,9 @@ export default async function Home() {
               <Link href="/sales/orders">Sales orders</Link>
             </Button>
             <Button asChild variant="outline" size="sm">
+              <Link href="/sales/quotations">Quotations</Link>
+            </Button>
+            <Button asChild variant="outline" size="sm">
               <Link href="/dispatch">Dispatch</Link>
             </Button>
             <Button asChild variant="outline" size="sm">

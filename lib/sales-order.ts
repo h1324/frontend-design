@@ -45,16 +45,37 @@ export interface OrderTotals {
   totalPaise: number;
 }
 
+/** A line's taxable value after a whole-order discount % (spec S25), rounded to the nearest
+ *  paisa. A uniform % is applied per line before tax so each line's own GST rate stays correct. */
+function discountedLineTaxablePaise(
+  qty: DecimalInput,
+  ratePaise: number | bigint,
+  orderDiscountPct: DecimalInput,
+): number {
+  const gross = lineTaxableValuePaise(qty, ratePaise);
+  const factor = new Decimal(1).minus(new Decimal(orderDiscountPct).div(100));
+  return Number(
+    new Decimal(gross).times(factor).toDecimalPlaces(0, Decimal.ROUND_HALF_UP).toString(),
+  );
+}
+
 /** Value an order's lines (taxable + GST + grand total, in paise). `intra` picks CGST+SGST vs
- *  IGST but the split doesn't change the total; used for the credit exposure. Pure. */
+ *  IGST but the split doesn't change the total; used for the credit exposure. `orderDiscountPct`
+ *  (spec S25) comes off each line's taxable value before GST; 0 leaves the pre-S25 behaviour
+ *  unchanged. Pure. */
 export function salesOrderTotalsPaise(
   lines: OrderLineValue[],
   intra: boolean,
+  orderDiscountPct: DecimalInput = "0",
 ): OrderTotals {
   let taxablePaise = 0;
   let taxPaise = 0;
   for (const l of lines) {
-    const taxable = lineTaxableValuePaise(l.qtyOrdered, l.ratePaise);
+    const taxable = discountedLineTaxablePaise(
+      l.qtyOrdered,
+      l.ratePaise,
+      orderDiscountPct,
+    );
     const tax = computeLineTax(taxable, l.gstRatePct, intra);
     taxablePaise += taxable;
     taxPaise += tax.cgstPaise + tax.sgstPaise + tax.igstPaise;
@@ -104,6 +125,8 @@ export interface CreateSalesOrderInput {
   shipToId: string;
   lines: SalesOrderLineInput[];
   orderDate?: Date;
+  /** Whole-order value discount % (spec S25), applied to the taxable subtotal before GST. */
+  orderDiscountPct?: DecimalInput;
 }
 
 /** Create a DRAFT sales order with its lines. SALES-write. Gapless SO/FY number. */
@@ -145,6 +168,9 @@ export async function createSO(
       customerId: input.customerId,
       shipToId: input.shipToId,
       ...(input.orderDate ? { orderDate: input.orderDate } : {}),
+      ...(input.orderDiscountPct != null
+        ? { orderDiscountPct: new Decimal(input.orderDiscountPct).toString() }
+        : {}),
       createdById: actor.userId,
       lines: {
         create: input.lines.map((l) => ({
@@ -192,6 +218,7 @@ async function orderTotals(
       gstRatePct: l.gstRatePct.toString(),
     })),
     intra,
+    so.orderDiscountPct.toString(),
   );
 }
 

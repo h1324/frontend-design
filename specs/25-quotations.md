@@ -1,6 +1,6 @@
 # Spec S25 — Quotations & Price Contracts
 
-**Status:** Ready — pricing decided (customer > tier > list, qty slabs **+ order-value discounts**); margin floor advisory. The deferred pre-order layer from S18.
+**Status:** Built — customer > tier > list slab pricing + order-value discounts (`ValueDiscountTier`), advisory margin floor with logged override, convert-to-SO. The deferred pre-order layer from S18.
 
 ## Purpose
 

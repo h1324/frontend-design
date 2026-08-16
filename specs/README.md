@@ -79,7 +79,7 @@ credentials — the real GSP/Tally adapters drop in behind the same interfaces.
 | S23 | [23-einvoice-eway.md](23-einvoice-eway.md)   | E-invoice (IRN) & e-way-bill APIs           | Built  |
 | S24 | [24-tally-sync.md](24-tally-sync.md)         | Tally sync (invoices out, receipts in)      | Built  |
 
-## Phase 4 build order (later) — **three specs Ready, one Draft, one Shelved**
+## Phase 4 build order (later) — **S25 built; S26/S27 ready, S28 draft, S29 shelved**
 
 Beyond the plant floor: the sales-side pre-order layer (quotations/price contracts, deferred from
 S18), then the outward-facing surfaces — customer portal, mobile order-taking — plus predictive
@@ -95,7 +95,7 @@ not schema-shaping, and can be confirmed at build time. Suggested build order: *
 
 | #   | Spec                                                   | Module                                      | Status  |
 | --- | ------------------------------------------------------ | ------------------------------------------- | ------- |
-| S25 | [25-quotations.md](25-quotations.md)                   | Quotations & price contracts                | Ready   |
+| S25 | [25-quotations.md](25-quotations.md)                   | Quotations & price contracts                | Built   |
 | S26 | [26-customer-portal.md](26-customer-portal.md)         | Customer portal (self-service, read-mostly) | Ready   |
 | S27 | [27-mobile-order-taking.md](27-mobile-order-taking.md) | Mobile order-taking (offline-first PWA)     | Ready   |
 | S28 | [28-predictive-reorder.md](28-predictive-reorder.md)   | Predictive reorder (RM/FG suggestions)      | Draft   |

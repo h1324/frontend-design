@@ -211,6 +211,9 @@ model Company {
   einvoiceLogs      EInvoiceLog[]
   tallySyncs        TallySync[]
   customerTallyMaps CustomerTallyMap[]
+  quotations        Quotation[]
+  priceContracts    PriceContract[]
+  valueDiscounts    ValueDiscountTier[]
 }
 
 model Plant {
@@ -337,6 +340,11 @@ model Item {
   layerCount       Int?
   surfaceTreatment SurfaceTreatment?
 
+  /// Default/list selling price per billed unit (paise) — the lowest-precedence rate the S25
+  /// price resolver falls back to when no customer/tier price contract applies. Null = no list
+  /// price, so a manual rate is required. Not a cost; the sell side of the item master.
+  listPricePaise BigInt?
+
   // aging: per-item override of Company.defaultAgingDays (decision B4)
   agingDays    Int?
   reorderLevel Decimal? @db.Decimal(16, 3)
@@ -362,6 +370,8 @@ model Item {
   convertedInOrders    ConvertingOrder[]
   salesOrderLines      SalesOrderLine[]
   costHistory          ItemCostHistory[]
+  quotationLines       QuotationLine[]
+  priceContractLines   PriceContractLine[]
 
   @@unique([companyId, code])
   @@index([companyId])
@@ -413,12 +423,15 @@ model Customer {
   isActive              Boolean      @default(true)
   createdAt             DateTime     @default(now())
 
-  shipTos       ShipToAddress[]
-  dispatchNotes DispatchNote[]
-  invoices      Invoice[]
-  salesOrders   SalesOrder[]
-  receipts      Receipt[]
-  tallyMap      CustomerTallyMap?
+  shipTos        ShipToAddress[]
+  dispatchNotes  DispatchNote[]
+  invoices       Invoice[]
+  salesOrders    SalesOrder[]
+  receipts       Receipt[]
+  tallyMap       CustomerTallyMap?
+  quotations     Quotation[]
+  priceContracts PriceContract[]
+  valueDiscounts ValueDiscountTier[]
 
   @@unique([companyId, code])
   @@index([companyId])
@@ -439,6 +452,7 @@ model ShipToAddress {
   dispatchNotes DispatchNote[]
   invoices      Invoice[]
   salesOrders   SalesOrder[]
+  quotations    Quotation[]
 
   @@index([customerId])
 }
@@ -1100,12 +1114,16 @@ model SalesOrder {
   creditStatus         CreditStatus     @default(OK)
   creditOverrideById   String? // user who cleared a credit block (ACCOUNTS/ADMIN)
   creditOverrideReason String?
+  /// Whole-order value discount % (spec S25), applied to the taxable subtotal before GST.
+  /// 0 for orders with no qualifying value tier; seeded on convert-from-quote or direct entry.
+  orderDiscountPct     Decimal          @default(0) @db.Decimal(5, 2)
   createdById          String?
   createdAt            DateTime         @default(now())
 
   lines         SalesOrderLine[]
   allocations   SalesOrderRoll[]
   dispatchNotes DispatchNote[]
+  fromQuotation Quotation?       @relation("QuotationConversion")
 
   @@unique([companyId, docNo])
   @@index([companyId])
@@ -1479,4 +1497,151 @@ model ConvertingInput {
   @@unique([orderId, rollId])
   @@index([orderId])
   @@index([rollId])
+}
+
+// --- Quotations & price contracts (spec S25) -----------------------------------------
+
+/// Lifecycle of a quotation. WON converts to a sales order (once); LOST/EXPIRED close it;
+/// CANCELLED voids it keeping the number (S2). A quote never moves stock or money.
+enum QuotationStatus {
+  DRAFT
+  SENT
+  WON
+  LOST
+  EXPIRED
+  CANCELLED
+}
+
+/// Lifecycle of a price contract / value-discount tier. ACTIVE within its validity window;
+/// EXPIRED past it; CANCELLED voided. A rate change is a new row, never an in-place edit.
+enum PriceContractStatus {
+  ACTIVE
+  EXPIRED
+  CANCELLED
+}
+
+/// Who a price rule applies to. CUSTOMER is the most specific; TIER covers a customer grade.
+/// The item list price (Item.listPricePaise) is the implicit third, least-specific tier.
+enum PriceScope {
+  CUSTOMER
+  TIER
+}
+
+/// A quotation: the pre-order document that captures an agreed price before a sales order
+/// exists (spec S25). It reads S21 cost for a margin badge but touches no stock, credit, or
+/// receivables — those begin only at the SO it converts into.
+model Quotation {
+  id                   String          @id @default(cuid())
+  companyId            String
+  company              Company         @relation(fields: [companyId], references: [id])
+  docNo                String // QT/FY/seq
+  customerId           String
+  customer             Customer        @relation(fields: [customerId], references: [id])
+  shipToId             String?
+  shipTo               ShipToAddress?  @relation(fields: [shipToId], references: [id])
+  enquiryDate          DateTime        @default(now())
+  validUntil           DateTime
+  status               QuotationStatus @default(DRAFT)
+  /// Resolved whole-order value discount % at quote time (spec S25 rule 3), applied to the
+  /// taxable subtotal before GST. Snapshotted so a later tier change never rewrites the quote.
+  orderDiscountPct     Decimal         @default(0) @db.Decimal(5, 2)
+  lostReason           String?
+  /// Set once when the quote is converted to a sales order — re-conversion is refused.
+  convertedSoId        String?         @unique
+  convertedSo          SalesOrder?     @relation("QuotationConversion", fields: [convertedSoId], references: [id])
+  marginOverrideById   String? // ADMIN/ACCOUNTS who cleared a below-floor margin warning
+  marginOverrideReason String?
+  createdById          String?
+  createdAt            DateTime        @default(now())
+
+  lines QuotationLine[]
+
+  @@unique([companyId, docNo])
+  @@index([companyId])
+  @@index([companyId, status])
+  @@index([customerId])
+}
+
+/// One quoted line. `ratePaise` is the agreed price per billed unit; `unitCostPaise` is a
+/// snapshot of the item's cost at quote time (S21) so the margin shown is stable.
+model QuotationLine {
+  id            String    @id @default(cuid())
+  quotationId   String
+  quotation     Quotation @relation(fields: [quotationId], references: [id], onDelete: Cascade)
+  itemId        String
+  item          Item      @relation(fields: [itemId], references: [id])
+  qtyQuoted     Decimal   @db.Decimal(14, 4)
+  uom           String
+  ratePaise     BigInt
+  gstRatePct    Decimal   @db.Decimal(5, 2)
+  unitCostPaise BigInt    @default(0)
+
+  @@index([quotationId])
+  @@index([itemId])
+}
+
+/// A customer- or tier-scoped agreed price list, valid over a window (spec S25). Resolution
+/// precedence is CUSTOMER > TIER > item list price; within a contract the highest qty slab the
+/// order clears wins. Cancel-not-supersede: a rate change is a new contract.
+model PriceContract {
+  id          String              @id @default(cuid())
+  companyId   String
+  company     Company             @relation(fields: [companyId], references: [id])
+  docNo       String // PC/FY/seq
+  scope       PriceScope
+  customerId  String? // set when scope = CUSTOMER
+  customer    Customer?           @relation(fields: [customerId], references: [id])
+  tier        CustomerTier? // set when scope = TIER
+  validFrom   DateTime            @default(now())
+  validUntil  DateTime?
+  status      PriceContractStatus @default(ACTIVE)
+  createdById String?
+  createdAt   DateTime            @default(now())
+
+  lines PriceContractLine[]
+
+  @@unique([companyId, docNo])
+  @@index([companyId])
+  @@index([companyId, scope, status])
+  @@index([customerId])
+}
+
+/// One agreed rate for an item, from `minQty` upward (a quantity slab). The resolver picks the
+/// highest `minQty` band the order quantity clears.
+model PriceContractLine {
+  id              String        @id @default(cuid())
+  priceContractId String
+  priceContract   PriceContract @relation(fields: [priceContractId], references: [id], onDelete: Cascade)
+  itemId          String
+  item            Item          @relation(fields: [itemId], references: [id])
+  minQty          Decimal       @default(0) @db.Decimal(14, 4)
+  ratePaise       BigInt
+  gstRatePct      Decimal       @db.Decimal(5, 2)
+
+  @@index([priceContractId])
+  @@index([itemId])
+}
+
+/// A whole-order value discount tier (spec S25 rule 3) — the second, orthogonal pricing axis.
+/// Above `minOrderValuePaise` (pre-tax subtotal), `discountPct` comes off the taxable subtotal
+/// before GST. Same specificity order as contracts: CUSTOMER before TIER.
+model ValueDiscountTier {
+  id                 String              @id @default(cuid())
+  companyId          String
+  company            Company             @relation(fields: [companyId], references: [id])
+  scope              PriceScope
+  customerId         String? // set when scope = CUSTOMER
+  customer           Customer?           @relation(fields: [customerId], references: [id])
+  tier               CustomerTier? // set when scope = TIER
+  minOrderValuePaise BigInt
+  discountPct        Decimal             @db.Decimal(5, 2)
+  validFrom          DateTime            @default(now())
+  validUntil         DateTime?
+  status             PriceContractStatus @default(ACTIVE)
+  createdById        String?
+  createdAt          DateTime            @default(now())
+
+  @@index([companyId])
+  @@index([companyId, scope, status])
+  @@index([customerId])
 }
