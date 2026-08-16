@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { sellThrough, avgDaysCover, valuation, deadStock, pendingOrderValue, lastSaleInfo, productionPlan } from '../metrics';
+import { sellThrough, avgDaysCover, valuation, deadStock, pendingOrderValue, lastSaleInfo, productionPlan, soldViaOrders } from '../metrics';
 import { effWithHistory } from '../logic';
 import type { CatalogSku, EffSku, Order, PeriodSnapshot, Thresholds } from '../types';
 
@@ -94,6 +94,21 @@ describe('productionPlan', () => {
   });
   it('replenishes negative stock', () => {
     expect(productionPlan([e({ uid: 'n', demand: 100, reorder: 50, closing: -20 })])[0].make).toBe(170);
+  });
+});
+
+describe('soldViaOrders', () => {
+  const orders: Order[] = [
+    { id: 'o1', no: 1, dealer: 'D', date: '2026-04-10', createdAt: 0, items: [{ uid: 'a', line: 'L', model: 'A', colour: 'c', qtyOrdered: 10, qtyFulfilled: 8 }] },
+    { id: 'o2', no: 2, dealer: 'D', date: '2026-05-02', createdAt: 0, items: [{ uid: 'a', line: 'L', model: 'A', colour: 'c', qtyOrdered: 5, qtyFulfilled: 5 }] },
+    { id: 'o3', no: 3, dealer: 'D', date: '2026-04-20', createdAt: 0, cancelled: true, items: [{ uid: 'a', line: 'L', model: 'A', colour: 'c', qtyOrdered: 5, qtyFulfilled: 5 }] },
+  ];
+  it('sums fulfilled units, excluding cancelled', () => {
+    expect(soldViaOrders(orders)).toBe(13); // 8 + 5 (o3 cancelled)
+  });
+  it('filters to a month when a period key is given', () => {
+    expect(soldViaOrders(orders, '2026-04')).toBe(8);
+    expect(soldViaOrders(orders, '2026-05')).toBe(5);
   });
 });
 

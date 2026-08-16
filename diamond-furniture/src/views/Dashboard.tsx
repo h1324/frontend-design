@@ -6,13 +6,15 @@ import { BarList } from '../components/BarList';
 import { useApp } from '../store/store';
 import { fmt } from '../domain/format';
 import { kpis, lineSummaries, statusCounts } from '../domain/logic';
-import { valuation } from '../domain/metrics';
+import { valuation, soldViaOrders } from '../domain/metrics';
 import { STATUS_META, STATUS_ORDER, IDLE_META } from '../domain/status';
 import type { View } from './types';
 
 export function Dashboard({ setView }: { setView: (v: View) => void }) {
-  const { effs, dataset, prodLog, period } = useApp();
+  const { effs, dataset, prodLog, period, orders, currentPeriodKey } = useApp();
   const k = kpis(effs);
+  // Sold, the second way: units dispatched through orders dated in this month.
+  const dispatched = soldViaOrders(orders, currentPeriodKey);
   const lines = lineSummaries(effs);
   const machinesFresh = dataset?.machines.reduce((a, m) => a + m.fresh, 0) ?? 0;
   const loggedTotal = prodLog.reduce((a, l) => a + l.qty, 0);
@@ -89,6 +91,24 @@ export function Dashboard({ setView }: { setView: (v: View) => void }) {
             ))}
           </div>
         </Blueprint>
+
+        {orders.length > 0 && (() => {
+          const diff = k.totalSold - dispatched;
+          const off = k.totalSold > 0 && Math.abs(diff) / k.totalSold > 0.05;
+          return (
+            <Blueprint className="card" style={{ gridColumn: '1/-1', gap: 10 }}>
+              <h4 style={{ margin: 0 }}>Sales cross-check <span className="text-muted" style={{ fontSize: 12, fontWeight: 400 }}>· {period}</span></h4>
+              <div style={{ display: 'flex', gap: 28, flexWrap: 'wrap' }}>
+                <div><div className="kpi-value" style={{ fontSize: 26 }}>{fmt(k.totalSold)}</div><span className="card-meta" style={{ margin: 0 }}>Sold — from the sheet</span></div>
+                <div><div className="kpi-value" style={{ fontSize: 26 }}>{fmt(dispatched)}</div><span className="card-meta" style={{ margin: 0 }}>Dispatched — from orders this month</span></div>
+                <div><div className="kpi-value" style={{ fontSize: 26, color: off ? '#b5852a' : '#4e8055' }}>{diff >= 0 ? '' : '+'}{fmt(Math.abs(diff))}</div><span className="card-meta" style={{ margin: 0 }}>{off ? 'gap to reconcile' : 'reconciles'}</span></div>
+              </div>
+              <p className="text-muted" style={{ margin: 0, fontSize: 12, lineHeight: 1.5 }}>
+                Two independent counts of what left the floor. They line up only once every sale is also recorded as an order — a persistent gap points to sales not entered as orders (or vice-versa).
+              </p>
+            </Blueprint>
+          );
+        })()}
 
         <Blueprint className="card" style={{ gap: 14 }}>
           <h4 style={{ margin: 0 }}>Stock on hand by product line</h4>

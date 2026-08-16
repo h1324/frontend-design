@@ -1,6 +1,6 @@
 import {
   collection, doc, onSnapshot, setDoc, getDoc, getDocs, deleteDoc, addDoc, serverTimestamp,
-  runTransaction, increment,
+  runTransaction,
 } from 'firebase/firestore';
 import type {
   CatalogSku, Machine, MonthRow, Order, OrderItem, PeriodSnapshot, ProdLogEntry, Thresholds,
@@ -232,13 +232,13 @@ export class FirebaseRepo implements Repo {
     await this.writeAudit(audit);
   }
 
-  async fulfilLine(orderId: string, itemIndex: number, qty: number, periodKey: string, audit: AuditEntry): Promise<void> {
+  async fulfilLine(orderId: string, itemIndex: number, qty: number, _periodKey: string, audit: AuditEntry): Promise<void> {
     const d = this.db();
     const orderRef = doc(d, 'orders', orderId);
-    // Transaction: read the order, advance the line, and adjust stock atomically.
-    // A plain read-then-write could let two people fulfilling different lines of
-    // the same order overwrite each other's items array; the transaction retries
-    // on conflict so no dispatch is lost.
+    // Orders are their own ledger: fulfilling advances the order line only and
+    // never edits the imported month numbers, so "Sold (sheet)" and
+    // "Dispatched (orders)" remain independent for cross-checking. The
+    // transaction still guards against two people fulfilling the same order.
     let did = 0;
     await runTransaction(d, async (tx) => {
       const snap = await tx.get(orderRef);
@@ -250,11 +250,6 @@ export class FirebaseRepo implements Repo {
       did = dispatched;
       const items = order.items.map((it, i) => (i === itemIndex ? { ...it, qtyFulfilled: it.qtyFulfilled + dispatched } : it));
       tx.set(orderRef, { items }, { merge: true });
-      tx.set(
-        doc(d, 'periods', periodKey),
-        { rows: { [safeDocId(item.uid)]: { uid: item.uid, c: increment(-dispatched), s: increment(dispatched) } } },
-        { merge: true },
-      );
     });
     if (did > 0) await this.writeAudit(audit);
   }

@@ -154,27 +154,17 @@ export class DemoRepo implements Repo {
     this.commit({ orders: [order, ...(this.s.orders ?? [])], orderSeq: seq + 1 }, audit);
   }
 
-  async fulfilLine(orderId: string, itemIndex: number, qty: number, periodKey: string, audit: AuditEntry): Promise<void> {
+  async fulfilLine(orderId: string, itemIndex: number, qty: number, _periodKey: string, audit: AuditEntry): Promise<void> {
+    // Orders are their own ledger — fulfilling advances the order line only and
+    // never edits the imported month numbers, so "Sold (sheet)" and
+    // "Dispatched (orders)" stay independent and can be cross-checked.
     const orders = (this.s.orders ?? []).map((o) => {
       if (o.id !== orderId) return o;
       const items = o.items.map((it, i) =>
         i === itemIndex ? { ...it, qtyFulfilled: Math.min(it.qtyOrdered, it.qtyFulfilled + qty) } : it);
       return { ...o, items };
     });
-    const target = (this.s.orders ?? []).find((o) => o.id === orderId);
-    const item = target?.items[itemIndex];
-    let periods = this.s.periods;
-    if (item) {
-      const dispatched = Math.min(qty, item.qtyOrdered - item.qtyFulfilled);
-      periods = this.s.periods.map((p) => {
-        if (p.key !== periodKey) return p;
-        const rows = p.rows.map((r) =>
-          r.uid === item.uid ? { ...r, closing: r.closing - dispatched, sold: r.sold + dispatched } : r);
-        if (!rows.some((r) => r.uid === item.uid)) rows.push({ uid: item.uid, opening: 0, sold: dispatched, closing: -dispatched });
-        return { ...p, rows };
-      });
-    }
-    this.commit({ orders, periods }, audit);
+    this.commit({ orders }, audit);
   }
 
   async cancelOrder(orderId: string, audit: AuditEntry): Promise<void> {

@@ -228,13 +228,12 @@ export function AppProvider({
 
   const fulfilLine = useCallback<AppContextValue['fulfilLine']>(
     async (orderId, itemIndex, qty) => {
-      // Always dispatch into the latest month — not the month being viewed — so
-      // shipping an order never rewrites a past month's stock by accident.
-      const target = state.latestPeriodKey || currentPeriodKey;
-      await repo.fulfilLine(orderId, itemIndex, qty, target,
-        mkAudit('fulfil-order', orderId, `dispatched ${qty} (into ${latestPeriodLabel})`));
+      // Orders are a separate ledger — fulfilling advances the order only and
+      // does not touch the imported month numbers (periodKey kept for the API).
+      await repo.fulfilLine(orderId, itemIndex, qty, state.latestPeriodKey || currentPeriodKey,
+        mkAudit('fulfil-order', orderId, `dispatched ${qty}`));
     },
-    [repo, mkAudit, state.latestPeriodKey, currentPeriodKey, latestPeriodLabel],
+    [repo, mkAudit, state.latestPeriodKey, currentPeriodKey],
   );
 
   const cancelOrder = useCallback<AppContextValue['cancelOrder']>(

@@ -95,6 +95,22 @@ export function productionPlan(effs: EffSku[]): PlanRow[] {
     .sort((a, b) => b.make - a.make);
 }
 
+/**
+ * Units dispatched through the order book — the second, independent way to count
+ * sales (the first is the imported "Sold" column). If `periodKey` (YYYY-MM) is
+ * given, only orders dated in that month count, so it lines up with a month's
+ * sheet figure. Cancelled orders are excluded; qty is capped at what was ordered.
+ */
+export function soldViaOrders(orders: Order[], periodKey?: string): number {
+  let total = 0;
+  for (const o of orders) {
+    if (o.cancelled) continue;
+    if (periodKey && !(o.date || '').startsWith(periodKey)) continue;
+    for (const it of o.items) total += Math.min(it.qtyFulfilled, it.qtyOrdered);
+  }
+  return total;
+}
+
 /** ₹ value of units still to dispatch across open/partial orders. */
 export function pendingOrderValue(orders: Order[], priceByUid: Map<string, number>): number {
   let total = 0;
