@@ -13,7 +13,9 @@ const PAGE = 40;
 const IDLE_FILTER = 'Idle stock (no sales)';
 
 export function Inventory({ onEdit }: { onEdit: (s: EffSku) => void }) {
-  const { effs, dataset, canEdit, period, periods, currentPeriodKey } = useApp();
+  const { effs, dataset, canEdit, period, periods, currentPeriodKey, isOverall, latestPeriodKey } = useApp();
+  // 'Last sold' needs a real month reference; in the overall view use the latest.
+  const refKey = isOverall ? latestPeriodKey : currentPeriodKey;
   const [q, setQ] = useState('');
   const [lineFilter, setLineFilter] = useState('All lines');
   const [statusFilter, setStatusFilter] = useState('All statuses');
@@ -43,7 +45,7 @@ export function Inventory({ onEdit }: { onEdit: (s: EffSku) => void }) {
       `diamond_inventory_${period.replace(/\s+/g, '_').toLowerCase()}.csv`,
       ['Line', 'Model', 'Colour', 'Stock', 'Sold', 'MonthsCover', 'Reorder', 'Status', 'LastSold', 'Note'],
       effs.map((s) => {
-        const last = lastSaleInfo(s.uid ?? s.id, periods, currentPeriodKey);
+        const last = lastSaleInfo(s.uid ?? s.id, periods, refKey);
         return [s.line, s.model, s.colour, s.closing, s.sold, s.cover >= 999 ? '' : s.cover.toFixed(1), s.reorder, s.status, last.lastLabel ?? 'never', s.note];
       }),
     );
@@ -92,7 +94,7 @@ export function Inventory({ onEdit }: { onEdit: (s: EffSku) => void }) {
           </thead>
           <tbody>
             {pageRows.map((s) => {
-              const last = lastSaleInfo(s.uid ?? s.id, periods, currentPeriodKey);
+              const last = lastSaleInfo(s.uid ?? s.id, periods, refKey);
               const idleFlag = last.monthsSince == null || last.monthsSince >= 3;
               return (
               <tr key={s.id}>

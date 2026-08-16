@@ -11,10 +11,11 @@ import { STATUS_META, STATUS_ORDER, IDLE_META } from '../domain/status';
 import type { View } from './types';
 
 export function Dashboard({ setView }: { setView: (v: View) => void }) {
-  const { effs, dataset, prodLog, period, orders, currentPeriodKey } = useApp();
+  const { effs, dataset, prodLog, period, orders, currentPeriodKey, isOverall } = useApp();
   const k = kpis(effs);
-  // Sold, the second way: units dispatched through orders dated in this month.
-  const dispatched = soldViaOrders(orders, currentPeriodKey);
+  // Sold, the second way: units dispatched through orders — this month, or all
+  // orders when the overall view is active.
+  const dispatched = soldViaOrders(orders, isOverall ? undefined : currentPeriodKey);
   const lines = lineSummaries(effs);
   const machinesFresh = dataset?.machines.reduce((a, m) => a + m.fresh, 0) ?? 0;
   const loggedTotal = prodLog.reduce((a, l) => a + l.qty, 0);
@@ -58,9 +59,11 @@ export function Dashboard({ setView }: { setView: (v: View) => void }) {
   return (
     <section>
       <div style={{ marginBottom: 18 }}>
-        <h1 style={{ margin: 0, fontSize: 34 }}>Dashboard</h1>
+        <h1 style={{ margin: 0, fontSize: 34 }}>Dashboard {isOverall && <span style={{ fontSize: 16, color: 'var(--color-accent-700)' }}>· Overall</span>}</h1>
         <p className="text-muted" style={{ margin: '2px 0 0', fontSize: 14 }}>
-          Consolidated from your production file · {fmt(effs.length)} SKUs across {dataset?.lines.length ?? 0} lines
+          {isOverall
+            ? `All months combined · stock is the latest month, sold & produced are summed · ${fmt(effs.length)} SKUs`
+            : `Consolidated from your production file · ${fmt(effs.length)} SKUs across ${dataset?.lines.length ?? 0} lines`}
         </p>
       </div>
 

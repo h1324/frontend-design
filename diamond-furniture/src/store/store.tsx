@@ -5,7 +5,7 @@ import {
 import type {
   CatalogSku, EffSku, Machine, Order, OrderItem, PeriodSnapshot, ProdLogEntry, Role, Thresholds, ParsedWorkbook,
 } from '../domain/types';
-import { effWithHistory, normalizeDataset } from '../domain/logic';
+import { effWithHistory, effOverall, normalizeDataset } from '../domain/logic';
 import { periodKeyFromLabel, periodLabel, trailingPeriods, financialYearOf } from '../domain/period';
 import {
   DEFAULT_THRESHOLDS, type AuditEntry, type FyOpening, type Identity, type ImportPayload,
@@ -13,6 +13,9 @@ import {
 } from './types';
 
 export type Mode = 'demo' | 'firebase';
+
+/** Sentinel period key for the "all months / overall" aggregate view. */
+export const OVERALL = '__all__';
 
 interface AppContextValue {
   loading: boolean;
@@ -22,6 +25,7 @@ interface AppContextValue {
   periods: PeriodSnapshot[];
   periodKeys: string[];        // newest → oldest, for the selector
   currentPeriodKey: string;
+  isOverall: boolean;
   setPeriod: (key: string) => void;
   latestPeriodKey: string;
   latestPeriodLabel: string;
@@ -92,13 +96,17 @@ export function AppProvider({
     [state.periods],
   );
 
-  // Keep the local selection valid: default to the latest month.
+  // Keep the local selection valid: default to the latest month. 'Overall' is
+  // always allowed once at least one month exists.
   useEffect(() => {
     if (!periodKeys.length) { if (selectedKey) setSelectedKey(''); return; }
+    if (selectedKey === OVERALL) return;
     if (!periodKeys.includes(selectedKey)) setSelectedKey(state.latestPeriodKey || periodKeys[0]);
   }, [periodKeys, state.latestPeriodKey, selectedKey]);
 
-  const currentPeriodKey = periodKeys.includes(selectedKey) ? selectedKey : (state.latestPeriodKey || periodKeys[0] || '');
+  const isOverall = selectedKey === OVERALL && periodKeys.length > 0;
+  const currentPeriodKey = isOverall ? OVERALL
+    : (periodKeys.includes(selectedKey) ? selectedKey : (state.latestPeriodKey || periodKeys[0] || ''));
 
   const role: Role = mode === 'firebase' ? identity?.role ?? 'viewer' : state.role;
   const uid = mode === 'firebase' ? identity?.uid ?? '' : 'demo';
@@ -112,13 +120,14 @@ export function AppProvider({
   );
 
   const effs = useMemo(() => {
+    if (isOverall) return effOverall(state.catalog, state.periods, state.fyOpening?.byUid ?? {}, state.thresholds);
     if (!currentPeriodKey) return [];
     const window = trailingPeriods(currentPeriodKey, 3);
     const trailing = window
       .map((k) => state.periods.find((p) => p.key === k))
       .filter((p): p is PeriodSnapshot => !!p);
     return effWithHistory(state.catalog, currentSnapshot, trailing, {}, state.thresholds);
-  }, [state.catalog, state.periods, currentSnapshot, currentPeriodKey, state.thresholds]);
+  }, [isOverall, state.catalog, state.periods, currentSnapshot, currentPeriodKey, state.thresholds, state.fyOpening]);
 
   const dataset = useMemo(
     () => (state.catalog.length || currentSnapshot
@@ -127,8 +136,12 @@ export function AppProvider({
     [state.catalog, currentSnapshot],
   );
 
-  const periodLabelText = currentSnapshot?.label ?? (currentPeriodKey ? periodLabel(currentPeriodKey) : '—');
-  const financialYearLabel = currentPeriodKey ? financialYearOf(currentPeriodKey).label : '';
+  const periodLabelText = isOverall
+    ? `All months (${periodKeys.length})`
+    : currentSnapshot?.label ?? (currentPeriodKey ? periodLabel(currentPeriodKey) : '—');
+  const financialYearLabel = isOverall
+    ? (state.latestPeriodKey ? financialYearOf(state.latestPeriodKey).label : '')
+    : (currentPeriodKey ? financialYearOf(currentPeriodKey).label : '');
 
   // The latest month is where order dispatch always lands — an operational action
   // acts on "now", never on whichever historical month happens to be on screen.
@@ -271,7 +284,7 @@ export function AppProvider({
 
   const value: AppContextValue = {
     loading, mode,
-    catalog: state.catalog, periods: state.periods, periodKeys, currentPeriodKey,
+    catalog: state.catalog, periods: state.periods, periodKeys, currentPeriodKey, isOverall,
     setPeriod: setSelectedKey, latestPeriodKey: state.latestPeriodKey, latestPeriodLabel, latestStock,
     financialYearLabel,
     dataset, effs, prodLog: state.prodLog, orders: state.orders, thresholds: state.thresholds,

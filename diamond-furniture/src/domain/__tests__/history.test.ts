@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { effWithHistory, periodTotals, lineTrend, skuHistory } from '../logic';
+import { effWithHistory, effOverall, periodTotals, lineTrend, skuHistory } from '../logic';
 import type { CatalogSku, PeriodSnapshot, Thresholds } from '../types';
 
 const T: Thresholds = { lowMonths: 0.5, overMonths: 3, byLine: {} };
@@ -49,6 +49,25 @@ describe('effWithHistory — 3-month demand forecast', () => {
     const m4 = snap('2026-04', 0, 200);
     const [e] = effWithHistory(catalog, m4, [m3, m4], {}, T);
     expect(e.demand).toBe(20);     // (40 + 0) / 2
+  });
+});
+
+describe('effOverall — all-months aggregate', () => {
+  const m2 = snap('2026-02', 40, 300);
+  const m3 = snap('2026-03', 20, 260);
+  it('stock = latest close, sold = cumulative, produced from FY opening', () => {
+    // FY opening 500. Sold 40+20=60. Latest closing 260. Produced = 260+60-500 = -180.
+    const [e] = effOverall(catalog, [m2, m3], { 'XUV||m||c': 500 }, T);
+    expect(e.closing).toBe(260);          // latest month's stock
+    expect(e.sold).toBe(60);              // summed across months
+    expect(e.opening).toBe(500);          // FY baseline
+    expect(e.produced).toBe(-180);        // 260 + 60 − 500
+    expect(e.demand).toBe(30);            // 60 sold / 2 months present
+  });
+  it('falls back to earliest month opening when no FY baseline', () => {
+    const [e] = effOverall(catalog, [m2, m3], {}, T);
+    expect(e.opening).toBe(0);            // earliest month (m2) opening is 0 in this fixture
+    expect(e.produced).toBe(260 + 60 - 0);
   });
 });
 

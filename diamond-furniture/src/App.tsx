@@ -69,6 +69,7 @@ export function App({ onSignOut }: { onSignOut?: () => void }) {
                 style={{ minHeight: 32, padding: '2px 8px', fontSize: 13, minWidth: 130 }}
                 title="Choose which month to view"
               >
+                {app.periodKeys.length > 1 && <option value="__all__">All months (overall)</option>}
                 {app.periodKeys.map((k) => (
                   <option key={k} value={k}>{periodLabel(k)}{k === app.latestPeriodKey ? ' (latest)' : ''}</option>
                 ))}

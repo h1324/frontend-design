@@ -164,6 +164,44 @@ export function effWithHistory(
   });
 }
 
+/**
+ * "Overall / all months" effective SKUs. Stock is a snapshot (latest month's
+ * closing); sold is cumulative across every month; opening is the financial-year
+ * baseline (or the earliest month's opening if none), so produced = closing +
+ * total sold − opening is the whole-period production. Demand for status/cover is
+ * the average monthly sold across the months a SKU appears in.
+ */
+export function effOverall(
+  catalog: CatalogSku[],
+  periods: PeriodSnapshot[],
+  fyByUid: Record<string, number>,
+  thresholds: Thresholds,
+): EffSku[] {
+  const sorted = [...periods].sort((a, b) => (a.key < b.key ? -1 : 1));
+  const latest = sorted[sorted.length - 1];
+  const earliest = sorted[0];
+  const latestRows = new Map((latest?.rows ?? []).map((r) => [r.uid, r]));
+  const earliestRows = new Map((earliest?.rows ?? []).map((r) => [r.uid, r]));
+  const soldTotal = new Map<string, number>();
+  const monthsPresent = new Map<string, number>();
+  for (const p of sorted) for (const r of p.rows) {
+    soldTotal.set(r.uid, (soldTotal.get(r.uid) ?? 0) + r.sold);
+    monthsPresent.set(r.uid, (monthsPresent.get(r.uid) ?? 0) + 1);
+  }
+  return catalog.map((c) => {
+    const { lowMonths, overMonths } = resolveThreshold(thresholds, c.line);
+    const closing = latestRows.get(c.uid)?.closing ?? 0;
+    const sold = soldTotal.get(c.uid) ?? 0;
+    const opening = fyByUid[c.uid] ?? earliestRows.get(c.uid)?.opening ?? 0;
+    const months = monthsPresent.get(c.uid) || sorted.length || 1;
+    const demand = sold / months; // average monthly demand across the year
+    return deriveEff(
+      { uid: c.uid, line: c.line, model: c.model, colour: c.colour, opening, sold, closing },
+      demand, c.reorder, c.note || '', c.price ?? 0, lowMonths, overMonths,
+    );
+  });
+}
+
 /** Split a single-month dataset (+ overrides) into the permanent catalog. */
 export function catalogFromDataset(dataset: Dataset, ov: Overrides = {}): CatalogSku[] {
   const norm = normalizeDataset(dataset);
