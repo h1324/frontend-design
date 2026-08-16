@@ -19,11 +19,14 @@ export function Dashboard({ setView }: { setView: (v: View) => void }) {
 
   const val = valuation(effs);
   const inr = (n: number) => '₹' + Math.round(n).toLocaleString('en-IN');
+  // Machine-sheet fresh output, kept only as a cross-check against the reliable
+  // stock-math produced (the machine tabs over-count via subtotal rows).
+  const machineFresh = machinesFresh + loggedTotal;
   const kpiCards = [
     { label: 'Units in stock', value: fmt(k.totalStock), sub: `across ${fmt(effs.length)} SKUs`, color: 'var(--color-text)' },
     { label: 'Sold this period', value: fmt(k.totalSold), sub: `${period} dispatches`, color: 'var(--color-text)' },
     { label: 'Urgent alerts', value: fmt(k.urgent), sub: `${k.negativeCount} negative · ${k.lowCount} low`, color: k.urgent ? STATUS_META.Negative.accent : 'var(--color-text)' },
-    { label: 'Fresh produced', value: fmt(machinesFresh + loggedTotal), sub: `${dataset?.machines.length ?? 0} machines logged`, color: 'var(--color-accent-700)' },
+    { label: 'Produced this period', value: fmt(k.totalProduced), sub: 'from stock movement', color: 'var(--color-accent-700)' },
     ...(val.hasPrice ? [{ label: 'Stock value', value: inr(val.stockValue), sub: `${inr(val.overstockValue)} in overstock`, color: 'var(--color-accent-700)' }] : []),
   ];
 
@@ -114,6 +117,25 @@ export function Dashboard({ setView }: { setView: (v: View) => void }) {
               </BarChart>
             </ResponsiveContainer>
           </div>
+          {machineFresh > 0 && (() => {
+            const gap = machineFresh - k.totalProduced;
+            const off = k.totalProduced > 0 && Math.abs(gap) / k.totalProduced > 0.1;
+            return (
+              <div style={{ borderTop: '1px solid var(--color-divider)', paddingTop: 10, fontSize: 12, lineHeight: 1.5 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span className="text-muted">Machine sheet total</span><span style={{ fontVariantNumeric: 'tabular-nums' }}>{fmt(machineFresh)}</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span className="text-muted">Produced (stock movement)</span><span style={{ fontVariantNumeric: 'tabular-nums' }}>{fmt(k.totalProduced)}</span>
+                </div>
+                <p style={{ margin: '6px 0 0', color: off ? '#b5852a' : 'var(--color-neutral-600)' }}>
+                  {off
+                    ? `⚠ These differ by ${fmt(Math.abs(gap))}. The machine tabs contain subtotal rows and a Day/Night split, so treat the stock-movement figure as the reliable one.`
+                    : 'These reconcile — good.'}
+                </p>
+              </div>
+            );
+          })()}
         </Blueprint>
 
         <Blueprint className="card" style={{ gap: 14 }}>

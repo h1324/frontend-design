@@ -155,6 +155,7 @@ describe('aggregations', () => {
     const k = kpis(e);
     expect(k.totalStock).toBe(60);      // negative row contributes 0
     expect(k.totalSold).toBe(40);
+    expect(k.totalProduced).toBe(-5);   // Σ(closing+sold−opening): (60+40−100)+(−5+0−0)
     expect(k.negativeCount).toBe(1);
     expect(k.urgent).toBe(k.negativeCount + k.lowCount);
   });

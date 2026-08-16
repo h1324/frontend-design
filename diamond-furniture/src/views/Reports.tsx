@@ -47,7 +47,7 @@ export function Reports() {
     { label: 'Units in stock', value: fmt(k.totalStock), sub: `across ${fmt(effs.length)} SKUs`, color: 'var(--color-text)' },
     { label: 'Sold this period', value: fmt(k.totalSold), sub: `${period} dispatches`, color: 'var(--color-text)' },
     { label: 'Urgent alerts', value: fmt(k.urgent), sub: `${k.negativeCount} negative · ${k.lowCount} low`, color: k.urgent ? STATUS_META.Negative.accent : 'var(--color-text)' },
-    { label: 'Fresh produced', value: fmt(machinesFresh + loggedTotal), sub: `${dataset?.machines.length ?? 0} machines logged`, color: 'var(--color-accent-700)' },
+    { label: 'Produced this period', value: fmt(k.totalProduced), sub: `machine sheet: ${fmt(machinesFresh + loggedTotal)}`, color: 'var(--color-accent-700)' },
   ];
   const slug = period.replace(/\s+/g, '_').toLowerCase();
 

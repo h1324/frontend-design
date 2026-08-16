@@ -280,6 +280,9 @@ export function statusCounts(effs: EffSku[]): Record<Status, number> {
 export interface Kpis {
   totalStock: number;
   totalSold: number;
+  /** Produced this period by stock conservation: Σ (closing + sold − opening).
+   *  This is the reliable produced figure — the machine tabs over-count. */
+  totalProduced: number;
   negativeCount: number;
   lowCount: number;
   overstockCount: number;
@@ -295,6 +298,7 @@ export function kpis(effs: EffSku[]): Kpis {
   return {
     totalStock: effs.reduce((a, s) => a + Math.max(0, s.closing), 0),
     totalSold: effs.reduce((a, s) => a + s.sold, 0),
+    totalProduced: effs.reduce((a, s) => a + s.produced, 0),
     negativeCount: c.Negative,
     lowCount: c.Low,
     overstockCount: c.Overstock,
