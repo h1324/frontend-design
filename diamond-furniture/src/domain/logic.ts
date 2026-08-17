@@ -240,7 +240,7 @@ export function periodTotals(snapshots: PeriodSnapshot[]): PeriodTotals[] {
       key: p.key,
       label: p.label,
       sold: p.rows.reduce((a, r) => a + r.sold, 0),
-      stock: p.rows.reduce((a, r) => a + Math.max(0, r.closing), 0),
+      stock: p.rows.reduce((a, r) => a + r.closing, 0), // net, matches Category Summary
       fresh: p.machines.reduce((a, m) => a + m.fresh, 0),
     }));
 }
@@ -259,7 +259,7 @@ export function lineTrend(
       return {
         key: p.key, label: p.label,
         sold: rows.reduce((a, r) => a + r.sold, 0),
-        stock: rows.reduce((a, r) => a + Math.max(0, r.closing), 0),
+        stock: rows.reduce((a, r) => a + r.closing, 0), // net, matches Category Summary
         fresh: 0,
       };
     });
@@ -283,8 +283,9 @@ export interface LineSummary {
   name: string;
   opening: number;
   sold: number;
-  stock: number;   // Σ max(0, closing)
-  produced: number; // Σ max(0, produced)
+  stock: number;   // Σ closing (NET — includes negative-stock rows, matching the
+                   // client's Category Summary; negatives are surfaced separately)
+  produced: number; // Σ produced (net conservation)
   count: number;
   flagged: number;  // negative + low
 }
@@ -299,8 +300,8 @@ export function lineSummaries(effs: EffSku[]): LineSummary[] {
     }
     L.opening += s.opening;
     L.sold += s.sold;
-    L.stock += Math.max(0, s.closing);
-    L.produced += Math.max(0, s.produced);
+    L.stock += s.closing;
+    L.produced += s.produced;
     L.count += 1;
     if (s.status === 'Negative' || s.status === 'Low') L.flagged += 1;
   }
@@ -316,7 +317,7 @@ export function statusCounts(effs: EffSku[]): Record<Status, number> {
 }
 
 export interface Kpis {
-  totalStock: number;
+  totalStock: number;  // NET closing (Σ closing) — reconciles with Category Summary
   totalSold: number;
   /** Produced this period by stock conservation: Σ (closing + sold − opening).
    *  This is the reliable produced figure — the machine tabs over-count. */
@@ -334,7 +335,9 @@ export function kpis(effs: EffSku[]): Kpis {
   const c = statusCounts(effs);
   const idle = effs.filter((s) => s.idle);
   return {
-    totalStock: effs.reduce((a, s) => a + Math.max(0, s.closing), 0),
+    // NET closing (includes the negative-stock rows), so the headline reconciles
+    // with the client's Category Summary. Negative stock is flagged separately.
+    totalStock: effs.reduce((a, s) => a + s.closing, 0),
     totalSold: effs.reduce((a, s) => a + s.sold, 0),
     totalProduced: effs.reduce((a, s) => a + s.produced, 0),
     negativeCount: c.Negative,

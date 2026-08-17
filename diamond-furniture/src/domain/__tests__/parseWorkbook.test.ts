@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { parseWorkbook } from '../parseWorkbook';
 import { applyParsedToDataset, mergeParsed, preserveOverrides, summarizeParse } from '../applyImport';
-import { skuId, eff, normalizeDataset, statusCounts } from '../logic';
+import { skuId, eff, normalizeDataset, statusCounts, kpis } from '../logic';
 import { DEFAULT_THRESHOLDS } from '../../store/types';
 import type { Dataset, ParsedWorkbook } from '../types';
 import dataJson from '../../data/data.json';
@@ -96,6 +96,17 @@ describe('parseWorkbook — Production machine tabs', () => {
     expect(total).toBe(266088);
     expect(parsed.machines.find((m) => m.name === 'M-1')!.fresh).toBe(37992);
     expect(total).toBeGreaterThan(68838 * 3); // not the old undercount
+  });
+});
+
+describe('totals reconcile with the Master workbook Category Summary', () => {
+  it('net stock and sold match the client totals (392,311 · 445,655)', async () => {
+    const parsed = await parseWorkbook(fixture(MASTER));
+    const ds = normalizeDataset({ skus: parsed.skus, lines: parsed.lines, machines: [] });
+    const k = kpis(eff(ds, {}, DEFAULT_THRESHOLDS));
+    // Category Summary Σ Total Closing Stock = 392,310.9 → 392,311 in whole pieces.
+    expect(k.totalStock).toBe(392311); // NET — must NOT clamp negatives (would give 398,671)
+    expect(k.totalSold).toBe(445655);
   });
 });
 

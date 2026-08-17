@@ -18,7 +18,7 @@ export function SkuHistoryDialog({ sku, onClose }: { sku: EffSku; onClose: () =>
   const uid = sku.uid ?? sku.id;
   const hist = skuHistory(uid, periods);
   const last = lastSaleInfo(uid, periods, currentPeriodKey);
-  const data = hist.map((h) => ({ name: shortLabel(h.label), Stock: Math.max(0, h.closing), Sold: h.sold }));
+  const data = hist.map((h) => ({ name: shortLabel(h.label), Stock: h.closing, Sold: h.sold }));
 
   return (
     <div className="dialog-backdrop no-print" onClick={onClose}>

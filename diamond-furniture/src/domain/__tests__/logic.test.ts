@@ -151,9 +151,9 @@ describe('aggregations', () => {
     ],
   };
   const e = eff(ds, {}, T());
-  it('kpis sum stock as Σ max(0, closing) and count urgents', () => {
+  it('kpis sum stock as NET Σ closing (reconciles with Category Summary) and count urgents', () => {
     const k = kpis(e);
-    expect(k.totalStock).toBe(60);      // negative row contributes 0
+    expect(k.totalStock).toBe(55);      // 60 + (−5): negative row nets out, not clamped
     expect(k.totalSold).toBe(40);
     expect(k.totalProduced).toBe(-5);   // Σ(closing+sold−opening): (60+40−100)+(−5+0−0)
     expect(k.negativeCount).toBe(1);
@@ -179,9 +179,9 @@ describe('aggregations', () => {
     expect(k.idleUnits).toBe(100);
   });
 
-  it('lineSummaries flags negative + low', () => {
+  it('lineSummaries flags negative + low and sums NET stock', () => {
     const [L] = lineSummaries(e);
-    expect(L.stock).toBe(60);
+    expect(L.stock).toBe(55);   // 60 + (−5) net
     expect(L.flagged).toBe(1);
     expect(L.count).toBe(2);
   });
