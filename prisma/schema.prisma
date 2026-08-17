@@ -214,6 +214,7 @@ model Company {
   quotations        Quotation[]
   priceContracts    PriceContract[]
   valueDiscounts    ValueDiscountTier[]
+  mobileSubmissions OrderDraftSubmission[]
 }
 
 model Plant {
@@ -423,15 +424,16 @@ model Customer {
   isActive              Boolean      @default(true)
   createdAt             DateTime     @default(now())
 
-  shipTos        ShipToAddress[]
-  dispatchNotes  DispatchNote[]
-  invoices       Invoice[]
-  salesOrders    SalesOrder[]
-  receipts       Receipt[]
-  tallyMap       CustomerTallyMap?
-  quotations     Quotation[]
-  priceContracts PriceContract[]
-  valueDiscounts ValueDiscountTier[]
+  shipTos           ShipToAddress[]
+  dispatchNotes     DispatchNote[]
+  invoices          Invoice[]
+  salesOrders       SalesOrder[]
+  receipts          Receipt[]
+  tallyMap          CustomerTallyMap?
+  quotations        Quotation[]
+  priceContracts    PriceContract[]
+  valueDiscounts    ValueDiscountTier[]
+  mobileSubmissions OrderDraftSubmission[]
 
   @@unique([companyId, code])
   @@index([companyId])
@@ -1117,13 +1119,17 @@ model SalesOrder {
   /// Whole-order value discount % (spec S25), applied to the taxable subtotal before GST.
   /// 0 for orders with no qualifying value tier; seeded on convert-from-quote or direct entry.
   orderDiscountPct     Decimal          @default(0) @db.Decimal(5, 2)
+  /// How the order was entered (spec S27). DESK is the default desk/web entry; MOBILE marks an
+  /// order captured on the field-sales PWA and synced in, so it is distinguishable downstream.
+  source               SalesOrderSource @default(DESK)
   createdById          String?
   createdAt            DateTime         @default(now())
 
-  lines         SalesOrderLine[]
-  allocations   SalesOrderRoll[]
-  dispatchNotes DispatchNote[]
-  fromQuotation Quotation?       @relation("QuotationConversion")
+  lines            SalesOrderLine[]
+  allocations      SalesOrderRoll[]
+  dispatchNotes    DispatchNote[]
+  fromQuotation    Quotation?            @relation("QuotationConversion")
+  mobileSubmission OrderDraftSubmission? @relation("MobileSubmissionSO")
 
   @@unique([companyId, docNo])
   @@index([companyId])
@@ -1644,4 +1650,50 @@ model ValueDiscountTier {
   @@index([companyId])
   @@index([companyId, scope, status])
   @@index([customerId])
+}
+
+// --- Mobile order-taking (spec S27) --------------------------------------------------
+
+/// How a sales order was entered. MOBILE marks an order captured on the field-sales PWA.
+enum SalesOrderSource {
+  DESK
+  MOBILE
+}
+
+/// Lifecycle of a mobile order submission. RECEIVED when uploaded; APPLIED once it has created
+/// a sales order; REJECTED when it could not be applied (kept, never dropped); SUPERSEDED if
+/// replaced. Idempotency is by `clientRequestId`.
+enum MobileSubmissionStatus {
+  RECEIVED
+  APPLIED
+  REJECTED
+  SUPERSEDED
+}
+
+/// The server-side record of one field-sales PWA order submission (spec S27). The device is a
+/// proposal; the server re-prices via S25 `resolvePrice` and runs the S18 credit check at apply,
+/// so a submission's `payloadJson` (what the device thought) may differ from the created SO
+/// (`priceDeltaJson` records where). `clientRequestId` is the dedupe key — re-submitting it never
+/// creates a second order. Device queue state lives in IndexedDB, not here.
+model OrderDraftSubmission {
+  id              String                 @id @default(cuid())
+  companyId       String
+  company         Company                @relation(fields: [companyId], references: [id])
+  clientRequestId String // device-generated idempotency key, unique per company
+  submittedById   String? // the SALES rep (scalar, mirrors createdById elsewhere)
+  customerId      String
+  customer        Customer               @relation(fields: [customerId], references: [id])
+  shipToId        String
+  payloadJson     Json // { lines: [{ itemId, qtyOrdered, uom, devicePricePaise }], pricedAsOf }
+  status          MobileSubmissionStatus @default(RECEIVED)
+  resultSoId      String?                @unique
+  resultSo        SalesOrder?            @relation("MobileSubmissionSO", fields: [resultSoId], references: [id])
+  priceDeltaJson  Json? // [{ itemId, devicePricePaise, serverPricePaise }] where they differed
+  rejectionReason String?
+  capturedAt      DateTime? // when the rep captured it on the device (may predate `at`)
+  at              DateTime               @default(now())
+
+  @@unique([companyId, clientRequestId])
+  @@index([companyId])
+  @@index([companyId, status])
 }

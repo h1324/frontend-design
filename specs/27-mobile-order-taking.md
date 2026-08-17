@@ -1,6 +1,6 @@
 # Spec S27 — Mobile Order-Taking (PWA)
 
-**Status:** Ready — audience decided: internal SALES reps only (rides Auth.js, no S26 dependency). Offline-first, idempotent server sync.
+**Status:** Built — internal SALES reps only; installable PWA (`/m`) with an IndexedDB offline queue, idempotent server sync by `clientRequestId`, server-authoritative re-pricing + credit check, `source=MOBILE`. Sync-target default: auto-CONFIRMED within credit, DRAFT+BLOCKED over.
 
 ## Purpose
 
@@ -91,9 +91,10 @@ change being silent.
 - ✅ **Who uses it — DECIDED: internal SALES reps only.** Rides the existing Auth.js SALES role, so
   S27 has no dependency on S26 and can ship first. Dealer self-ordering, if ever wanted, would be a
   later feature on the S26 `PortalUser` boundary — not this module.
-- ⚠️ **Sync target status.** Do mobile orders arrive as `DRAFT` (staff confirm) or auto-`CONFIRMED`
-  when within credit? **Default: auto-`CONFIRMED` when the server credit check passes, `DRAFT` when it
-  doesn't** — reps get instant orders, risky ones wait for an override. Confirm.
+- ✅ **Sync target status — BUILT to the default:** auto-`CONFIRMED` when the server credit check
+  passes, left `DRAFT`+`BLOCKED` (for a logged ACCOUNTS/ADMIN override) when over the limit. Flip by
+  forcing DRAFT in `applyMobileSubmission` if every field order should be desk-reviewed — no schema
+  change.
 - **Offline storage & retention.** How long may an unsynced order live on a device before it is
   considered stale? **Default: 7 days in IndexedDB, warned after 48h unsynced.** Confirm.
 - **Conflict on price change mid-flight.** If a contract changes between capture and sync, accept the

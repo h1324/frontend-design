@@ -9,6 +9,7 @@ import type {
   CreditStatus,
   Prisma,
   SalesOrder,
+  SalesOrderSource,
   DispatchNote,
   CustomerTier,
 } from "@prisma/client";
@@ -127,6 +128,8 @@ export interface CreateSalesOrderInput {
   orderDate?: Date;
   /** Whole-order value discount % (spec S25), applied to the taxable subtotal before GST. */
   orderDiscountPct?: DecimalInput;
+  /** How the order was entered (spec S27). Defaults to DESK. */
+  source?: SalesOrderSource;
 }
 
 /** Create a DRAFT sales order with its lines. SALES-write. Gapless SO/FY number. */
@@ -171,6 +174,7 @@ export async function createSO(
       ...(input.orderDiscountPct != null
         ? { orderDiscountPct: new Decimal(input.orderDiscountPct).toString() }
         : {}),
+      ...(input.source ? { source: input.source } : {}),
       createdById: actor.userId,
       lines: {
         create: input.lines.map((l) => ({
