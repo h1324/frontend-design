@@ -101,7 +101,9 @@ function sheetRows(xml: string, ss: string[]): Rows {
       const t = /t="([^"]*)"/.exec(attrs)?.[1];
       let val: string | undefined;
       if (inner) {
-        const vMatch = /<v>([\s\S]*?)<\/v>/.exec(inner);
+        // `<v>` can carry attributes (e.g. <v xml:space="preserve">) on formula
+        // string cells — must allow them or the value is silently dropped.
+        const vMatch = /<v[^>]*>([\s\S]*?)<\/v>/.exec(inner);
         const isMatch = /<is>[\s\S]*?<t[^>]*>([\s\S]*?)<\/t>/.exec(inner);
         if (vMatch) val = t === 's' ? ss[parseInt(vMatch[1])] : vMatch[1];
         else if (isMatch) val = isMatch[1];
@@ -121,6 +123,76 @@ const num = (v: string | undefined): number => {
 };
 /** Whole pieces on the way in (business rule: stock is counted in whole pieces). */
 const piecesIn = (v: string | undefined): number => Math.round(num(v));
+
+/**
+ * Grand-total / summary columns that appear in the raw product tabs AND leaked
+ * into the client's Master as fake SKUs (quadruple-counting stock ~4×). Anything
+ * whose colour is one of these is a tab total, NOT a sellable variant, and is
+ * excluded — both from a Master SKU List sheet and from tab consolidation.
+ */
+const SUMMARY_COLS = new Set([
+  'fresh', 'c-mix', 'cmix', 'total', 'g.rejn', 'g.total', 'g rejn', 'g total', 'rejn', 'gtotal', 'grejn', 'g.rej',
+]);
+const isSummaryColour = (c: string): boolean => SUMMARY_COLS.has(c.trim().toLowerCase());
+const isLabelColumn = (c: string): boolean => {
+  const t = c.trim().toLowerCase();
+  return t === 'name' || t === 'b.no.' || t === 'date' || t.startsWith('production');
+};
+/** Sheets that are never product tabs. */
+const NON_PRODUCT = /^(sheet\s*\d+|final stock.*|read me|alerts|category summary|master sku list|summary)$/i;
+const isMachineSheet = (name: string): boolean => /^m-?\s*\d+$/i.test(name.trim());
+
+const labelRow = (rows: Rows, needle: string, after = 0): number => {
+  for (let r = after; r < rows.length; r++) {
+    const v = rows[r]?.[0];
+    if (v && v.toLowerCase().includes(needle)) return r;
+  }
+  return -1;
+};
+
+/**
+ * Consolidate ONE raw product tab into per-SKU opening/sold/closing — the same
+ * thing the client's Master workbook did by hand, but built from the tab so any
+ * monthly production file works. Columns are model×colour (model header on row 2,
+ * colour on row 3); three whole-tab rows carry the figures: "Opening Stock as on"
+ * (opening), "Total Piece:-" after "Sales Detail" (sold), "Stock Available…"
+ * (closing). Returns null if the tab lacks the expected shape (caller skips it).
+ */
+function consolidateTab(name: string, rows: Rows): RawSku[] | null {
+  const ro = labelRow(rows, 'opening stock');
+  if (ro < 2) return null; // need the model + colour header rows above it
+  // Rows are indexed in document order and xlsx omits empty rows, so we locate
+  // the model/colour headers RELATIVE to the opening row (models 2 above, colours
+  // 1 above) rather than by absolute row number.
+  const modelRow = rows[ro - 2] || [];
+  const colourRow = rows[ro - 1] || [];
+  const width = Math.max(modelRow.length, colourRow.length);
+  const cols: { col: number; model: string; colour: string }[] = [];
+  let model = '';
+  for (let c = 0; c < width; c++) {
+    const m = (modelRow[c] || '').trim();
+    if (m) model = m;
+    const colour = (colourRow[c] || '').trim();
+    if (!colour || isLabelColumn(colour) || isSummaryColour(colour) || !model) continue;
+    cols.push({ col: c, model, colour });
+  }
+  const rSales = labelRow(rows, 'sales detail');
+  const rSold = rSales >= 0 ? labelRow(rows, 'total piece', rSales) : -1;
+  const rClose = labelRow(rows, 'stock available');
+  if (rClose < 0 || !cols.length) return null; // not the expected layout
+  const out: RawSku[] = [];
+  for (const { col, model: mdl, colour } of cols) {
+    out.push({
+      line: name,
+      model: mdl,
+      colour,
+      opening: piecesIn(rows[ro]?.[col]),
+      sold: rSold >= 0 ? piecesIn(rows[rSold]?.[col]) : 0,
+      closing: piecesIn(rows[rClose]?.[col]),
+    });
+  }
+  return out;
+}
 
 export async function parseWorkbook(blob: Blob): Promise<ParsedWorkbook> {
   const z = await unzip(blob);
@@ -192,6 +264,8 @@ export async function parseWorkbook(blob: Blob): Promise<ParsedWorkbook> {
       const model = (r[ci.model] || '').trim();
       const colour = (r[ci.colour] || '').trim();
       if (!model && !colour) continue;
+      // Drop grand-total/summary rows that inflate the client's Master ~4×.
+      if (isSummaryColour(colour)) continue;
       const price = priceCol >= 0 ? num(r[priceCol]) : 0;
       skus.push({
         line, model, colour,
@@ -204,10 +278,30 @@ export async function parseWorkbook(blob: Blob): Promise<ParsedWorkbook> {
     lines = [...new Set(skus.map((s) => s.line).filter(Boolean))];
   }
 
+  // ── Fallback: no Master SKU List sheet → consolidate the raw product tabs ──
+  // (this is how monthly production files, which have 27 product tabs instead of
+  // a pre-made Master sheet, get their per-SKU opening/sold/closing).
+  let consolidation: { tabs: number; skipped: string[] } | undefined;
+  if (!skus.length) {
+    const skipped: string[] = [];
+    let tabs = 0;
+    for (const s of sheets) {
+      const nm = s.name.trim();
+      if (isMachineSheet(nm) || NON_PRODUCT.test(nm)) continue;
+      const tabSkus = consolidateTab(nm, rowsOf(s));
+      if (tabSkus && tabSkus.length) { skus.push(...tabSkus); tabs++; }
+      else skipped.push(nm);
+    }
+    if (tabs) {
+      lines = [...new Set(skus.map((s) => s.line).filter(Boolean))];
+      consolidation = { tabs, skipped };
+    }
+  }
+
   // ── Machine tabs (Fresh band only; Rejection columns are unreliable) ──────
   const machines: Machine[] = [];
   for (const s of sheets) {
-    if (!/^M-?\d+$/i.test(s.name.trim())) continue;
+    if (!isMachineSheet(s.name)) continue; // handles 'M-8' and 'M- 8' (stray space)
     const rows = rowsOf(s);
     const band = rows[2] || [];
     const idxOf = (kw: string): number => band.findIndex((c) => c && new RegExp(kw, 'i').test(c));
@@ -231,5 +325,5 @@ export async function parseWorkbook(blob: Blob): Promise<ParsedWorkbook> {
   }
   machines.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
 
-  return { skus, lines, machines, sheetNames: sheets.map((s) => s.name) };
+  return { skus, lines, machines, sheetNames: sheets.map((s) => s.name), ...(consolidation ? { consolidation } : {}) };
 }

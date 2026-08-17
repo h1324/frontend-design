@@ -17,7 +17,9 @@ interface FileEntry {
   message: string;
   skus: number;
   machines: number;
-  month: string | null; // month detected from THIS file's name/sheets, or null
+  tabs?: number;         // product tabs consolidated (raw production file)
+  skipped?: string[];    // tabs that couldn't be consolidated
+  month: string | null;  // month detected from THIS file's name/sheets, or null
 }
 
 /**
@@ -62,7 +64,7 @@ export function ImportDialog({ onClose }: { onClose: () => void }) {
       try {
         const res = await parseWorkbook(file);
         const s = summarizeParse(res);
-        rows.push({ name: file.name, ok: s.ok, message: s.message, skus: s.skuCount, machines: s.machineCount, month: monthOf([file.name], res.sheetNames) });
+        rows.push({ name: file.name, ok: s.ok, message: s.message, skus: s.skuCount, machines: s.machineCount, tabs: res.consolidation?.tabs, skipped: res.consolidation?.skipped, month: monthOf([file.name], res.sheetNames) });
         if (s.ok) parts.push(res);
       } catch (err) {
         rows.push({ name: file.name, ok: false, message: err instanceof Error ? err.message : String(err), skus: 0, machines: 0, month: null });
@@ -152,6 +154,11 @@ export function ImportDialog({ onClose }: { onClose: () => void }) {
                     <td style={{ fontSize: 12.5 }}>
                       <span style={{ color: f.ok ? OK : ERR, fontWeight: 600 }}>{f.ok ? '✓' : '✕'}</span>{' '}
                       {f.name}
+                      {f.tabs != null && (
+                        <span className="text-muted" style={{ fontSize: 11, display: 'block' }}>
+                          consolidated {f.tabs} product tabs{f.skipped && f.skipped.length ? ` · skipped ${f.skipped.length} (${f.skipped.join(', ')})` : ''}
+                        </span>
+                      )}
                     </td>
                     <td style={{ textAlign: 'right', fontSize: 12, whiteSpace: 'nowrap', color: 'var(--color-neutral-600)' }}>
                       {f.ok

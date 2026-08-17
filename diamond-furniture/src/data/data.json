@@ -1,1 +1,5479 @@
-{"skus":[{"line":"BIG CHAIR","model":"2001(New)","colour":"S-W","opening":976,"sold":976,"closing":0,"produced":0},{"line":"BIG CHAIR","model":"2001(New)","colour":"G.B","opening":0,"sold":0,"closing":0,"produced":0},{"line":"BIG CHAIR","model":"2001(New)","colour":"B.Silver","opening":1264,"sold":32,"closing":1232,"produced":0},{"line":"BIG CHAIR","model":"2001(New)","colour":"A.Gold","opening":0,"sold":0,"closing":0,"produced":0},{"line":"BIG CHAIR","model":"2001(New)","colour":"M.Bz","opening":768,"sold":0,"closing":768,"produced":0},{"line":"BIG CHAIR","model":"2001(New)","colour":"P.Silver","opening":0,"sold":0,"closing":0,"produced":0},{"line":"BIG CHAIR","model":"2001(New)","colour":"R-W","opening":912,"sold":496,"closing":416,"produced":0},{"line":"BIG CHAIR","model":"2001(New)","colour":"Brown","opening":0,"sold":0,"closing":0,"produced":0},{"line":"BIG CHAIR","model":"5001 (Maharaja)","colour":"S-W","opening":0,"sold":0,"closing":0,"produced":0},{"line":"BIG CHAIR","model":"5001 (Maharaja)","colour":"C-W","opening":0,"sold":0,"closing":0,"produced":0},{"line":"BIG CHAIR","model":"5001 (Maharaja)","colour":"B-Silver","opening":0,"sold":0,"closing":0,"produced":0},{"line":"BIG CHAIR","model":"5001 (Maharaja)","colour":"KR","opening":0,"sold":0,"closing":0,"produced":0},{"line":"BIG CHAIR","model":"5001 (Maharaja)","colour":"M.Bz","opening":0,"sold":0,"closing":0,"produced":0},{"line":"BIG CHAIR","model":"5001 (Maharaja)","colour":"BCM","opening":0,"sold":0,"closing":0,"produced":0},{"line":"BIG CHAIR","model":"5001 (Maharaja)","colour":"R-W","opening":0,"sold":0,"closing":0,"produced":0},{"line":"BIG CHAIR","model":"5001 (Maharaja)","colour":"Mix","opening":0,"sold":0,"closing":0,"produced":0},{"line":"BIG CHAIR","model":"5002 (Maharaja) - Gold","colour":"A.Gold","opening":0,"sold":0,"closing":0,"produced":0},{"line":"BIG CHAIR","model":"5002 (Maharaja) - Gold","colour":"White","opening":128,"sold":0,"closing":128,"produced":0},{"line":"BIG CHAIR","model":"5002 (Maharaja) - Gold","colour":"Karara","opening":0,"sold":0,"closing":0,"produced":0},{"line":"BIG CHAIR","model":"5002 (Maharaja) - Gold","colour":"P-Silver","opening":0,"sold":0,"closing":0,"produced":0},{"line":"BIG CHAIR","model":"5002 (Maharaja) - Gold","colour":"M.Bz","opening":0,"sold":0,"closing":0,"produced":0},{"line":"BIG CHAIR","model":"5002 (Maharaja) - Gold","colour":"Blue,5003","opening":0,"sold":0,"closing":0,"produced":0},{"line":"BIG CHAIR","model":"5002 (Maharaja) - Gold","colour":"Red F","opening":32,"sold":0,"closing":32,"produced":0},{"line":"BIG CHAIR","model":"5002 (Maharaja) - Gold","colour":"5003, Orange","opening":272,"sold":0,"closing":272,"produced":0},{"line":"BIG CHAIR","model":"5003 (Flower)","colour":"P.Pink","opening":0,"sold":0,"closing":0,"produced":0},{"line":"BIG CHAIR","model":"5003 (Flower)","colour":"P.Green","opening":0,"sold":0,"closing":0,"produced":0},{"line":"BIG CHAIR","model":"5003 (Flower)","colour":"R-W","opening":704,"sold":704,"closing":0,"produced":0},{"line":"BIG CHAIR","model":"5003 (Flower)","colour":"M.Bz","opening":0,"sold":0,"closing":0,"produced":0},{"line":"BIG CHAIR","model":"5003 (Flower)","colour":"B-Silver","opening":1456,"sold":464,"closing":992,"produced":0},{"line":"BIG CHAIR","model":"5003 (Flower)","colour":"Brown","opening":0,"sold":0,"closing":0,"produced":0},{"line":"BIG CHAIR","model":"5003 (Flower)","colour":"S.Wood","opening":1840,"sold":2016,"closing":-176,"produced":0},{"line":"BIG CHAIR","model":"5003 (Flower)","colour":"A.Gold","opening":0,"sold":0,"closing":0,"produced":0},{"line":"BIG CHAIR","model":"6001 (Goli)","colour":"P.Green","opening":32,"sold":0,"closing":32,"produced":0},{"line":"BIG CHAIR","model":"6001 (Goli)","colour":"Blue","opening":368,"sold":0,"closing":368,"produced":0},{"line":"BIG CHAIR","model":"6001 (Goli)","colour":"P.White","opening":48,"sold":0,"closing":48,"produced":0},{"line":"BIG CHAIR","model":"6001 (Goli)","colour":"Orange","opening":0,"sold":0,"closing":0,"produced":0},{"line":"BIG CHAIR","model":"6001 (Goli)","colour":"Red First","opening":0,"sold":0,"closing":0,"produced":0},{"line":"BIG CHAIR","model":"6001 (Goli)","colour":"P.Pink","opening":0,"sold":0,"closing":0,"produced":0},{"line":"BIG CHAIR","model":"6001 (Goli)","colour":"Brown First","opening":0,"sold":0,"closing":0,"produced":0},{"line":"BIG CHAIR","model":"6001 (Goli)","colour":"M.B.","opening":0,"sold":0,"closing":0,"produced":0},{"line":"BIG CHAIR","model":"6002 (Chattai)","colour":"P-Silver","opening":0,"sold":0,"closing":0,"produced":0},{"line":"BIG CHAIR","model":"6002 (Chattai)","colour":"S-Wood","opening":0,"sold":0,"closing":0,"produced":0},{"line":"BIG CHAIR","model":"6002 (Chattai)","colour":"A.Gold","opening":1760,"sold":3200,"closing":1552,"produced":2992},{"line":"BIG CHAIR","model":"6002 (Chattai)","colour":"Black","opening":0,"sold":192,"closing":-192,"produced":0},{"line":"BIG CHAIR","model":"6002 (Chattai)","colour":"M.Bz","opening":624,"sold":208,"closing":416,"produced":0},{"line":"BIG CHAIR","model":"6002 (Chattai)","colour":"Brown","opening":3056,"sold":4080,"closing":1504,"produced":2528},{"line":"BIG CHAIR","model":"6002 (Chattai)","colour":"White","opening":0,"sold":0,"closing":0,"produced":0},{"line":"BIG CHAIR","model":"6002 (Chattai)","colour":"B.Gold","opening":0,"sold":800,"closing":-800,"produced":0},{"line":"BIG CHAIR","model":"6003 (Patti)","colour":"S-W","opening":0,"sold":0,"closing":0,"produced":0},{"line":"BIG CHAIR","model":"6003 (Patti)","colour":"G.Black","opening":976,"sold":688,"closing":1216,"produced":928},{"line":"BIG CHAIR","model":"6003 (Patti)","colour":"T-Wood","opening":1328,"sold":480,"closing":848,"produced":0},{"line":"BIG CHAIR","model":"6003 (Patti)","colour":"S-Black","opening":464,"sold":272,"closing":192,"produced":0},{"line":"BIG CHAIR","model":"6003 (Patti)","colour":"M.Bz","opening":0,"sold":0,"closing":0,"produced":0},{"line":"BIG CHAIR","model":"6003 (Patti)","colour":"A.G","opening":0,"sold":0,"closing":0,"produced":0},{"line":"BIG CHAIR","model":"6003 (Patti)","colour":"R-W","opening":160,"sold":160,"closing":0,"produced":0},{"line":"BIG CHAIR","model":"6003 (Patti)","colour":"Gold","opening":0,"sold":0,"closing":0,"produced":0},{"line":"BIG CHAIR","model":"2002","colour":"Red First","opening":16,"sold":0,"closing":16,"produced":0},{"line":"BIG CHAIR","model":"2002","colour":"A.G","opening":0,"sold":0,"closing":0,"produced":0},{"line":"BIG CHAIR","model":"2002","colour":"Orange","opening":0,"sold":0,"closing":0,"produced":0},{"line":"BIG CHAIR","model":"2002","colour":"Brown","opening":0,"sold":0,"closing":0,"produced":0},{"line":"BIG CHAIR","model":"2002","colour":"P.Green","opening":0,"sold":0,"closing":0,"produced":0},{"line":"BIG CHAIR","model":"2002","colour":"G . Black","opening":560,"sold":288,"closing":272,"produced":0},{"line":"BIG CHAIR","model":"2002","colour":"Yellow","opening":0,"sold":0,"closing":0,"produced":0},{"line":"BIG CHAIR","model":"2002","colour":"Blue","opening":464,"sold":0,"closing":464,"produced":0},{"line":"BIG CHAIR","model":"10001 New (Goli)","colour":"Mix","opening":1168,"sold":16176,"closing":-448,"produced":14560},{"line":"BIG CHAIR","model":"10001 New (Goli)","colour":"YELLOW","opening":0,"sold":0,"closing":0,"produced":0},{"line":"BIG CHAIR","model":"10001 New (Goli)","colour":"S .B 2002","opening":0,"sold":0,"closing":0,"produced":0},{"line":"BIG CHAIR","model":"10001 New (Goli)","colour":"2001OK","opening":0,"sold":0,"closing":0,"produced":0},{"line":"BIG CHAIR","model":"10001 New (Goli)","colour":"T.W 2002","opening":400,"sold":112,"closing":288,"produced":0},{"line":"BIG CHAIR","model":"10001 New (Goli)","colour":"M.B 1","opening":0,"sold":0,"closing":0,"produced":0},{"line":"BIG CHAIR","model":"10001 New (Goli)","colour":"R-W","opening":0,"sold":0,"closing":0,"produced":0},{"line":"BIG CHAIR","model":"10001 New (Goli)","colour":"S-Wood","opening":0,"sold":0,"closing":0,"produced":0},{"line":"BIG CHAIR","model":"10001 New (Goli)","colour":"Fresh","opening":19776,"sold":31344,"closing":9440,"produced":21008},{"line":"BIG CHAIR","model":"10001 New (Goli)","colour":"C-Mix","opening":0,"sold":0,"closing":37,"produced":37},{"line":"BIG CHAIR","model":"10001 New (Goli)","colour":"Total","opening":19776,"sold":31344,"closing":9477,"produced":21045},{"line":"BIG CHAIR","model":"10001 New (Goli)","colour":"G.Rejn","opening":0,"sold":0,"closing":437,"produced":437},{"line":"BIG CHAIR","model":"10001 New (Goli)","colour":"G.Total","opening":19776,"sold":31344,"closing":9914,"produced":21482},{"line":"Sumo","model":"Sumo - 301","colour":"S-W","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Sumo","model":"Sumo - 301","colour":"Coloured","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Sumo","model":"Sumo - 301","colour":"Red","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Sumo","model":"Sumo - 301","colour":"P-Pink","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Sumo","model":"Sumo - 301","colour":"B. Gold","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Sumo","model":"Sumo - 301","colour":"Orange","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Sumo","model":"Sumo - 301","colour":"P-White","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Sumo","model":"Sumo - 301","colour":"Silver.B","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Sumo","model":"Sumo - 301","colour":"P. Silver","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Sumo","model":"Sumo - 301","colour":"A.Gold","opening":208,"sold":0,"closing":512,"produced":304},{"line":"Sumo","model":"Sumo - 301","colour":"P.Green","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Sumo","model":"Sumo - 301","colour":"M.Bz","opening":288,"sold":0,"closing":288,"produced":0},{"line":"Sumo","model":"Sumo - 301","colour":"Black","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Sumo","model":"Sumo - 301","colour":"R-W","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Sumo","model":"Sumo - 301","colour":"Brown","opening":0,"sold":0,"closing":1232,"produced":1232},{"line":"Sumo","model":"Sumo - 301","colour":"Fresh","opening":496,"sold":0,"closing":2032,"produced":1536},{"line":"Sumo","model":"Sumo - 301","colour":"C-Mix","opening":0,"sold":0,"closing":8,"produced":8},{"line":"Sumo","model":"Sumo - 301","colour":"Total","opening":496,"sold":0,"closing":2040,"produced":1544},{"line":"Sumo","model":"Sumo - 301","colour":"G.Rejn","opening":0,"sold":0,"closing":35,"produced":35},{"line":"Sumo","model":"Sumo - 301","colour":"G.Total","opening":496,"sold":0,"closing":2075,"produced":1579},{"line":"XUV","model":"8003 ClipON","colour":"Br.Blue","opening":0,"sold":0,"closing":0,"produced":0},{"line":"XUV","model":"8003 ClipON","colour":"Black Red","opening":0,"sold":0,"closing":0,"produced":0},{"line":"XUV","model":"8003 ClipON","colour":"Br.Orange","opening":0,"sold":0,"closing":0,"produced":0},{"line":"XUV","model":"8003 ClipON","colour":"Black Green","opening":0,"sold":0,"closing":0,"produced":0},{"line":"XUV","model":"8003 ClipON","colour":"Br.Green","opening":352,"sold":256,"closing":96,"produced":0},{"line":"XUV","model":"8003 ClipON","colour":"Black Blue","opening":0,"sold":0,"closing":0,"produced":0},{"line":"XUV","model":"8003 ClipON","colour":"Br.Red","opening":0,"sold":0,"closing":0,"produced":0},{"line":"XUV","model":"8003 ClipON","colour":"Black Orange","opening":0,"sold":0,"closing":0,"produced":0},{"line":"XUV","model":"8002 (Y)","colour":"S-W","opening":0,"sold":0,"closing":0,"produced":0},{"line":"XUV","model":"8002 (Y)","colour":"T.W","opening":304,"sold":464,"closing":480,"produced":640},{"line":"XUV","model":"8002 (Y)","colour":"B . Silver","opening":560,"sold":0,"closing":560,"produced":0},{"line":"XUV","model":"8002 (Y)","colour":"B.Gold/Spl","opening":1856,"sold":528,"closing":1328,"produced":0},{"line":"XUV","model":"8002 (Y)","colour":"M.Bz","opening":32,"sold":0,"closing":32,"produced":0},{"line":"XUV","model":"8002 (Y)","colour":"Brown","opening":2544,"sold":960,"closing":1584,"produced":0},{"line":"XUV","model":"8002 (Y)","colour":"R-W","opening":0,"sold":0,"closing":0,"produced":0},{"line":"XUV","model":"8002 (Y)","colour":"A.Gold","opening":752,"sold":1408,"closing":1120,"produced":1776},{"line":"XUV","model":"8001 (Pearl)","colour":"P.Green","opening":224,"sold":0,"closing":224,"produced":0},{"line":"XUV","model":"8001 (Pearl)","colour":"A.Gold Red/8003","opening":0,"sold":0,"closing":0,"produced":0},{"line":"XUV","model":"8001 (Pearl)","colour":"P.Pink","opening":112,"sold":16,"closing":96,"produced":0},{"line":"XUV","model":"8001 (Pearl)","colour":"Red","opening":0,"sold":0,"closing":0,"produced":0},{"line":"XUV","model":"8001 (Pearl)","colour":"P.White","opening":160,"sold":0,"closing":160,"produced":0},{"line":"XUV","model":"8001 (Pearl)","colour":"Blue F","opening":208,"sold":0,"closing":208,"produced":0},{"line":"XUV","model":"8001 (Pearl)","colour":"M.Beige F","opening":0,"sold":0,"closing":0,"produced":0},{"line":"XUV","model":"8001 (Pearl)","colour":"Orange","opening":160,"sold":32,"closing":128,"produced":0},{"line":"XUV","model":"8001 (Pearl)","colour":"Fresh","opening":7264,"sold":3664,"closing":6016,"produced":2416},{"line":"XUV","model":"8001 (Pearl)","colour":"Mix","opening":0,"sold":0,"closing":27,"produced":27},{"line":"XUV","model":"8001 (Pearl)","colour":"Total","opening":7264,"sold":3664,"closing":6043,"produced":2443},{"line":"XUV","model":"8001 (Pearl)","colour":"G.R.C.","opening":0,"sold":0,"closing":114,"produced":114},{"line":"XUV","model":"8001 (Pearl)","colour":"G.Total","opening":7264,"sold":3664,"closing":6157,"produced":2557},{"line":"Innova","model":"Innova (3001)","colour":"White","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Innova","model":"Innova (3001)","colour":"Orange","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Innova","model":"Innova (3001)","colour":"P.Pink","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Innova","model":"Innova (3001)","colour":"BROWN","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Innova","model":"Innova (3001)","colour":"P.Green","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Innova","model":"Innova (3002)","colour":"B.Gold","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Innova","model":"Innova (3002)","colour":"Gold","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Innova","model":"Innova (3002)","colour":"M.Beige","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Innova","model":"Innova (3002)","colour":"S.Black","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Innova","model":"Innova (3002)","colour":"Brown","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Innova","model":"Innova (3002)","colour":"R.Wood","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Innova","model":"Innova (3002)","colour":"A.Gold","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Innova","model":"Innova(3003)","colour":"A.Gold","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Innova","model":"Innova(3003)","colour":"Brown","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Innova","model":"Innova(3003)","colour":"B.Gold","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Innova","model":"Innova(3003)","colour":"M.Beige","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Innova","model":"Innova(3003)","colour":"Fresh","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Innova","model":"Innova(3003)","colour":"Mix","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Innova","model":"Innova(3003)","colour":"Total","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Innova","model":"Innova(3003)","colour":"G.R.C.","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Innova","model":"Innova(3003)","colour":"G.Total","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Garden Table","model":"Garden Table","colour":"S-W","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Garden Table","model":"Garden Table","colour":"P.Blue","opening":144,"sold":0,"closing":144,"produced":0},{"line":"Garden Table","model":"Garden Table","colour":"Red First","opening":0,"sold":12,"closing":-12,"produced":0},{"line":"Garden Table","model":"Garden Table","colour":"P-Pink","opening":204,"sold":24,"closing":180,"produced":0},{"line":"Garden Table","model":"Garden Table","colour":"Gold","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Garden Table","model":"Garden Table","colour":"Orange","opening":60,"sold":48,"closing":12,"produced":0},{"line":"Garden Table","model":"Garden Table","colour":"P-White","opening":276,"sold":0,"closing":276,"produced":0},{"line":"Garden Table","model":"Garden Table","colour":"Silver.B","opening":24,"sold":24,"closing":0,"produced":0},{"line":"Garden Table","model":"Garden Table","colour":"Black.Gold","opening":1212,"sold":1032,"closing":180,"produced":0},{"line":"Garden Table","model":"Garden Table","colour":"A.Gold","opening":120,"sold":924,"closing":-48,"produced":756},{"line":"Garden Table","model":"Garden Table","colour":"P.Green","opening":216,"sold":48,"closing":168,"produced":0},{"line":"Garden Table","model":"Garden Table","colour":"T.Wood/M.B","opening":516,"sold":528,"closing":-12,"produced":0},{"line":"Garden Table","model":"Garden Table","colour":"Black","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Garden Table","model":"Garden Table","colour":"R-W","opening":12,"sold":12,"closing":0,"produced":0},{"line":"Garden Table","model":"Garden Table","colour":"Brown","opening":636,"sold":1392,"closing":12,"produced":768},{"line":"Garden Table","model":"Garden Table","colour":"Yellow","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Garden Table","model":"Garden Table","colour":"Fresh","opening":3420,"sold":4044,"closing":900,"produced":1524},{"line":"Garden Table","model":"Garden Table","colour":"C-Mix","opening":0,"sold":0,"closing":25,"produced":25},{"line":"Garden Table","model":"Garden Table","colour":"Total","opening":3420,"sold":4044,"closing":925,"produced":1549},{"line":"Garden Table","model":"Garden Table","colour":"G.Rejn","opening":0,"sold":0,"closing":44,"produced":44},{"line":"Garden Table","model":"Garden Table","colour":"G.Total","opening":3420,"sold":4044,"closing":969,"produced":1593},{"line":"Stool","model":"Stool 1","colour":"Red F","opening":2300,"sold":80,"closing":2220,"produced":0},{"line":"Stool","model":"Stool 1","colour":"P.Pink","opening":180,"sold":20,"closing":160,"produced":0},{"line":"Stool","model":"Stool 1","colour":"P.Green","opening":920,"sold":60,"closing":860,"produced":0},{"line":"Stool","model":"Stool 1","colour":"Orange","opening":960,"sold":60,"closing":900,"produced":0},{"line":"Stool","model":"Stool 1","colour":"M.B","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Stool","model":"Stool 1","colour":"B.Gold","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Stool","model":"Stool 1","colour":"P.Blue","opening":560,"sold":20,"closing":540,"produced":0},{"line":"Stool","model":"Stool 2","colour":"M.Beize","opening":500,"sold":40,"closing":460,"produced":0},{"line":"Stool","model":"Stool 2","colour":"Brown","opening":3840,"sold":1000,"closing":2840,"produced":0},{"line":"Stool","model":"Stool 2","colour":"A.Gold","opening":3660,"sold":780,"closing":2880,"produced":0},{"line":"Stool","model":"Stool 2","colour":"P.Silver","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Stool","model":"Stool 2","colour":"Black","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Stool","model":"Stool 2","colour":"B.Silver","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Stool","model":"Stool 2","colour":"B Red","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Stool","model":"Stool 2","colour":"S.W","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Stool","model":"Stool 2","colour":"R.W","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Stool","model":"Stool 2","colour":"Fresh","opening":12920,"sold":2060,"closing":10860,"produced":0},{"line":"Stool","model":"Stool 2","colour":"Mix","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Stool","model":"Stool 2","colour":"Total","opening":12920,"sold":2060,"closing":10860,"produced":0},{"line":"Stool","model":"Stool 2","colour":"G.R.C.","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Stool","model":"Stool 2","colour":"G.Total","opening":12920,"sold":2060,"closing":10860,"produced":0},{"line":"Activa","model":"4001 (Cushion)","colour":"A.Gold","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Activa","model":"4001 (Cushion)","colour":"Orange","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Activa","model":"4001 (Cushion)","colour":"Brown","opening":1280,"sold":208,"closing":1072,"produced":0},{"line":"Activa","model":"4001 (Cushion)","colour":"YELLOW","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Activa","model":"4001 (Cushion)","colour":"P.Blue/D. Blue","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Activa","model":"4001 (Cushion)","colour":"Red 1","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Activa","model":"4001 (Cushion)","colour":"P. Green","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Activa","model":"4002 (Y)","colour":"A.Gold","opening":992,"sold":256,"closing":736,"produced":0},{"line":"Activa","model":"4002 (Y)","colour":"Gold 4001","opening":1376,"sold":1984,"closing":1456,"produced":2064},{"line":"Activa","model":"4002 (Y)","colour":"S.B 4001","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Activa","model":"4002 (Y)","colour":"Pink 4001","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Activa","model":"4002 (Y)","colour":"M.Bz","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Activa","model":"4002 (Y)","colour":"Brown","opening":1328,"sold":368,"closing":1712,"produced":752},{"line":"Activa","model":"4002 (Y)","colour":"T.Wood","opening":2016,"sold":1136,"closing":2784,"produced":1904},{"line":"Activa","model":"4003 (Goli)","colour":"A.Gold","opening":768,"sold":1056,"closing":368,"produced":656},{"line":"Activa","model":"4003 (Goli)","colour":"B.G","opening":1680,"sold":3040,"closing":224,"produced":1584},{"line":"Activa","model":"4003 (Goli)","colour":"M.BZ","opening":432,"sold":432,"closing":0,"produced":0},{"line":"Activa","model":"4003 (Goli)","colour":"S.B","opening":128,"sold":0,"closing":128,"produced":0},{"line":"Activa","model":"4003 (Goli)","colour":"Brown","opening":832,"sold":1536,"closing":1232,"produced":1936},{"line":"Activa","model":"4003 (Goli)","colour":"Gold","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Activa","model":"4003 (Goli)","colour":"T.Wood","opening":400,"sold":2432,"closing":400,"produced":2432},{"line":"Activa","model":"4003 (Goli)","colour":"Fresh","opening":11232,"sold":12448,"closing":10112,"produced":11328},{"line":"Activa","model":"4003 (Goli)","colour":"Mix","opening":0,"sold":0,"closing":43,"produced":43},{"line":"Activa","model":"4003 (Goli)","colour":"Total","opening":11232,"sold":12448,"closing":10155,"produced":11371},{"line":"Activa","model":"4003 (Goli)","colour":"G.R.C.","opening":0,"sold":0,"closing":115,"produced":115},{"line":"Activa","model":"4003 (Goli)","colour":"G.Total","opening":11232,"sold":12448,"closing":10270,"produced":11486},{"line":"Small Chair","model":"401(Flower)","colour":"S.Wood","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Small Chair","model":"401(Flower)","colour":"P.Blue","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Small Chair","model":"401(Flower)","colour":"Brown","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Small Chair","model":"401(Flower)","colour":"A.Gold","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Small Chair","model":"401(Flower)","colour":"R.Wood","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Small Chair","model":"401(Flower)","colour":"Yellow","opening":140,"sold":0,"closing":140,"produced":0},{"line":"Small Chair","model":"401(Flower)","colour":"S.Black","opening":0,"sold":0,"closing":360,"produced":360},{"line":"Small Chair","model":"401(Flower)","colour":"Green","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Small Chair","model":"402(Chattai)","colour":"White","opening":140,"sold":0,"closing":140,"produced":0},{"line":"Small Chair","model":"402(Chattai)","colour":"P.Blue","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Small Chair","model":"402(Chattai)","colour":"Brown","opening":200,"sold":2680,"closing":180,"produced":2660},{"line":"Small Chair","model":"402(Chattai)","colour":"P.Green","opening":340,"sold":60,"closing":280,"produced":0},{"line":"Small Chair","model":"402(Chattai)","colour":"A.Gold","opening":600,"sold":3520,"closing":-20,"produced":2900},{"line":"Small Chair","model":"402(Chattai)","colour":"B.G","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Small Chair","model":"402(Chattai)","colour":"Orange","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Small Chair","model":"402(Chattai)","colour":"Red Fist","opening":760,"sold":100,"closing":660,"produced":0},{"line":"Small Chair","model":"403(WIFI)","colour":"S.Wood","opening":2220,"sold":2500,"closing":-280,"produced":0},{"line":"Small Chair","model":"403(WIFI)","colour":"M.B","opening":1200,"sold":0,"closing":1200,"produced":0},{"line":"Small Chair","model":"403(WIFI)","colour":"S.Black","opening":1700,"sold":1560,"closing":800,"produced":660},{"line":"Small Chair","model":"403(WIFI)","colour":"A.G","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Small Chair","model":"403(WIFI)","colour":"R.Wood","opening":1620,"sold":1620,"closing":1300,"produced":1300},{"line":"Small Chair","model":"403(WIFI)","colour":"P.Pink","opening":20,"sold":20,"closing":0,"produced":0},{"line":"Small Chair","model":"403(WIFI)","colour":"P.Silver","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Small Chair","model":"403(WIFI)","colour":"BROWN","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Small Chair","model":"403(WIFI)","colour":"Fresh","opening":8940,"sold":12060,"closing":4760,"produced":7880},{"line":"Small Chair","model":"403(WIFI)","colour":"Mix","opening":0,"sold":0,"closing":50,"produced":50},{"line":"Small Chair","model":"403(WIFI)","colour":"Total","opening":8940,"sold":12060,"closing":4810,"produced":7930},{"line":"Small Chair","model":"403(WIFI)","colour":"G.R.C.","opening":0,"sold":0,"closing":12.2,"produced":12.2},{"line":"Small Chair","model":"403(WIFI)","colour":"G.Total","opening":8940,"sold":603,"closing":252.7,"produced":-8084.3},{"line":"EV Chair","model":"201","colour":"Red First","opening":0,"sold":32,"closing":-32,"produced":0},{"line":"EV Chair","model":"201","colour":"Yellow First","opening":288,"sold":32,"closing":256,"produced":0},{"line":"EV Chair","model":"201","colour":"D .Green First","opening":0,"sold":0,"closing":0,"produced":0},{"line":"EV Chair","model":"201","colour":"Orange","opening":0,"sold":0,"closing":0,"produced":0},{"line":"EV Chair","model":"201","colour":"P.Blue","opening":0,"sold":16,"closing":-16,"produced":0},{"line":"EV Chair","model":"201","colour":"P.Pink /White","opening":336,"sold":16,"closing":320,"produced":0},{"line":"EV Chair","model":"201","colour":"S.B","opening":0,"sold":0,"closing":0,"produced":0},{"line":"EV Chair","model":"201","colour":"Br/GoldBrown","opening":0,"sold":0,"closing":0,"produced":0},{"line":"EV Chair","model":"202","colour":"Brown","opening":16,"sold":16,"closing":0,"produced":0},{"line":"EV Chair","model":"202","colour":"A.Gold","opening":176,"sold":0,"closing":176,"produced":0},{"line":"EV Chair","model":"202","colour":"S.B 2","opening":192,"sold":0,"closing":192,"produced":0},{"line":"EV Chair","model":"202","colour":"M.Beige","opening":560,"sold":32,"closing":528,"produced":0},{"line":"EV Chair","model":"202","colour":"GOLD","opening":0,"sold":0,"closing":0,"produced":0},{"line":"EV Chair","model":"202","colour":"B .Gold","opening":944,"sold":800,"closing":144,"produced":0},{"line":"EV Chair","model":"202","colour":"T.W","opening":688,"sold":272,"closing":416,"produced":0},{"line":"EV Chair","model":"203","colour":"Brown","opening":0,"sold":0,"closing":0,"produced":0},{"line":"EV Chair","model":"203","colour":"A.Gold","opening":0,"sold":0,"closing":0,"produced":0},{"line":"EV Chair","model":"203","colour":"Fresh","opening":3200,"sold":1216,"closing":1984,"produced":0},{"line":"EV Chair","model":"203","colour":"Mix","opening":0,"sold":0,"closing":0,"produced":0},{"line":"EV Chair","model":"203","colour":"Total","opening":3200,"sold":1216,"closing":1984,"produced":0},{"line":"EV Chair","model":"203","colour":"G.R.C.","opening":0,"sold":0,"closing":0,"produced":0},{"line":"EV Chair","model":"203","colour":"G.Total","opening":3200,"sold":1216,"closing":1984,"produced":0},{"line":"Aless","model":"101(Chattai)","colour":"White","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Aless","model":"101(Chattai)","colour":"P. Green1","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Aless","model":"101(Chattai)","colour":"S. Black","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Aless","model":"101(Chattai)","colour":"Yellow","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Aless","model":"101(Chattai)","colour":"M.Bz First","opening":20,"sold":0,"closing":20,"produced":0},{"line":"Aless","model":"101(Chattai)","colour":"Orange","opening":0,"sold":2240,"closing":-220,"produced":2020},{"line":"Aless","model":"101(Chattai)","colour":"Red (1)","opening":3400,"sold":6880,"closing":820,"produced":4300},{"line":"Aless","model":"101(Chattai)","colour":"Blue","opening":240,"sold":160,"closing":80,"produced":0},{"line":"Aless","model":"102(Gold-P)","colour":"S-W","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Aless","model":"102(Gold-P)","colour":"Brown","opening":1300,"sold":1800,"closing":-500,"produced":0},{"line":"Aless","model":"102(Gold-P)","colour":"B. Silver2","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Aless","model":"102(Gold-P)","colour":"KR","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Aless","model":"102(Gold-P)","colour":"M.Bz","opening":800,"sold":440,"closing":360,"produced":0},{"line":"Aless","model":"102(Gold-P)","colour":"A.Gold","opening":880,"sold":680,"closing":1200,"produced":1000},{"line":"Aless","model":"102(Gold-P)","colour":"R-W","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Aless","model":"102(Gold-P)","colour":"Red","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Aless","model":"103(Barfi)","colour":"T.W","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Aless","model":"103(Barfi)","colour":"White","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Aless","model":"103(Barfi)","colour":"Silver","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Aless","model":"103(Barfi)","colour":"Gold","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Aless","model":"103(Barfi)","colour":"M.Bz","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Aless","model":"103(Barfi)","colour":"Brown","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Aless","model":"103(Barfi)","colour":"Red 1","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Aless","model":"103(Barfi)","colour":"Black","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Aless","model":"103(Barfi)","colour":"Fresh","opening":6640,"sold":12200,"closing":4880,"produced":10440},{"line":"Aless","model":"103(Barfi)","colour":"Mix","opening":0,"sold":0,"closing":26,"produced":26},{"line":"Aless","model":"103(Barfi)","colour":"Total","opening":6640,"sold":12200,"closing":4906,"produced":10466},{"line":"Aless","model":"103(Barfi)","colour":"G.R.C.","opening":0,"sold":0,"closing":53,"produced":53},{"line":"Aless","model":"103(Barfi)","colour":"G.Total","opening":6640,"sold":12200,"closing":4959,"produced":10519},{"line":"Tea Table","model":"Tea Table","colour":"S-W","opening":924,"sold":324,"closing":600,"produced":0},{"line":"Tea Table","model":"Tea Table","colour":"Red 1","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Tea Table","model":"Tea Table","colour":"P.Yellow","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Tea Table","model":"Tea Table","colour":"OK","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Tea Table","model":"Tea Table","colour":"B.Gold","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Tea Table","model":"Tea Table","colour":"Orange","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Tea Table","model":"Tea Table","colour":"P-White","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Tea Table","model":"Tea Table","colour":"Silver.B","opening":168,"sold":336,"closing":516,"produced":684},{"line":"Tea Table","model":"Tea Table","colour":"GOLD","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Tea Table","model":"Tea Table","colour":"A.Gold","opening":0,"sold":1308,"closing":-96,"produced":1212},{"line":"Tea Table","model":"Tea Table","colour":"P.Green","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Tea Table","model":"Tea Table","colour":"M.Bz","opening":708,"sold":48,"closing":660,"produced":0},{"line":"Tea Table","model":"Tea Table","colour":"T . Wood","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Tea Table","model":"Tea Table","colour":"R-W","opening":492,"sold":192,"closing":1164,"produced":864},{"line":"Tea Table","model":"Tea Table","colour":"Brown","opening":24,"sold":2016,"closing":-168,"produced":1824},{"line":"Tea Table","model":"Tea Table","colour":"Fresh","opening":2316,"sold":4224,"closing":2676,"produced":4584},{"line":"Tea Table","model":"Tea Table","colour":"C-Mix","opening":0,"sold":0,"closing":29,"produced":29},{"line":"Tea Table","model":"Tea Table","colour":"Total","opening":2316,"sold":4224,"closing":2705,"produced":4613},{"line":"Tea Table","model":"Tea Table","colour":"G.Rejn","opening":0,"sold":0,"closing":77,"produced":77},{"line":"Tea Table","model":"Tea Table","colour":"G.Total","opening":2316,"sold":4224,"closing":2782,"produced":4690},{"line":"Chota Heritage","model":"7001 (Cushion)","colour":"P.Green","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Chota Heritage","model":"7001 (Cushion)","colour":"S.W","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Chota Heritage","model":"7002 (Y)","colour":"A.G","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Chota Heritage","model":"7002 (Y)","colour":"GOLD","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Chota Heritage","model":"7003 (Goli)","colour":"S-W","opening":0,"sold":288,"closing":768,"produced":1056},{"line":"Chota Heritage","model":"7003 (Goli)","colour":"T.W","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Chota Heritage","model":"7003 (Goli)","colour":"S-Black","opening":80,"sold":160,"closing":464,"produced":544},{"line":"Chota Heritage","model":"7003 (Goli)","colour":"C.W","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Chota Heritage","model":"7003 (Goli)","colour":"M.Bz","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Chota Heritage","model":"7003 (Goli)","colour":"Brown","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Chota Heritage","model":"7003 (Goli)","colour":"R-W","opening":288,"sold":272,"closing":1152,"produced":1136},{"line":"Chota Heritage","model":"7003 (Goli)","colour":"P Green","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Chota Heritage","model":"7003 (Goli)","colour":"Fresh","opening":368,"sold":720,"closing":2384,"produced":2736},{"line":"Chota Heritage","model":"7003 (Goli)","colour":"Mix","opening":0,"sold":0,"closing":34,"produced":34},{"line":"Chota Heritage","model":"7003 (Goli)","colour":"Total","opening":368,"sold":720,"closing":2418,"produced":2770},{"line":"Chota Heritage","model":"7003 (Goli)","colour":"G.R.C.","opening":0,"sold":0,"closing":36,"produced":36},{"line":"Chota Heritage","model":"7003 (Goli)","colour":"G.Total","opening":368,"sold":720,"closing":2454,"produced":2806},{"line":"M.P.Stool","model":"M.P.Stool","colour":"Br.Gold","opening":0,"sold":0,"closing":0,"produced":0},{"line":"M.P.Stool","model":"M.P.Stool","colour":"Brown","opening":1560,"sold":180,"closing":1380,"produced":0},{"line":"M.P.Stool","model":"M.P.Stool","colour":"S.Black","opening":0,"sold":0,"closing":0,"produced":0},{"line":"M.P.Stool","model":"M.P.Stool","colour":"M.Beige","opening":0,"sold":0,"closing":0,"produced":0},{"line":"M.P.Stool","model":"M.P.Stool","colour":"A.Gold","opening":1640,"sold":60,"closing":1580,"produced":0},{"line":"M.P.Stool","model":"M.P.Stool","colour":"D.Green","opening":0,"sold":0,"closing":0,"produced":0},{"line":"M.P.Stool","model":"M.P.Stool","colour":"P.Pink","opening":0,"sold":0,"closing":0,"produced":0},{"line":"M.P.Stool","model":"M.P.Stool","colour":"D.Blue","opening":0,"sold":0,"closing":0,"produced":0},{"line":"M.P.Stool","model":"M.P.Stool","colour":"Red First","opening":0,"sold":0,"closing":0,"produced":0},{"line":"M.P.Stool","model":"M.P.Stool","colour":"Yellow First","opening":0,"sold":0,"closing":0,"produced":0},{"line":"M.P.Stool","model":"M.P.Stool","colour":"Green First","opening":0,"sold":0,"closing":0,"produced":0},{"line":"M.P.Stool","model":"M.P.Stool","colour":"Orange First","opening":0,"sold":0,"closing":0,"produced":0},{"line":"M.P.Stool","model":"M.P.Stool","colour":"Red","opening":0,"sold":0,"closing":0,"produced":0},{"line":"M.P.Stool","model":"M.P.Stool","colour":"Brown","opening":0,"sold":0,"closing":0,"produced":0},{"line":"M.P.Stool","model":"M.P.Stool","colour":"M.Beige Ist","opening":0,"sold":0,"closing":0,"produced":0},{"line":"M.P.Stool","model":"M.P.Stool","colour":"A.Gold","opening":0,"sold":0,"closing":0,"produced":0},{"line":"M.P.Stool","model":"M.P.Stool","colour":"White","opening":0,"sold":0,"closing":0,"produced":0},{"line":"M.P.Stool","model":"M.P.Stool","colour":"P.Green","opening":0,"sold":0,"closing":0,"produced":0},{"line":"M.P.Stool","model":"M.P.Stool","colour":"Fresh","opening":3200,"sold":240,"closing":2960,"produced":0},{"line":"M.P.Stool","model":"M.P.Stool","colour":"Mix","opening":0,"sold":0,"closing":0,"produced":0},{"line":"M.P.Stool","model":"M.P.Stool","colour":"Total","opening":3200,"sold":240,"closing":2960,"produced":0},{"line":"M.P.Stool","model":"M.P.Stool","colour":"G.R.C.","opening":0,"sold":0,"closing":0,"produced":0},{"line":"M.P.Stool","model":"M.P.Stool","colour":"G.Total","opening":3200,"sold":240,"closing":2960,"produced":0},{"line":"Yoddha","model":"501","colour":"Brown","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Yoddha","model":"501","colour":"Br. CloN","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Yoddha","model":"501","colour":"T.Wood","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Yoddha","model":"501","colour":"Brown mix","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Yoddha","model":"501","colour":"A.Gold","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Yoddha","model":"501","colour":"Orange 502","opening":168,"sold":24,"closing":144,"produced":0},{"line":"Yoddha","model":"501","colour":"Black","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Yoddha","model":"502","colour":"Brown","opening":0,"sold":1728,"closing":228,"produced":1956},{"line":"Yoddha","model":"502","colour":"M.Beige","opening":24,"sold":0,"closing":24,"produced":0},{"line":"Yoddha","model":"502","colour":"T.Wod/Gold","opening":432,"sold":1692,"closing":1320,"produced":2580},{"line":"Yoddha","model":"502","colour":"S.Black","opening":84,"sold":84,"closing":0,"produced":0},{"line":"Yoddha","model":"502","colour":"A.Gold","opening":0,"sold":36,"closing":-36,"produced":0},{"line":"Yoddha","model":"502","colour":"P.Red","opening":180,"sold":12,"closing":168,"produced":0},{"line":"Yoddha","model":"502","colour":"White","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Yoddha","model":"502","colour":"P.Green","opening":384,"sold":36,"closing":348,"produced":0},{"line":"Yoddha","model":"503","colour":"Brown","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Yoddha","model":"503","colour":"B.Gold502","opening":1368,"sold":3096,"closing":1356,"produced":3084},{"line":"Yoddha","model":"503","colour":"T.Wood","opening":336,"sold":192,"closing":144,"produced":0},{"line":"Yoddha","model":"503","colour":"P. Green","opening":24,"sold":0,"closing":24,"produced":0},{"line":"Yoddha","model":"503","colour":"A.Gold","opening":264,"sold":48,"closing":216,"produced":0},{"line":"Yoddha","model":"503","colour":"Gold","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Yoddha","model":"503","colour":"Singham","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Yoddha","model":"503","colour":"Blue 502","opening":240,"sold":0,"closing":240,"produced":0},{"line":"Yoddha","model":"503","colour":"Fresh","opening":3504,"sold":6948,"closing":4176,"produced":7620},{"line":"Yoddha","model":"503","colour":"Mix","opening":0,"sold":0,"closing":6,"produced":6},{"line":"Yoddha","model":"503","colour":"Total","opening":3504,"sold":6948,"closing":4182,"produced":7626},{"line":"Yoddha","model":"503","colour":"G.R.C.","opening":0,"sold":0,"closing":177,"produced":177},{"line":"Yoddha","model":"503","colour":"G.Total","opening":3504,"sold":6948,"closing":4359,"produced":7803},{"line":"ClipON Stool","model":"Stool 1","colour":"Red F","opening":0,"sold":0,"closing":0,"produced":0},{"line":"ClipON Stool","model":"Stool 1","colour":"P.Pink","opening":0,"sold":0,"closing":0,"produced":0},{"line":"ClipON Stool","model":"Stool 1","colour":"P.Green","opening":0,"sold":0,"closing":0,"produced":0},{"line":"ClipON Stool","model":"Stool 1","colour":"Orange","opening":0,"sold":0,"closing":0,"produced":0},{"line":"ClipON Stool","model":"Stool 1","colour":"M.B","opening":0,"sold":0,"closing":0,"produced":0},{"line":"ClipON Stool","model":"Stool 1","colour":"B.Gold","opening":0,"sold":0,"closing":0,"produced":0},{"line":"ClipON Stool","model":"Stool 1","colour":"White","opening":0,"sold":0,"closing":0,"produced":0},{"line":"ClipON Stool","model":"Stool 2","colour":"M.Beize","opening":0,"sold":0,"closing":0,"produced":0},{"line":"ClipON Stool","model":"Stool 2","colour":"Brown","opening":0,"sold":100,"closing":-100,"produced":0},{"line":"ClipON Stool","model":"Stool 2","colour":"A.Gold","opening":0,"sold":0,"closing":0,"produced":0},{"line":"ClipON Stool","model":"Stool 2","colour":"P.Silver","opening":0,"sold":0,"closing":0,"produced":0},{"line":"ClipON Stool","model":"Stool 2","colour":"Black","opening":0,"sold":0,"closing":0,"produced":0},{"line":"ClipON Stool","model":"Stool 2","colour":"Karara","opening":0,"sold":0,"closing":0,"produced":0},{"line":"ClipON Stool","model":"Stool 2","colour":"T.Wood","opening":0,"sold":0,"closing":0,"produced":0},{"line":"ClipON Stool","model":"Stool 2","colour":"R.Wood","opening":0,"sold":0,"closing":0,"produced":0},{"line":"ClipON Stool","model":"Stool 2","colour":"Brown mix","opening":3760,"sold":1340,"closing":2420,"produced":0},{"line":"ClipON Stool","model":"Stool 2","colour":"White mix","opening":0,"sold":0,"closing":0,"produced":0},{"line":"ClipON Stool","model":"Stool 2","colour":"Fresh","opening":3760,"sold":1440,"closing":2320,"produced":0},{"line":"ClipON Stool","model":"Stool 2","colour":"Mix","opening":0,"sold":0,"closing":0,"produced":0},{"line":"ClipON Stool","model":"Stool 2","colour":"Total","opening":3760,"sold":1440,"closing":2320,"produced":0},{"line":"ClipON Stool","model":"Stool 2","colour":"G.R.C.","opening":0,"sold":0,"closing":0,"produced":0},{"line":"ClipON Stool","model":"Stool 2","colour":"G.Total","opening":3760,"sold":1440,"closing":2320,"produced":0},{"line":"Baby Chair","model":"Baby Chair 201","colour":"P.Green","opening":640,"sold":80,"closing":560,"produced":0},{"line":"Baby Chair","model":"Baby Chair 201","colour":"P.Yellow","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Baby Chair","model":"Baby Chair 201","colour":"Red Ist","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Baby Chair","model":"Baby Chair 201","colour":"P.Orange","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Baby Chair","model":"Baby Chair 201","colour":"P.White","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Baby Chair","model":"Baby Chair 201","colour":"P.Pink","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Baby Chair","model":"Baby Chair 201","colour":"Blue","opening":260,"sold":100,"closing":160,"produced":0},{"line":"Baby Chair","model":"Baby Chair 2","colour":"Black","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Baby Chair","model":"Baby Chair 2","colour":"A.Gold","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Baby Chair","model":"Baby Chair 2","colour":"M.Beige","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Baby Chair","model":"Baby Chair 2","colour":"Brown","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Baby Chair","model":"Baby Chair 2","colour":"Pink","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Baby Chair","model":"Baby Chair 2","colour":"Red","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Baby Chair","model":"Baby Chair 2","colour":"Orange","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Baby Chair","model":"Baby Chair 2","colour":"Green","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Baby Chair","model":"Baby Chair 3","colour":"P.Green Sumo Baby","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Baby Chair","model":"Baby Chair 3","colour":"Sumo Baby Chair","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Baby Chair","model":"Baby Chair 3","colour":"Fresh","opening":900,"sold":180,"closing":720,"produced":0},{"line":"Baby Chair","model":"Baby Chair 3","colour":"Mix","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Baby Chair","model":"Baby Chair 3","colour":"Total","opening":900,"sold":180,"closing":720,"produced":0},{"line":"Baby Chair","model":"Baby Chair 3","colour":"G.R.C.","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Baby Chair","model":"Baby Chair 3","colour":"G.Total","opening":900,"sold":180,"closing":720,"produced":0},{"line":"BABA CHAIR 1","model":"Baba Chair 1","colour":"P.Green","opening":740,"sold":720,"closing":20,"produced":0},{"line":"BABA CHAIR 1","model":"Baba Chair 1","colour":"P.Yellow","opening":1340,"sold":980,"closing":360,"produced":0},{"line":"BABA CHAIR 1","model":"Baba Chair 1","colour":"Red Ist","opening":4200,"sold":1680,"closing":2520,"produced":0},{"line":"BABA CHAIR 1","model":"Baba Chair 1","colour":"P.Orange","opening":2240,"sold":1420,"closing":820,"produced":0},{"line":"BABA CHAIR 1","model":"Baba Chair 1","colour":"P.White","opening":0,"sold":0,"closing":0,"produced":0},{"line":"BABA CHAIR 1","model":"Baba Chair 1","colour":"P.Pink","opening":0,"sold":0,"closing":0,"produced":0},{"line":"BABA CHAIR 1","model":"Baba Chair 1","colour":"Blue","opening":620,"sold":600,"closing":20,"produced":0},{"line":"BABA CHAIR 1","model":"Baba Chair 1","colour":"Black","opening":0,"sold":0,"closing":0,"produced":0},{"line":"BABA CHAIR 1","model":"Baba Chair 1","colour":"A.Gold","opening":0,"sold":0,"closing":0,"produced":0},{"line":"BABA CHAIR 1","model":"Baba Chair 1","colour":"M.Beige","opening":0,"sold":0,"closing":0,"produced":0},{"line":"BABA CHAIR 1","model":"Baba Chair 1","colour":"Blue","opening":0,"sold":0,"closing":0,"produced":0},{"line":"BABA CHAIR 1","model":"Baba Chair 1","colour":"Pink","opening":0,"sold":0,"closing":0,"produced":0},{"line":"BABA CHAIR 1","model":"Baba Chair 1","colour":"Red","opening":0,"sold":0,"closing":0,"produced":0},{"line":"BABA CHAIR 1","model":"Baba Chair 1","colour":"Orange","opening":0,"sold":0,"closing":0,"produced":0},{"line":"BABA CHAIR 1","model":"Baba Chair 1","colour":"Green","opening":0,"sold":0,"closing":0,"produced":0},{"line":"BABA CHAIR 1","model":"Baba Chair 1","colour":"P.Silver","opening":0,"sold":0,"closing":0,"produced":0},{"line":"BABA CHAIR 1","model":"Baba Chair 1","colour":"Fresh","opening":9140,"sold":5400,"closing":3740,"produced":0},{"line":"BABA CHAIR 1","model":"Baba Chair 1","colour":"Mix","opening":0,"sold":0,"closing":0,"produced":0},{"line":"BABA CHAIR 1","model":"Baba Chair 1","colour":"Total","opening":9140,"sold":5400,"closing":3740,"produced":0},{"line":"BABA CHAIR 1","model":"Baba Chair 1","colour":"G.R.C.","opening":0,"sold":0,"closing":0,"produced":0},{"line":"BABA CHAIR 1","model":"Baba Chair 1","colour":"G.Total","opening":9140,"sold":5400,"closing":3740,"produced":0},{"line":"Jordan New","model":"1001","colour":"White","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Jordan New","model":"1001","colour":"T.W","opening":204,"sold":144,"closing":60,"produced":0},{"line":"Jordan New","model":"1001","colour":"S.Black","opening":24,"sold":0,"closing":24,"produced":0},{"line":"Jordan New","model":"1001","colour":"Brown","opening":384,"sold":240,"closing":144,"produced":0},{"line":"Jordan New","model":"1001","colour":"A.Gold","opening":120,"sold":96,"closing":24,"produced":0},{"line":"Jordan New","model":"1001","colour":"B.GLD","opening":192,"sold":48,"closing":144,"produced":0},{"line":"Jordan New","model":"1001","colour":"Orange","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Jordan New","model":"1002","colour":"S-W","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Jordan New","model":"1002","colour":"C-W","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Jordan New","model":"1002","colour":"Silver","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Jordan New","model":"1002","colour":"Black","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Jordan New","model":"1002","colour":"M.Bz","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Jordan New","model":"1002","colour":"Brown","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Jordan New","model":"1002","colour":"R-W","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Jordan New","model":"1002","colour":"A-Gold","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Jordan New","model":"1003","colour":"A.Gold","opening":0,"sold":276,"closing":708,"produced":984},{"line":"Jordan New","model":"1003","colour":"T.Wood","opening":0,"sold":744,"closing":576,"produced":1320},{"line":"Jordan New","model":"1003","colour":"Brown","opening":648,"sold":756,"closing":420,"produced":528},{"line":"Jordan New","model":"1003","colour":"B.G","opening":0,"sold":1068,"closing":912,"produced":1980},{"line":"Jordan New","model":"1003","colour":"M.Beige","opening":444,"sold":300,"closing":144,"produced":0},{"line":"Jordan New","model":"1003","colour":"G.B/Br.Black","opening":1272,"sold":564,"closing":708,"produced":0},{"line":"Jordan New","model":"1003","colour":"S.Black","opening":36,"sold":36,"closing":0,"produced":0},{"line":"Jordan New","model":"1003","colour":"Gold 1","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Jordan New","model":"1003","colour":"Fresh","opening":3324,"sold":4272,"closing":3864,"produced":4812},{"line":"Jordan New","model":"1003","colour":"Mix","opening":0,"sold":0,"closing":28,"produced":28},{"line":"Jordan New","model":"1003","colour":"Total","opening":3324,"sold":4272,"closing":3892,"produced":4840},{"line":"Jordan New","model":"1003","colour":"G.R.C.","opening":0,"sold":0,"closing":103,"produced":103},{"line":"Jordan New","model":"1003","colour":"G.Total","opening":3324,"sold":4272,"closing":3995,"produced":4943},{"line":"Jordan Chair","model":"","colour":"M.Beige","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Jordan Chair","model":"","colour":"R.Wood","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Jordan Chair","model":"","colour":"A.Gold","opening":24,"sold":12,"closing":12,"produced":0},{"line":"Jordan Chair","model":"","colour":"T.W","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Jordan Chair","model":"","colour":"S .Black","opening":312,"sold":0,"closing":312,"produced":0},{"line":"Jordan Chair","model":"","colour":"G.Black","opening":0,"sold":24,"closing":-24,"produced":0},{"line":"Jordan Chair","model":"","colour":"Brown","opening":12,"sold":0,"closing":12,"produced":0},{"line":"Jordan Chair","model":"9002 (Goli)","colour":"P.Pink","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Jordan Chair","model":"9002 (Goli)","colour":"M.Beige","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Jordan Chair","model":"9002 (Goli)","colour":"B.Silver","opening":180,"sold":0,"closing":180,"produced":0},{"line":"Jordan Chair","model":"9002 (Goli)","colour":"Brown","opening":636,"sold":0,"closing":636,"produced":0},{"line":"Jordan Chair","model":"9002 (Goli)","colour":"P.Green","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Jordan Chair","model":"9002 (Goli)","colour":"A.Gold","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Jordan Chair","model":"9002 (Goli)","colour":"White","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Jordan Chair","model":"9002 (Goli)","colour":"G.B","opening":12,"sold":0,"closing":12,"produced":0},{"line":"Jordan Chair","model":"9003 (Plain)","colour":"T.W 9002","opening":828,"sold":348,"closing":480,"produced":0},{"line":"Jordan Chair","model":"9003 (Plain)","colour":"YELLOW","opening":12,"sold":0,"closing":12,"produced":0},{"line":"Jordan Chair","model":"9003 (Plain)","colour":"S.B","opening":108,"sold":0,"closing":108,"produced":0},{"line":"Jordan Chair","model":"9003 (Plain)","colour":"B.G","opening":0,"sold":396,"closing":228,"produced":624},{"line":"Jordan Chair","model":"9003 (Plain)","colour":"Brown","opening":672,"sold":228,"closing":444,"produced":0},{"line":"Jordan Chair","model":"9003 (Plain)","colour":"Fresh","opening":2796,"sold":1008,"closing":2412,"produced":624},{"line":"Jordan Chair","model":"9003 (Plain)","colour":"Mix","opening":0,"sold":0,"closing":3,"produced":3},{"line":"Jordan Chair","model":"9003 (Plain)","colour":"Total","opening":2796,"sold":1008,"closing":2415,"produced":627},{"line":"Jordan Chair","model":"9003 (Plain)","colour":"G.R.C.","opening":0,"sold":0,"closing":52,"produced":52},{"line":"Jordan Chair","model":"9003 (Plain)","colour":"G.Total","opening":2796,"sold":1008,"closing":2467,"produced":679},{"line":"High cros","model":"601 (High Cros)","colour":"White","opening":740,"sold":80,"closing":660,"produced":0},{"line":"High cros","model":"601 (High Cros)","colour":"Green","opening":0,"sold":0,"closing":0,"produced":0},{"line":"High cros","model":"601 (High Cros)","colour":"S. Black","opening":0,"sold":0,"closing":0,"produced":0},{"line":"High cros","model":"601 (High Cros)","colour":"Yellow","opening":20,"sold":40,"closing":-20,"produced":0},{"line":"High cros","model":"601 (High Cros)","colour":"M.Bz First","opening":660,"sold":0,"closing":660,"produced":0},{"line":"High cros","model":"601 (High Cros)","colour":"Orange","opening":400,"sold":260,"closing":140,"produced":0},{"line":"High cros","model":"601 (High Cros)","colour":"Red (1)","opening":460,"sold":400,"closing":60,"produced":0},{"line":"High cros","model":"601 (High Cros)","colour":"BLUE","opening":380,"sold":120,"closing":260,"produced":0},{"line":"High cros","model":"601 (High Cros)","colour":"S-W","opening":0,"sold":0,"closing":0,"produced":0},{"line":"High cros","model":"601 (High Cros)","colour":"Brown","opening":0,"sold":0,"closing":0,"produced":0},{"line":"High cros","model":"601 (High Cros)","colour":"B .Silver","opening":0,"sold":0,"closing":0,"produced":0},{"line":"High cros","model":"601 (High Cros)","colour":"M.B","opening":120,"sold":0,"closing":120,"produced":0},{"line":"High cros","model":"601 (High Cros)","colour":"D.Blue","opening":0,"sold":0,"closing":0,"produced":0},{"line":"High cros","model":"601 (High Cros)","colour":"A.Gold","opening":0,"sold":0,"closing":0,"produced":0},{"line":"High cros","model":"601 (High Cros)","colour":"R-W","opening":0,"sold":0,"closing":0,"produced":0},{"line":"High cros","model":"601 (High Cros)","colour":"T.W","opening":860,"sold":800,"closing":60,"produced":0},{"line":"High cros","model":"601 (High Cros)","colour":"SILVER","opening":20,"sold":0,"closing":20,"produced":0},{"line":"High cros","model":"601 (High Cros)","colour":"White","opening":0,"sold":0,"closing":0,"produced":0},{"line":"High cros","model":"601 (High Cros)","colour":"B. Gold","opening":1420,"sold":1100,"closing":320,"produced":0},{"line":"High cros","model":"601 (High Cros)","colour":"Fresh","opening":5080,"sold":2800,"closing":2280,"produced":0},{"line":"High cros","model":"601 (High Cros)","colour":"Mix","opening":0,"sold":0,"closing":0,"produced":0},{"line":"High cros","model":"601 (High Cros)","colour":"Total","opening":5080,"sold":2800,"closing":2280,"produced":0},{"line":"High cros","model":"601 (High Cros)","colour":"G.R.C.","opening":0,"sold":0,"closing":0,"produced":0},{"line":"High cros","model":"601 (High Cros)","colour":"G.Total","opening":5080,"sold":2800,"closing":2280,"produced":0},{"line":"Ring Table","model":"RING TABLE","colour":"S-W","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Ring Table","model":"RING TABLE","colour":"blue","opening":552,"sold":0,"closing":552,"produced":0},{"line":"Ring Table","model":"RING TABLE","colour":"Red","opening":660,"sold":0,"closing":660,"produced":0},{"line":"Ring Table","model":"RING TABLE","colour":"P-Pink","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Ring Table","model":"RING TABLE","colour":"B.Gold","opening":0,"sold":228,"closing":576,"produced":804},{"line":"Ring Table","model":"RING TABLE","colour":"Orange","opening":276,"sold":36,"closing":240,"produced":0},{"line":"Ring Table","model":"RING TABLE","colour":"P-White","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Ring Table","model":"RING TABLE","colour":"Silver.B","opening":0,"sold":36,"closing":228,"produced":264},{"line":"Ring Table","model":"RING TABLE","colour":"T.W","opening":0,"sold":192,"closing":504,"produced":696},{"line":"Ring Table","model":"RING TABLE","colour":"A.Gold","opening":0,"sold":48,"closing":312,"produced":360},{"line":"Ring Table","model":"RING TABLE","colour":"P.Green","opening":444,"sold":36,"closing":408,"produced":0},{"line":"Ring Table","model":"RING TABLE","colour":"M.Bz","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Ring Table","model":"RING TABLE","colour":"Black","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Ring Table","model":"RING TABLE","colour":"R-W","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Ring Table","model":"RING TABLE","colour":"Brown","opening":0,"sold":204,"closing":192,"produced":396},{"line":"Ring Table","model":"RING TABLE","colour":"Fresh","opening":1932,"sold":780,"closing":3672,"produced":2520},{"line":"Ring Table","model":"RING TABLE","colour":"C-Mix","opening":0,"sold":0,"closing":17,"produced":17},{"line":"Ring Table","model":"RING TABLE","colour":"Total","opening":1932,"sold":780,"closing":3689,"produced":2537},{"line":"Ring Table","model":"RING TABLE","colour":"G.Rejn","opening":0,"sold":0,"closing":107,"produced":107},{"line":"Ring Table","model":"RING TABLE","colour":"G.Total","opening":1932,"sold":780,"closing":3796,"produced":2644},{"line":"ARM LESS SUMO","model":"ARM LESS SUMO","colour":"White","opening":120,"sold":0,"closing":120,"produced":0},{"line":"ARM LESS SUMO","model":"ARM LESS SUMO","colour":"P. Green1","opening":0,"sold":0,"closing":0,"produced":0},{"line":"ARM LESS SUMO","model":"ARM LESS SUMO","colour":"S. Black","opening":0,"sold":0,"closing":0,"produced":0},{"line":"ARM LESS SUMO","model":"ARM LESS SUMO","colour":"Yellow","opening":0,"sold":0,"closing":0,"produced":0},{"line":"ARM LESS SUMO","model":"ARM LESS SUMO","colour":"M.Bz First","opening":0,"sold":0,"closing":0,"produced":0},{"line":"ARM LESS SUMO","model":"ARM LESS SUMO","colour":"Orange","opening":0,"sold":0,"closing":0,"produced":0},{"line":"ARM LESS SUMO","model":"ARM LESS SUMO","colour":"Red (1)","opening":1800,"sold":200,"closing":1600,"produced":0},{"line":"ARM LESS SUMO","model":"ARM LESS SUMO","colour":"Blue","opening":340,"sold":220,"closing":120,"produced":0},{"line":"ARM LESS SUMO","model":"ARM LESS SUMO","colour":"S-W","opening":0,"sold":0,"closing":0,"produced":0},{"line":"ARM LESS SUMO","model":"ARM LESS SUMO","colour":"Brown","opening":0,"sold":40,"closing":-40,"produced":0},{"line":"ARM LESS SUMO","model":"ARM LESS SUMO","colour":"S. BLACK SECOND","opening":120,"sold":120,"closing":0,"produced":0},{"line":"ARM LESS SUMO","model":"ARM LESS SUMO","colour":"KR","opening":0,"sold":0,"closing":0,"produced":0},{"line":"ARM LESS SUMO","model":"ARM LESS SUMO","colour":"M.Bz","opening":1440,"sold":0,"closing":1440,"produced":0},{"line":"ARM LESS SUMO","model":"ARM LESS SUMO","colour":"A.Gold","opening":0,"sold":40,"closing":-40,"produced":0},{"line":"ARM LESS SUMO","model":"ARM LESS SUMO","colour":"R-W","opening":0,"sold":0,"closing":0,"produced":0},{"line":"ARM LESS SUMO","model":"ARM LESS SUMO","colour":"Red","opening":0,"sold":0,"closing":0,"produced":0},{"line":"ARM LESS SUMO","model":"ARM LESS SUMO","colour":"T.W","opening":100,"sold":200,"closing":1560,"produced":1660},{"line":"ARM LESS SUMO","model":"ARM LESS SUMO","colour":"GOLD","opening":0,"sold":0,"closing":0,"produced":0},{"line":"ARM LESS SUMO","model":"ARM LESS SUMO","colour":"B. GOLD","opening":0,"sold":740,"closing":1360,"produced":2100},{"line":"ARM LESS SUMO","model":"ARM LESS SUMO","colour":"Fresh","opening":3920,"sold":1560,"closing":6120,"produced":3760},{"line":"ARM LESS SUMO","model":"ARM LESS SUMO","colour":"Mix","opening":0,"sold":0,"closing":19,"produced":19},{"line":"ARM LESS SUMO","model":"ARM LESS SUMO","colour":"Total","opening":3920,"sold":1560,"closing":6139,"produced":3779},{"line":"ARM LESS SUMO","model":"ARM LESS SUMO","colour":"G.R.C.","opening":0,"sold":0,"closing":131,"produced":131},{"line":"ARM LESS SUMO","model":"ARM LESS SUMO","colour":"G.Total","opening":3920,"sold":1560,"closing":6270,"produced":3910},{"line":"JIO TABLE","model":"JIO  - Top","colour":"B.G","opening":478,"sold":79,"closing":399,"produced":0},{"line":"JIO TABLE","model":"JIO  - Top","colour":"A.Gold","opening":548,"sold":2,"closing":546,"produced":0},{"line":"JIO TABLE","model":"JIO  - Top","colour":"Brown","opening":1410,"sold":58,"closing":1352,"produced":0},{"line":"JIO TABLE","model":"JIO  - Top","colour":"T.Wood","opening":788,"sold":43,"closing":745,"produced":0},{"line":"JIO TABLE","model":"JIO  - Top","colour":"M.B","opening":554,"sold":0,"closing":554,"produced":0},{"line":"JIO TABLE","model":"JIO  - Top","colour":"S.Black","opening":0,"sold":0,"closing":0,"produced":0},{"line":"JIO TABLE","model":"JIO  - Top","colour":"R.Wood","opening":0,"sold":0,"closing":0,"produced":0},{"line":"JIO TABLE","model":"JIO - Joint and Leg","colour":"R.Wood","opening":0,"sold":0,"closing":0,"produced":0},{"line":"JIO TABLE","model":"JIO - Joint and Leg","colour":"T.Wood","opening":0,"sold":0,"closing":0,"produced":0},{"line":"JIO TABLE","model":"JIO - Joint and Leg","colour":"White. F","opening":0,"sold":0,"closing":0,"produced":0},{"line":"JIO TABLE","model":"JIO - Joint and Leg","colour":"Brown","opening":0,"sold":0,"closing":0,"produced":0},{"line":"JIO TABLE","model":"JIO - Joint and Leg","colour":"A.Gold","opening":0,"sold":0,"closing":0,"produced":0},{"line":"JIO TABLE","model":"JIO - Joint and Leg","colour":"S.Black","opening":0,"sold":0,"closing":0,"produced":0},{"line":"JIO TABLE","model":"JIO - Joint and Leg","colour":"Red","opening":0,"sold":0,"closing":0,"produced":0},{"line":"JIO TABLE","model":"JIO - Joint and Leg","colour":"BLUE","opening":0,"sold":0,"closing":0,"produced":0},{"line":"JIO TABLE","model":"JIO Top - Round","colour":"BLUE","opening":309,"sold":0,"closing":309,"produced":0},{"line":"JIO TABLE","model":"JIO Top - Round","colour":"B.Gold","opening":0,"sold":0,"closing":0,"produced":0},{"line":"JIO TABLE","model":"JIO Top - Round","colour":"Green","opening":337,"sold":0,"closing":337,"produced":0},{"line":"JIO TABLE","model":"JIO Top - Round","colour":"S.Black","opening":0,"sold":0,"closing":0,"produced":0},{"line":"JIO TABLE","model":"JIO Top - Round","colour":"M.Beize F","opening":0,"sold":0,"closing":0,"produced":0},{"line":"JIO TABLE","model":"JIO Top - Round","colour":"White","opening":145,"sold":0,"closing":145,"produced":0},{"line":"JIO TABLE","model":"JIO Top - Round","colour":"Orange","opening":455,"sold":0,"closing":455,"produced":0},{"line":"JIO TABLE","model":"JIO Top - Round","colour":"Red","opening":692,"sold":0,"closing":692,"produced":0},{"line":"JIO TABLE","model":"JIO Top - Round","colour":"Fresh","opening":5716,"sold":182,"closing":5534,"produced":0},{"line":"JIO TABLE","model":"JIO Top - Round","colour":"Mix","opening":0,"sold":0,"closing":0,"produced":0},{"line":"JIO TABLE","model":"JIO Top - Round","colour":"Total","opening":5716,"sold":182,"closing":5534,"produced":0},{"line":"JIO TABLE","model":"JIO Top - Round","colour":"G.R.C.","opening":0,"sold":0,"closing":0,"produced":0},{"line":"JIO TABLE","model":"JIO Top - Round","colour":"G.Total","opening":5716,"sold":182,"closing":5534,"produced":0},{"line":"Dining Table","model":"Dining - Top Square","colour":"B.G","opening":168,"sold":77,"closing":91,"produced":0},{"line":"Dining Table","model":"Dining - Top Square","colour":"A.Gold","opening":319,"sold":147,"closing":172,"produced":0},{"line":"Dining Table","model":"Dining - Top Square","colour":"Brown","opening":640,"sold":148,"closing":492,"produced":0},{"line":"Dining Table","model":"Dining - Top Square","colour":"T.Wood","opening":160,"sold":90,"closing":70,"produced":0},{"line":"Dining Table","model":"Dining - Top Square","colour":"P.Silver","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Dining Table","model":"Dining - Top Square","colour":"S.Black","opening":2,"sold":2,"closing":0,"produced":0},{"line":"Dining Table","model":"Dining - Top Square","colour":"R.Wood","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Dining Table","model":"Dining - Joint and Leg","colour":"R.Wood","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Dining Table","model":"Dining - Joint and Leg","colour":"T.Wood","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Dining Table","model":"Dining - Joint and Leg","colour":"White. F","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Dining Table","model":"Dining - Joint and Leg","colour":"Brown","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Dining Table","model":"Dining - Joint and Leg","colour":"A.Gold","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Dining Table","model":"Dining - Joint and Leg","colour":"S.Black","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Dining Table","model":"Dining - Joint and Leg","colour":"Red","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Dining Table","model":"Dining - Joint and Leg","colour":"BLUE","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Dining Table","model":"Dining Top - Round","colour":"BLUE","opening":64,"sold":0,"closing":64,"produced":0},{"line":"Dining Table","model":"Dining Top - Round","colour":"B.Gold","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Dining Table","model":"Dining Top - Round","colour":"Green","opening":276,"sold":10,"closing":266,"produced":0},{"line":"Dining Table","model":"Dining Top - Round","colour":"S.Black","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Dining Table","model":"Dining Top - Round","colour":"M.Beize F","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Dining Table","model":"Dining Top - Round","colour":"White","opening":1,"sold":0,"closing":1,"produced":0},{"line":"Dining Table","model":"Dining Top - Round","colour":"Orange","opening":200,"sold":6,"closing":194,"produced":0},{"line":"Dining Table","model":"Dining Top - Round","colour":"Red","opening":520,"sold":10,"closing":510,"produced":0},{"line":"Dining Table","model":"Dining Top - Round","colour":"Fresh","opening":2350,"sold":490,"closing":1860,"produced":0},{"line":"Dining Table","model":"Dining Top - Round","colour":"Mix","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Dining Table","model":"Dining Top - Round","colour":"Total","opening":2350,"sold":490,"closing":1860,"produced":0},{"line":"Dining Table","model":"Dining Top - Round","colour":"G.R.C.","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Dining Table","model":"Dining Top - Round","colour":"G.Total","opening":2350,"sold":490,"closing":1860,"produced":0},{"line":"Web Chair","model":"Wap Chair","colour":"P. Green","opening":198,"sold":72,"closing":126,"produced":0},{"line":"Web Chair","model":"Wap Chair","colour":"Orange","opening":228,"sold":60,"closing":168,"produced":0},{"line":"Web Chair","model":"Wap Chair","colour":"Red","opening":252,"sold":72,"closing":180,"produced":0},{"line":"Web Chair","model":"Wap Chair","colour":"White","opening":108,"sold":0,"closing":108,"produced":0},{"line":"Web Chair","model":"Wap Chair","colour":"Blue","opening":360,"sold":0,"closing":360,"produced":0},{"line":"Web Chair","model":"Wap Chair","colour":"Black","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Web Chair","model":"Wap Chair","colour":"Brown","opening":474,"sold":54,"closing":420,"produced":0},{"line":"Web Chair","model":"Wap Chair","colour":"A .G","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Web Chair","model":"Wap Chair","colour":"Gold","opening":840,"sold":12,"closing":828,"produced":0},{"line":"Web Chair","model":"Wap Chair","colour":"D.Green","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Web Chair","model":"Wap Chair","colour":"M.B","opening":318,"sold":0,"closing":318,"produced":0},{"line":"Web Chair","model":"Wap Chair","colour":"B.G","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Web Chair","model":"Wap Chair","colour":"Fresh","opening":2778,"sold":270,"closing":2508,"produced":0},{"line":"Web Chair","model":"Wap Chair","colour":"Mix","opening":12,"sold":0,"closing":12,"produced":0},{"line":"Web Chair","model":"Wap Chair","colour":"Total","opening":2790,"sold":270,"closing":2520,"produced":0},{"line":"Web Chair","model":"Wap Chair","colour":"G.R.C.","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Web Chair","model":"Wap Chair","colour":"G.Total","opening":2778,"sold":270,"closing":2508,"produced":0},{"line":"F.Stand & C Table","model":"Fridge Stand 1","colour":"White","opening":0,"sold":0,"closing":0,"produced":0},{"line":"F.Stand & C Table","model":"Fridge Stand 1","colour":"Red First","opening":0,"sold":160,"closing":-160,"produced":0},{"line":"F.Stand & C Table","model":"Fridge Stand 1","colour":"P.Green","opening":0,"sold":20,"closing":-20,"produced":0},{"line":"F.Stand & C Table","model":"Fridge Stand 1","colour":"P.Pink","opening":0,"sold":0,"closing":0,"produced":0},{"line":"F.Stand & C Table","model":"Fridge Stand 1","colour":"Blue","opening":0,"sold":0,"closing":0,"produced":0},{"line":"F.Stand & C Table","model":"Fridge Stand 1","colour":"Yellow","opening":0,"sold":0,"closing":0,"produced":0},{"line":"F.Stand & C Table","model":"Fridge Stand 1","colour":"Orange","opening":0,"sold":140,"closing":-140,"produced":0},{"line":"F.Stand & C Table","model":"Coffee - Table","colour":"M.Beize","opening":320,"sold":32,"closing":288,"produced":0},{"line":"F.Stand & C Table","model":"Coffee - Table","colour":"Orange","opening":0,"sold":0,"closing":0,"produced":0},{"line":"F.Stand & C Table","model":"Coffee - Table","colour":"White. F","opening":0,"sold":0,"closing":0,"produced":0},{"line":"F.Stand & C Table","model":"Coffee - Table","colour":"Brown","opening":720,"sold":896,"closing":1696,"produced":1872},{"line":"F.Stand & C Table","model":"Coffee - Table","colour":"A.Gold","opening":0,"sold":544,"closing":544,"produced":1088},{"line":"F.Stand & C Table","model":"Coffee - Table","colour":"T.W","opening":544,"sold":128,"closing":416,"produced":0},{"line":"F.Stand & C Table","model":"Coffee - Table","colour":"S . BLACK","opening":928,"sold":48,"closing":880,"produced":0},{"line":"F.Stand & C Table","model":"Coffee - Table","colour":"P.Green","opening":0,"sold":0,"closing":0,"produced":0},{"line":"F.Stand & C Table","model":"Fridge Stand 3","colour":"Black","opening":0,"sold":580,"closing":-580,"produced":0},{"line":"F.Stand & C Table","model":"Fridge Stand 3","colour":"R.W","opening":0,"sold":0,"closing":0,"produced":0},{"line":"F.Stand & C Table","model":"Fridge Stand 3","colour":"Cherry","opening":0,"sold":520,"closing":-520,"produced":0},{"line":"F.Stand & C Table","model":"Fridge Stand 3","colour":"M.B","opening":0,"sold":60,"closing":-60,"produced":0},{"line":"F.Stand & C Table","model":"Fridge Stand 3","colour":"P.Silver","opening":0,"sold":0,"closing":0,"produced":0},{"line":"F.Stand & C Table","model":"Fridge Stand 3","colour":"Brown","opening":0,"sold":1600,"closing":-1600,"produced":0},{"line":"F.Stand & C Table","model":"Fridge Stand 3","colour":"Fresh","opening":2512,"sold":4728,"closing":744,"produced":2960},{"line":"F.Stand & C Table","model":"Fridge Stand 3","colour":"Mix","opening":0,"sold":0,"closing":14,"produced":14},{"line":"F.Stand & C Table","model":"Fridge Stand 3","colour":"Total","opening":2512,"sold":4728,"closing":758,"produced":2974},{"line":"F.Stand & C Table","model":"Fridge Stand 3","colour":"G.R.C.","opening":0,"sold":0,"closing":38,"produced":38},{"line":"F.Stand & C Table","model":"Fridge Stand 3","colour":"G.Total","opening":2512,"sold":4728,"closing":796,"produced":3012},{"line":"Fruit Crate","model":"","colour":"P.Green","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Fruit Crate","model":"","colour":"P.Pink","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Fruit Crate","model":"","colour":"Blue & Red( F )","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Fruit Crate","model":"","colour":"Cherry","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Fruit Crate","model":"","colour":"Grey","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Fruit Crate","model":"","colour":"Brown","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Fruit Crate","model":"","colour":"Mix","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Fruit Crate","model":"Fruit Crate (700)","colour":"S-W","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Fruit Crate","model":"Fruit Crate (700)","colour":"C-W","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Fruit Crate","model":"Fruit Crate (700)","colour":"Silver","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Fruit Crate","model":"Fruit Crate (700)","colour":"Black","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Fruit Crate","model":"Fruit Crate (700)","colour":"M.Bz","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Fruit Crate","model":"Fruit Crate (700)","colour":"Brown","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Fruit Crate","model":"Fruit Crate (700)","colour":"R-W","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Fruit Crate","model":"Fruit Crate (700)","colour":"A-Gold","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Fruit Crate","model":"Fruit Crate (700)","colour":"S-W","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Fruit Crate","model":"Fruit Crate (700)","colour":"C-W","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Fruit Crate","model":"Fruit Crate (700)","colour":"Silver","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Fruit Crate","model":"Fruit Crate (700)","colour":"Black","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Fruit Crate","model":"Fruit Crate (700)","colour":"M.Bz","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Fruit Crate","model":"Fruit Crate (700)","colour":"B-Brown","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Fruit Crate","model":"Fruit Crate (700)","colour":"T-W","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Fruit Crate","model":"Fruit Crate (700)","colour":"Karara","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Fruit Crate","model":"Fruit Crate (700)","colour":"Fresh","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Fruit Crate","model":"Fruit Crate (700)","colour":"Mix","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Fruit Crate","model":"Fruit Crate (700)","colour":"Total","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Fruit Crate","model":"Fruit Crate (700)","colour":"G.R.C.","opening":0,"sold":0,"closing":0,"produced":0},{"line":"Fruit Crate","model":"Fruit Crate (700)","colour":"G.Total","opening":0,"sold":0,"closing":0,"produced":0}],"lines":["BIG CHAIR","Sumo","XUV","Innova","Garden Table","Stool","Activa","Small Chair","EV Chair","Aless","Tea Table","Chota Heritage","M.P.Stool","Yoddha","ClipON Stool","Baby Chair","BABA CHAIR 1","Jordan New","Jordan Chair","High cros","Ring Table","ARM LESS SUMO","JIO TABLE","Dining Table","Web Chair","F.Stand & C Table","Fruit Crate"],"machines":[{"name":"M-1","fresh":37992,"activeDays":41},{"name":"M-2","fresh":63384,"activeDays":48},{"name":"M-3","fresh":39270,"activeDays":49},{"name":"M-4","fresh":35424,"activeDays":31},{"name":"M-5","fresh":35208,"activeDays":31},{"name":"M-6","fresh":23490,"activeDays":28},{"name":"M-7","fresh":31320,"activeDays":20}]}
+{
+  "skus": [
+    {
+      "line": "BIG CHAIR",
+      "model": "2001(New)",
+      "colour": "S-W",
+      "opening": 976,
+      "sold": 976,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "2001(New)",
+      "colour": "G.B",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "2001(New)",
+      "colour": "B.Silver",
+      "opening": 1264,
+      "sold": 32,
+      "closing": 1232,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "2001(New)",
+      "colour": "A.Gold",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "2001(New)",
+      "colour": "M.Bz",
+      "opening": 768,
+      "sold": 0,
+      "closing": 768,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "2001(New)",
+      "colour": "P.Silver",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "2001(New)",
+      "colour": "R-W",
+      "opening": 912,
+      "sold": 496,
+      "closing": 416,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "2001(New)",
+      "colour": "Brown",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "5001 (Maharaja)",
+      "colour": "S-W",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "5001 (Maharaja)",
+      "colour": "C-W",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "5001 (Maharaja)",
+      "colour": "B-Silver",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "5001 (Maharaja)",
+      "colour": "KR",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "5001 (Maharaja)",
+      "colour": "M.Bz",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "5001 (Maharaja)",
+      "colour": "BCM",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "5001 (Maharaja)",
+      "colour": "R-W",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "5001 (Maharaja)",
+      "colour": "Mix",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "5002 (Maharaja) - Gold",
+      "colour": "A.Gold",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "5002 (Maharaja) - Gold",
+      "colour": "White",
+      "opening": 128,
+      "sold": 0,
+      "closing": 128,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "5002 (Maharaja) - Gold",
+      "colour": "Karara",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "5002 (Maharaja) - Gold",
+      "colour": "P-Silver",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "5002 (Maharaja) - Gold",
+      "colour": "M.Bz",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "5002 (Maharaja) - Gold",
+      "colour": "Blue,5003",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "5002 (Maharaja) - Gold",
+      "colour": "Red F",
+      "opening": 32,
+      "sold": 0,
+      "closing": 32,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "5002 (Maharaja) - Gold",
+      "colour": "5003, Orange",
+      "opening": 272,
+      "sold": 0,
+      "closing": 272,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "5003 (Flower)",
+      "colour": "P.Pink",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "5003 (Flower)",
+      "colour": "P.Green",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "5003 (Flower)",
+      "colour": "R-W",
+      "opening": 704,
+      "sold": 704,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "5003 (Flower)",
+      "colour": "M.Bz",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "5003 (Flower)",
+      "colour": "B-Silver",
+      "opening": 1456,
+      "sold": 464,
+      "closing": 992,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "5003 (Flower)",
+      "colour": "Brown",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "5003 (Flower)",
+      "colour": "S.Wood",
+      "opening": 1840,
+      "sold": 2016,
+      "closing": -176,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "5003 (Flower)",
+      "colour": "A.Gold",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "6001 (Goli)",
+      "colour": "P.Green",
+      "opening": 32,
+      "sold": 0,
+      "closing": 32,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "6001 (Goli)",
+      "colour": "Blue",
+      "opening": 368,
+      "sold": 0,
+      "closing": 368,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "6001 (Goli)",
+      "colour": "P.White",
+      "opening": 48,
+      "sold": 0,
+      "closing": 48,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "6001 (Goli)",
+      "colour": "Orange",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "6001 (Goli)",
+      "colour": "Red First",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "6001 (Goli)",
+      "colour": "P.Pink",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "6001 (Goli)",
+      "colour": "Brown First",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "6001 (Goli)",
+      "colour": "M.B.",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "6002 (Chattai)",
+      "colour": "P-Silver",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "6002 (Chattai)",
+      "colour": "S-Wood",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "6002 (Chattai)",
+      "colour": "A.Gold",
+      "opening": 1760,
+      "sold": 3200,
+      "closing": 1552,
+      "produced": 2992
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "6002 (Chattai)",
+      "colour": "Black",
+      "opening": 0,
+      "sold": 192,
+      "closing": -192,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "6002 (Chattai)",
+      "colour": "M.Bz",
+      "opening": 624,
+      "sold": 208,
+      "closing": 416,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "6002 (Chattai)",
+      "colour": "Brown",
+      "opening": 3056,
+      "sold": 4080,
+      "closing": 1504,
+      "produced": 2528
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "6002 (Chattai)",
+      "colour": "White",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "6002 (Chattai)",
+      "colour": "B.Gold",
+      "opening": 0,
+      "sold": 800,
+      "closing": -800,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "6003 (Patti)",
+      "colour": "S-W",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "6003 (Patti)",
+      "colour": "G.Black",
+      "opening": 976,
+      "sold": 688,
+      "closing": 1216,
+      "produced": 928
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "6003 (Patti)",
+      "colour": "T-Wood",
+      "opening": 1328,
+      "sold": 480,
+      "closing": 848,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "6003 (Patti)",
+      "colour": "S-Black",
+      "opening": 464,
+      "sold": 272,
+      "closing": 192,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "6003 (Patti)",
+      "colour": "M.Bz",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "6003 (Patti)",
+      "colour": "A.G",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "6003 (Patti)",
+      "colour": "R-W",
+      "opening": 160,
+      "sold": 160,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "6003 (Patti)",
+      "colour": "Gold",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "2002",
+      "colour": "Red First",
+      "opening": 16,
+      "sold": 0,
+      "closing": 16,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "2002",
+      "colour": "A.G",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "2002",
+      "colour": "Orange",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "2002",
+      "colour": "Brown",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "2002",
+      "colour": "P.Green",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "2002",
+      "colour": "G . Black",
+      "opening": 560,
+      "sold": 288,
+      "closing": 272,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "2002",
+      "colour": "Yellow",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "2002",
+      "colour": "Blue",
+      "opening": 464,
+      "sold": 0,
+      "closing": 464,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "10001 New (Goli)",
+      "colour": "Mix",
+      "opening": 1168,
+      "sold": 16176,
+      "closing": -448,
+      "produced": 14560
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "10001 New (Goli)",
+      "colour": "YELLOW",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "10001 New (Goli)",
+      "colour": "S .B 2002",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "10001 New (Goli)",
+      "colour": "2001OK",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "10001 New (Goli)",
+      "colour": "T.W 2002",
+      "opening": 400,
+      "sold": 112,
+      "closing": 288,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "10001 New (Goli)",
+      "colour": "M.B 1",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "10001 New (Goli)",
+      "colour": "R-W",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "BIG CHAIR",
+      "model": "10001 New (Goli)",
+      "colour": "S-Wood",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Sumo",
+      "model": "Sumo - 301",
+      "colour": "S-W",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Sumo",
+      "model": "Sumo - 301",
+      "colour": "Coloured",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Sumo",
+      "model": "Sumo - 301",
+      "colour": "Red",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Sumo",
+      "model": "Sumo - 301",
+      "colour": "P-Pink",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Sumo",
+      "model": "Sumo - 301",
+      "colour": "B. Gold",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Sumo",
+      "model": "Sumo - 301",
+      "colour": "Orange",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Sumo",
+      "model": "Sumo - 301",
+      "colour": "P-White",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Sumo",
+      "model": "Sumo - 301",
+      "colour": "Silver.B",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Sumo",
+      "model": "Sumo - 301",
+      "colour": "P. Silver",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Sumo",
+      "model": "Sumo - 301",
+      "colour": "A.Gold",
+      "opening": 208,
+      "sold": 0,
+      "closing": 512,
+      "produced": 304
+    },
+    {
+      "line": "Sumo",
+      "model": "Sumo - 301",
+      "colour": "P.Green",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Sumo",
+      "model": "Sumo - 301",
+      "colour": "M.Bz",
+      "opening": 288,
+      "sold": 0,
+      "closing": 288,
+      "produced": 0
+    },
+    {
+      "line": "Sumo",
+      "model": "Sumo - 301",
+      "colour": "Black",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Sumo",
+      "model": "Sumo - 301",
+      "colour": "R-W",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Sumo",
+      "model": "Sumo - 301",
+      "colour": "Brown",
+      "opening": 0,
+      "sold": 0,
+      "closing": 1232,
+      "produced": 1232
+    },
+    {
+      "line": "XUV",
+      "model": "8003 ClipON",
+      "colour": "Br.Blue",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "XUV",
+      "model": "8003 ClipON",
+      "colour": "Black Red",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "XUV",
+      "model": "8003 ClipON",
+      "colour": "Br.Orange",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "XUV",
+      "model": "8003 ClipON",
+      "colour": "Black Green",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "XUV",
+      "model": "8003 ClipON",
+      "colour": "Br.Green",
+      "opening": 352,
+      "sold": 256,
+      "closing": 96,
+      "produced": 0
+    },
+    {
+      "line": "XUV",
+      "model": "8003 ClipON",
+      "colour": "Black Blue",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "XUV",
+      "model": "8003 ClipON",
+      "colour": "Br.Red",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "XUV",
+      "model": "8003 ClipON",
+      "colour": "Black Orange",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "XUV",
+      "model": "8002 (Y)",
+      "colour": "S-W",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "XUV",
+      "model": "8002 (Y)",
+      "colour": "T.W",
+      "opening": 304,
+      "sold": 464,
+      "closing": 480,
+      "produced": 640
+    },
+    {
+      "line": "XUV",
+      "model": "8002 (Y)",
+      "colour": "B . Silver",
+      "opening": 560,
+      "sold": 0,
+      "closing": 560,
+      "produced": 0
+    },
+    {
+      "line": "XUV",
+      "model": "8002 (Y)",
+      "colour": "B.Gold/Spl",
+      "opening": 1856,
+      "sold": 528,
+      "closing": 1328,
+      "produced": 0
+    },
+    {
+      "line": "XUV",
+      "model": "8002 (Y)",
+      "colour": "M.Bz",
+      "opening": 32,
+      "sold": 0,
+      "closing": 32,
+      "produced": 0
+    },
+    {
+      "line": "XUV",
+      "model": "8002 (Y)",
+      "colour": "Brown",
+      "opening": 2544,
+      "sold": 960,
+      "closing": 1584,
+      "produced": 0
+    },
+    {
+      "line": "XUV",
+      "model": "8002 (Y)",
+      "colour": "R-W",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "XUV",
+      "model": "8002 (Y)",
+      "colour": "A.Gold",
+      "opening": 752,
+      "sold": 1408,
+      "closing": 1120,
+      "produced": 1776
+    },
+    {
+      "line": "XUV",
+      "model": "8001 (Pearl)",
+      "colour": "P.Green",
+      "opening": 224,
+      "sold": 0,
+      "closing": 224,
+      "produced": 0
+    },
+    {
+      "line": "XUV",
+      "model": "8001 (Pearl)",
+      "colour": "A.Gold Red/8003",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "XUV",
+      "model": "8001 (Pearl)",
+      "colour": "P.Pink",
+      "opening": 112,
+      "sold": 16,
+      "closing": 96,
+      "produced": 0
+    },
+    {
+      "line": "XUV",
+      "model": "8001 (Pearl)",
+      "colour": "Red",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "XUV",
+      "model": "8001 (Pearl)",
+      "colour": "P.White",
+      "opening": 160,
+      "sold": 0,
+      "closing": 160,
+      "produced": 0
+    },
+    {
+      "line": "XUV",
+      "model": "8001 (Pearl)",
+      "colour": "Blue F",
+      "opening": 208,
+      "sold": 0,
+      "closing": 208,
+      "produced": 0
+    },
+    {
+      "line": "XUV",
+      "model": "8001 (Pearl)",
+      "colour": "M.Beige F",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "XUV",
+      "model": "8001 (Pearl)",
+      "colour": "Orange",
+      "opening": 160,
+      "sold": 32,
+      "closing": 128,
+      "produced": 0
+    },
+    {
+      "line": "XUV",
+      "model": "8001 (Pearl)",
+      "colour": "Mix",
+      "opening": 0,
+      "sold": 0,
+      "closing": 27,
+      "produced": 27
+    },
+    {
+      "line": "XUV",
+      "model": "8001 (Pearl)",
+      "colour": "G.R.C.",
+      "opening": 0,
+      "sold": 0,
+      "closing": 114,
+      "produced": 114
+    },
+    {
+      "line": "Innova",
+      "model": "Innova (3001)",
+      "colour": "White",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Innova",
+      "model": "Innova (3001)",
+      "colour": "Orange",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Innova",
+      "model": "Innova (3001)",
+      "colour": "P.Pink",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Innova",
+      "model": "Innova (3001)",
+      "colour": "BROWN",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Innova",
+      "model": "Innova (3001)",
+      "colour": "P.Green",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Innova",
+      "model": "Innova (3002)",
+      "colour": "B.Gold",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Innova",
+      "model": "Innova (3002)",
+      "colour": "Gold",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Innova",
+      "model": "Innova (3002)",
+      "colour": "M.Beige",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Innova",
+      "model": "Innova (3002)",
+      "colour": "S.Black",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Innova",
+      "model": "Innova (3002)",
+      "colour": "Brown",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Innova",
+      "model": "Innova (3002)",
+      "colour": "R.Wood",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Innova",
+      "model": "Innova (3002)",
+      "colour": "A.Gold",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Innova",
+      "model": "Innova(3003)",
+      "colour": "A.Gold",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Innova",
+      "model": "Innova(3003)",
+      "colour": "Brown",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Innova",
+      "model": "Innova(3003)",
+      "colour": "B.Gold",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Innova",
+      "model": "Innova(3003)",
+      "colour": "M.Beige",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Innova",
+      "model": "Innova(3003)",
+      "colour": "Mix",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Innova",
+      "model": "Innova(3003)",
+      "colour": "G.R.C.",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Garden Table",
+      "model": "Garden Table",
+      "colour": "S-W",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Garden Table",
+      "model": "Garden Table",
+      "colour": "P.Blue",
+      "opening": 144,
+      "sold": 0,
+      "closing": 144,
+      "produced": 0
+    },
+    {
+      "line": "Garden Table",
+      "model": "Garden Table",
+      "colour": "Red First",
+      "opening": 0,
+      "sold": 12,
+      "closing": -12,
+      "produced": 0
+    },
+    {
+      "line": "Garden Table",
+      "model": "Garden Table",
+      "colour": "P-Pink",
+      "opening": 204,
+      "sold": 24,
+      "closing": 180,
+      "produced": 0
+    },
+    {
+      "line": "Garden Table",
+      "model": "Garden Table",
+      "colour": "Gold",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Garden Table",
+      "model": "Garden Table",
+      "colour": "Orange",
+      "opening": 60,
+      "sold": 48,
+      "closing": 12,
+      "produced": 0
+    },
+    {
+      "line": "Garden Table",
+      "model": "Garden Table",
+      "colour": "P-White",
+      "opening": 276,
+      "sold": 0,
+      "closing": 276,
+      "produced": 0
+    },
+    {
+      "line": "Garden Table",
+      "model": "Garden Table",
+      "colour": "Silver.B",
+      "opening": 24,
+      "sold": 24,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Garden Table",
+      "model": "Garden Table",
+      "colour": "Black.Gold",
+      "opening": 1212,
+      "sold": 1032,
+      "closing": 180,
+      "produced": 0
+    },
+    {
+      "line": "Garden Table",
+      "model": "Garden Table",
+      "colour": "A.Gold",
+      "opening": 120,
+      "sold": 924,
+      "closing": -48,
+      "produced": 756
+    },
+    {
+      "line": "Garden Table",
+      "model": "Garden Table",
+      "colour": "P.Green",
+      "opening": 216,
+      "sold": 48,
+      "closing": 168,
+      "produced": 0
+    },
+    {
+      "line": "Garden Table",
+      "model": "Garden Table",
+      "colour": "T.Wood/M.B",
+      "opening": 516,
+      "sold": 528,
+      "closing": -12,
+      "produced": 0
+    },
+    {
+      "line": "Garden Table",
+      "model": "Garden Table",
+      "colour": "Black",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Garden Table",
+      "model": "Garden Table",
+      "colour": "R-W",
+      "opening": 12,
+      "sold": 12,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Garden Table",
+      "model": "Garden Table",
+      "colour": "Brown",
+      "opening": 636,
+      "sold": 1392,
+      "closing": 12,
+      "produced": 768
+    },
+    {
+      "line": "Garden Table",
+      "model": "Garden Table",
+      "colour": "Yellow",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Stool",
+      "model": "Stool 1",
+      "colour": "Red F",
+      "opening": 2300,
+      "sold": 80,
+      "closing": 2220,
+      "produced": 0
+    },
+    {
+      "line": "Stool",
+      "model": "Stool 1",
+      "colour": "P.Pink",
+      "opening": 180,
+      "sold": 20,
+      "closing": 160,
+      "produced": 0
+    },
+    {
+      "line": "Stool",
+      "model": "Stool 1",
+      "colour": "P.Green",
+      "opening": 920,
+      "sold": 60,
+      "closing": 860,
+      "produced": 0
+    },
+    {
+      "line": "Stool",
+      "model": "Stool 1",
+      "colour": "Orange",
+      "opening": 960,
+      "sold": 60,
+      "closing": 900,
+      "produced": 0
+    },
+    {
+      "line": "Stool",
+      "model": "Stool 1",
+      "colour": "M.B",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Stool",
+      "model": "Stool 1",
+      "colour": "B.Gold",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Stool",
+      "model": "Stool 1",
+      "colour": "P.Blue",
+      "opening": 560,
+      "sold": 20,
+      "closing": 540,
+      "produced": 0
+    },
+    {
+      "line": "Stool",
+      "model": "Stool 2",
+      "colour": "M.Beize",
+      "opening": 500,
+      "sold": 40,
+      "closing": 460,
+      "produced": 0
+    },
+    {
+      "line": "Stool",
+      "model": "Stool 2",
+      "colour": "Brown",
+      "opening": 3840,
+      "sold": 1000,
+      "closing": 2840,
+      "produced": 0
+    },
+    {
+      "line": "Stool",
+      "model": "Stool 2",
+      "colour": "A.Gold",
+      "opening": 3660,
+      "sold": 780,
+      "closing": 2880,
+      "produced": 0
+    },
+    {
+      "line": "Stool",
+      "model": "Stool 2",
+      "colour": "P.Silver",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Stool",
+      "model": "Stool 2",
+      "colour": "Black",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Stool",
+      "model": "Stool 2",
+      "colour": "B.Silver",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Stool",
+      "model": "Stool 2",
+      "colour": "B Red",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Stool",
+      "model": "Stool 2",
+      "colour": "S.W",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Stool",
+      "model": "Stool 2",
+      "colour": "R.W",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Stool",
+      "model": "Stool 2",
+      "colour": "Mix",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Stool",
+      "model": "Stool 2",
+      "colour": "G.R.C.",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Activa",
+      "model": "4001 (Cushion)",
+      "colour": "A.Gold",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Activa",
+      "model": "4001 (Cushion)",
+      "colour": "Orange",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Activa",
+      "model": "4001 (Cushion)",
+      "colour": "Brown",
+      "opening": 1280,
+      "sold": 208,
+      "closing": 1072,
+      "produced": 0
+    },
+    {
+      "line": "Activa",
+      "model": "4001 (Cushion)",
+      "colour": "YELLOW",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Activa",
+      "model": "4001 (Cushion)",
+      "colour": "P.Blue/D. Blue",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Activa",
+      "model": "4001 (Cushion)",
+      "colour": "Red 1",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Activa",
+      "model": "4001 (Cushion)",
+      "colour": "P. Green",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Activa",
+      "model": "4002 (Y)",
+      "colour": "A.Gold",
+      "opening": 992,
+      "sold": 256,
+      "closing": 736,
+      "produced": 0
+    },
+    {
+      "line": "Activa",
+      "model": "4002 (Y)",
+      "colour": "Gold 4001",
+      "opening": 1376,
+      "sold": 1984,
+      "closing": 1456,
+      "produced": 2064
+    },
+    {
+      "line": "Activa",
+      "model": "4002 (Y)",
+      "colour": "S.B 4001",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Activa",
+      "model": "4002 (Y)",
+      "colour": "Pink 4001",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Activa",
+      "model": "4002 (Y)",
+      "colour": "M.Bz",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Activa",
+      "model": "4002 (Y)",
+      "colour": "Brown",
+      "opening": 1328,
+      "sold": 368,
+      "closing": 1712,
+      "produced": 752
+    },
+    {
+      "line": "Activa",
+      "model": "4002 (Y)",
+      "colour": "T.Wood",
+      "opening": 2016,
+      "sold": 1136,
+      "closing": 2784,
+      "produced": 1904
+    },
+    {
+      "line": "Activa",
+      "model": "4003 (Goli)",
+      "colour": "A.Gold",
+      "opening": 768,
+      "sold": 1056,
+      "closing": 368,
+      "produced": 656
+    },
+    {
+      "line": "Activa",
+      "model": "4003 (Goli)",
+      "colour": "B.G",
+      "opening": 1680,
+      "sold": 3040,
+      "closing": 224,
+      "produced": 1584
+    },
+    {
+      "line": "Activa",
+      "model": "4003 (Goli)",
+      "colour": "M.BZ",
+      "opening": 432,
+      "sold": 432,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Activa",
+      "model": "4003 (Goli)",
+      "colour": "S.B",
+      "opening": 128,
+      "sold": 0,
+      "closing": 128,
+      "produced": 0
+    },
+    {
+      "line": "Activa",
+      "model": "4003 (Goli)",
+      "colour": "Brown",
+      "opening": 832,
+      "sold": 1536,
+      "closing": 1232,
+      "produced": 1936
+    },
+    {
+      "line": "Activa",
+      "model": "4003 (Goli)",
+      "colour": "Gold",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Activa",
+      "model": "4003 (Goli)",
+      "colour": "T.Wood",
+      "opening": 400,
+      "sold": 2432,
+      "closing": 400,
+      "produced": 2432
+    },
+    {
+      "line": "Activa",
+      "model": "4003 (Goli)",
+      "colour": "Mix",
+      "opening": 0,
+      "sold": 0,
+      "closing": 43,
+      "produced": 43
+    },
+    {
+      "line": "Activa",
+      "model": "4003 (Goli)",
+      "colour": "G.R.C.",
+      "opening": 0,
+      "sold": 0,
+      "closing": 115,
+      "produced": 115
+    },
+    {
+      "line": "Small Chair",
+      "model": "401(Flower)",
+      "colour": "S.Wood",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Small Chair",
+      "model": "401(Flower)",
+      "colour": "P.Blue",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Small Chair",
+      "model": "401(Flower)",
+      "colour": "Brown",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Small Chair",
+      "model": "401(Flower)",
+      "colour": "A.Gold",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Small Chair",
+      "model": "401(Flower)",
+      "colour": "R.Wood",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Small Chair",
+      "model": "401(Flower)",
+      "colour": "Yellow",
+      "opening": 140,
+      "sold": 0,
+      "closing": 140,
+      "produced": 0
+    },
+    {
+      "line": "Small Chair",
+      "model": "401(Flower)",
+      "colour": "S.Black",
+      "opening": 0,
+      "sold": 0,
+      "closing": 360,
+      "produced": 360
+    },
+    {
+      "line": "Small Chair",
+      "model": "401(Flower)",
+      "colour": "Green",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Small Chair",
+      "model": "402(Chattai)",
+      "colour": "White",
+      "opening": 140,
+      "sold": 0,
+      "closing": 140,
+      "produced": 0
+    },
+    {
+      "line": "Small Chair",
+      "model": "402(Chattai)",
+      "colour": "P.Blue",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Small Chair",
+      "model": "402(Chattai)",
+      "colour": "Brown",
+      "opening": 200,
+      "sold": 2680,
+      "closing": 180,
+      "produced": 2660
+    },
+    {
+      "line": "Small Chair",
+      "model": "402(Chattai)",
+      "colour": "P.Green",
+      "opening": 340,
+      "sold": 60,
+      "closing": 280,
+      "produced": 0
+    },
+    {
+      "line": "Small Chair",
+      "model": "402(Chattai)",
+      "colour": "A.Gold",
+      "opening": 600,
+      "sold": 3520,
+      "closing": -20,
+      "produced": 2900
+    },
+    {
+      "line": "Small Chair",
+      "model": "402(Chattai)",
+      "colour": "B.G",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Small Chair",
+      "model": "402(Chattai)",
+      "colour": "Orange",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Small Chair",
+      "model": "402(Chattai)",
+      "colour": "Red Fist",
+      "opening": 760,
+      "sold": 100,
+      "closing": 660,
+      "produced": 0
+    },
+    {
+      "line": "Small Chair",
+      "model": "403(WIFI)",
+      "colour": "S.Wood",
+      "opening": 2220,
+      "sold": 2500,
+      "closing": -280,
+      "produced": 0
+    },
+    {
+      "line": "Small Chair",
+      "model": "403(WIFI)",
+      "colour": "M.B",
+      "opening": 1200,
+      "sold": 0,
+      "closing": 1200,
+      "produced": 0
+    },
+    {
+      "line": "Small Chair",
+      "model": "403(WIFI)",
+      "colour": "S.Black",
+      "opening": 1700,
+      "sold": 1560,
+      "closing": 800,
+      "produced": 660
+    },
+    {
+      "line": "Small Chair",
+      "model": "403(WIFI)",
+      "colour": "A.G",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Small Chair",
+      "model": "403(WIFI)",
+      "colour": "R.Wood",
+      "opening": 1620,
+      "sold": 1620,
+      "closing": 1300,
+      "produced": 1300
+    },
+    {
+      "line": "Small Chair",
+      "model": "403(WIFI)",
+      "colour": "P.Pink",
+      "opening": 20,
+      "sold": 20,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Small Chair",
+      "model": "403(WIFI)",
+      "colour": "P.Silver",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Small Chair",
+      "model": "403(WIFI)",
+      "colour": "BROWN",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Small Chair",
+      "model": "403(WIFI)",
+      "colour": "Mix",
+      "opening": 0,
+      "sold": 0,
+      "closing": 50,
+      "produced": 50
+    },
+    {
+      "line": "Small Chair",
+      "model": "403(WIFI)",
+      "colour": "G.R.C.",
+      "opening": 0,
+      "sold": 0,
+      "closing": 12,
+      "produced": 12
+    },
+    {
+      "line": "EV Chair",
+      "model": "201",
+      "colour": "Red First",
+      "opening": 0,
+      "sold": 32,
+      "closing": -32,
+      "produced": 0
+    },
+    {
+      "line": "EV Chair",
+      "model": "201",
+      "colour": "Yellow First",
+      "opening": 288,
+      "sold": 32,
+      "closing": 256,
+      "produced": 0
+    },
+    {
+      "line": "EV Chair",
+      "model": "201",
+      "colour": "D .Green First",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "EV Chair",
+      "model": "201",
+      "colour": "Orange",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "EV Chair",
+      "model": "201",
+      "colour": "P.Blue",
+      "opening": 0,
+      "sold": 16,
+      "closing": -16,
+      "produced": 0
+    },
+    {
+      "line": "EV Chair",
+      "model": "201",
+      "colour": "P.Pink /White",
+      "opening": 336,
+      "sold": 16,
+      "closing": 320,
+      "produced": 0
+    },
+    {
+      "line": "EV Chair",
+      "model": "201",
+      "colour": "S.B",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "EV Chair",
+      "model": "201",
+      "colour": "Br/GoldBrown",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "EV Chair",
+      "model": "202",
+      "colour": "Brown",
+      "opening": 16,
+      "sold": 16,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "EV Chair",
+      "model": "202",
+      "colour": "A.Gold",
+      "opening": 176,
+      "sold": 0,
+      "closing": 176,
+      "produced": 0
+    },
+    {
+      "line": "EV Chair",
+      "model": "202",
+      "colour": "S.B 2",
+      "opening": 192,
+      "sold": 0,
+      "closing": 192,
+      "produced": 0
+    },
+    {
+      "line": "EV Chair",
+      "model": "202",
+      "colour": "M.Beige",
+      "opening": 560,
+      "sold": 32,
+      "closing": 528,
+      "produced": 0
+    },
+    {
+      "line": "EV Chair",
+      "model": "202",
+      "colour": "GOLD",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "EV Chair",
+      "model": "202",
+      "colour": "B .Gold",
+      "opening": 944,
+      "sold": 800,
+      "closing": 144,
+      "produced": 0
+    },
+    {
+      "line": "EV Chair",
+      "model": "202",
+      "colour": "T.W",
+      "opening": 688,
+      "sold": 272,
+      "closing": 416,
+      "produced": 0
+    },
+    {
+      "line": "EV Chair",
+      "model": "203",
+      "colour": "Brown",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "EV Chair",
+      "model": "203",
+      "colour": "A.Gold",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "EV Chair",
+      "model": "203",
+      "colour": "Mix",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "EV Chair",
+      "model": "203",
+      "colour": "G.R.C.",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Aless",
+      "model": "101(Chattai)",
+      "colour": "White",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Aless",
+      "model": "101(Chattai)",
+      "colour": "P. Green1",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Aless",
+      "model": "101(Chattai)",
+      "colour": "S. Black",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Aless",
+      "model": "101(Chattai)",
+      "colour": "Yellow",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Aless",
+      "model": "101(Chattai)",
+      "colour": "M.Bz First",
+      "opening": 20,
+      "sold": 0,
+      "closing": 20,
+      "produced": 0
+    },
+    {
+      "line": "Aless",
+      "model": "101(Chattai)",
+      "colour": "Orange",
+      "opening": 0,
+      "sold": 2240,
+      "closing": -220,
+      "produced": 2020
+    },
+    {
+      "line": "Aless",
+      "model": "101(Chattai)",
+      "colour": "Red (1)",
+      "opening": 3400,
+      "sold": 6880,
+      "closing": 820,
+      "produced": 4300
+    },
+    {
+      "line": "Aless",
+      "model": "101(Chattai)",
+      "colour": "Blue",
+      "opening": 240,
+      "sold": 160,
+      "closing": 80,
+      "produced": 0
+    },
+    {
+      "line": "Aless",
+      "model": "102(Gold-P)",
+      "colour": "S-W",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Aless",
+      "model": "102(Gold-P)",
+      "colour": "Brown",
+      "opening": 1300,
+      "sold": 1800,
+      "closing": -500,
+      "produced": 0
+    },
+    {
+      "line": "Aless",
+      "model": "102(Gold-P)",
+      "colour": "B. Silver2",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Aless",
+      "model": "102(Gold-P)",
+      "colour": "KR",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Aless",
+      "model": "102(Gold-P)",
+      "colour": "M.Bz",
+      "opening": 800,
+      "sold": 440,
+      "closing": 360,
+      "produced": 0
+    },
+    {
+      "line": "Aless",
+      "model": "102(Gold-P)",
+      "colour": "A.Gold",
+      "opening": 880,
+      "sold": 680,
+      "closing": 1200,
+      "produced": 1000
+    },
+    {
+      "line": "Aless",
+      "model": "102(Gold-P)",
+      "colour": "R-W",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Aless",
+      "model": "102(Gold-P)",
+      "colour": "Red",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Aless",
+      "model": "103(Barfi)",
+      "colour": "T.W",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Aless",
+      "model": "103(Barfi)",
+      "colour": "White",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Aless",
+      "model": "103(Barfi)",
+      "colour": "Silver",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Aless",
+      "model": "103(Barfi)",
+      "colour": "Gold",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Aless",
+      "model": "103(Barfi)",
+      "colour": "M.Bz",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Aless",
+      "model": "103(Barfi)",
+      "colour": "Brown",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Aless",
+      "model": "103(Barfi)",
+      "colour": "Red 1",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Aless",
+      "model": "103(Barfi)",
+      "colour": "Black",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Aless",
+      "model": "103(Barfi)",
+      "colour": "Mix",
+      "opening": 0,
+      "sold": 0,
+      "closing": 26,
+      "produced": 26
+    },
+    {
+      "line": "Aless",
+      "model": "103(Barfi)",
+      "colour": "G.R.C.",
+      "opening": 0,
+      "sold": 0,
+      "closing": 53,
+      "produced": 53
+    },
+    {
+      "line": "Tea Table",
+      "model": "Tea Table",
+      "colour": "S-W",
+      "opening": 924,
+      "sold": 324,
+      "closing": 600,
+      "produced": 0
+    },
+    {
+      "line": "Tea Table",
+      "model": "Tea Table",
+      "colour": "Red 1",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Tea Table",
+      "model": "Tea Table",
+      "colour": "P.Yellow",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Tea Table",
+      "model": "Tea Table",
+      "colour": "OK",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Tea Table",
+      "model": "Tea Table",
+      "colour": "B.Gold",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Tea Table",
+      "model": "Tea Table",
+      "colour": "Orange",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Tea Table",
+      "model": "Tea Table",
+      "colour": "P-White",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Tea Table",
+      "model": "Tea Table",
+      "colour": "Silver.B",
+      "opening": 168,
+      "sold": 336,
+      "closing": 516,
+      "produced": 684
+    },
+    {
+      "line": "Tea Table",
+      "model": "Tea Table",
+      "colour": "GOLD",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Tea Table",
+      "model": "Tea Table",
+      "colour": "A.Gold",
+      "opening": 0,
+      "sold": 1308,
+      "closing": -96,
+      "produced": 1212
+    },
+    {
+      "line": "Tea Table",
+      "model": "Tea Table",
+      "colour": "P.Green",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Tea Table",
+      "model": "Tea Table",
+      "colour": "M.Bz",
+      "opening": 708,
+      "sold": 48,
+      "closing": 660,
+      "produced": 0
+    },
+    {
+      "line": "Tea Table",
+      "model": "Tea Table",
+      "colour": "T . Wood",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Tea Table",
+      "model": "Tea Table",
+      "colour": "R-W",
+      "opening": 492,
+      "sold": 192,
+      "closing": 1164,
+      "produced": 864
+    },
+    {
+      "line": "Tea Table",
+      "model": "Tea Table",
+      "colour": "Brown",
+      "opening": 24,
+      "sold": 2016,
+      "closing": -168,
+      "produced": 1824
+    },
+    {
+      "line": "Chota Heritage",
+      "model": "7001 (Cushion)",
+      "colour": "P.Green",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Chota Heritage",
+      "model": "7001 (Cushion)",
+      "colour": "S.W",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Chota Heritage",
+      "model": "7002 (Y)",
+      "colour": "A.G",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Chota Heritage",
+      "model": "7002 (Y)",
+      "colour": "GOLD",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Chota Heritage",
+      "model": "7003 (Goli)",
+      "colour": "S-W",
+      "opening": 0,
+      "sold": 288,
+      "closing": 768,
+      "produced": 1056
+    },
+    {
+      "line": "Chota Heritage",
+      "model": "7003 (Goli)",
+      "colour": "T.W",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Chota Heritage",
+      "model": "7003 (Goli)",
+      "colour": "S-Black",
+      "opening": 80,
+      "sold": 160,
+      "closing": 464,
+      "produced": 544
+    },
+    {
+      "line": "Chota Heritage",
+      "model": "7003 (Goli)",
+      "colour": "C.W",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Chota Heritage",
+      "model": "7003 (Goli)",
+      "colour": "M.Bz",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Chota Heritage",
+      "model": "7003 (Goli)",
+      "colour": "Brown",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Chota Heritage",
+      "model": "7003 (Goli)",
+      "colour": "R-W",
+      "opening": 288,
+      "sold": 272,
+      "closing": 1152,
+      "produced": 1136
+    },
+    {
+      "line": "Chota Heritage",
+      "model": "7003 (Goli)",
+      "colour": "P Green",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Chota Heritage",
+      "model": "7003 (Goli)",
+      "colour": "Mix",
+      "opening": 0,
+      "sold": 0,
+      "closing": 34,
+      "produced": 34
+    },
+    {
+      "line": "Chota Heritage",
+      "model": "7003 (Goli)",
+      "colour": "G.R.C.",
+      "opening": 0,
+      "sold": 0,
+      "closing": 36,
+      "produced": 36
+    },
+    {
+      "line": "M.P.Stool",
+      "model": "M.P.Stool",
+      "colour": "Br.Gold",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "M.P.Stool",
+      "model": "M.P.Stool",
+      "colour": "Brown",
+      "opening": 1560,
+      "sold": 180,
+      "closing": 1380,
+      "produced": 0
+    },
+    {
+      "line": "M.P.Stool",
+      "model": "M.P.Stool",
+      "colour": "S.Black",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "M.P.Stool",
+      "model": "M.P.Stool",
+      "colour": "M.Beige",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "M.P.Stool",
+      "model": "M.P.Stool",
+      "colour": "A.Gold",
+      "opening": 1640,
+      "sold": 60,
+      "closing": 1580,
+      "produced": 0
+    },
+    {
+      "line": "M.P.Stool",
+      "model": "M.P.Stool",
+      "colour": "D.Green",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "M.P.Stool",
+      "model": "M.P.Stool",
+      "colour": "P.Pink",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "M.P.Stool",
+      "model": "M.P.Stool",
+      "colour": "D.Blue",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "M.P.Stool",
+      "model": "M.P.Stool",
+      "colour": "Red First",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "M.P.Stool",
+      "model": "M.P.Stool",
+      "colour": "Yellow First",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "M.P.Stool",
+      "model": "M.P.Stool",
+      "colour": "Green First",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "M.P.Stool",
+      "model": "M.P.Stool",
+      "colour": "Orange First",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "M.P.Stool",
+      "model": "M.P.Stool",
+      "colour": "Red",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "M.P.Stool",
+      "model": "M.P.Stool",
+      "colour": "Brown",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "M.P.Stool",
+      "model": "M.P.Stool",
+      "colour": "M.Beige Ist",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "M.P.Stool",
+      "model": "M.P.Stool",
+      "colour": "A.Gold",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "M.P.Stool",
+      "model": "M.P.Stool",
+      "colour": "White",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "M.P.Stool",
+      "model": "M.P.Stool",
+      "colour": "P.Green",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "M.P.Stool",
+      "model": "M.P.Stool",
+      "colour": "Mix",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "M.P.Stool",
+      "model": "M.P.Stool",
+      "colour": "G.R.C.",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Yoddha",
+      "model": "501",
+      "colour": "Brown",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Yoddha",
+      "model": "501",
+      "colour": "Br. CloN",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Yoddha",
+      "model": "501",
+      "colour": "T.Wood",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Yoddha",
+      "model": "501",
+      "colour": "Brown mix",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Yoddha",
+      "model": "501",
+      "colour": "A.Gold",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Yoddha",
+      "model": "501",
+      "colour": "Orange 502",
+      "opening": 168,
+      "sold": 24,
+      "closing": 144,
+      "produced": 0
+    },
+    {
+      "line": "Yoddha",
+      "model": "501",
+      "colour": "Black",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Yoddha",
+      "model": "502",
+      "colour": "Brown",
+      "opening": 0,
+      "sold": 1728,
+      "closing": 228,
+      "produced": 1956
+    },
+    {
+      "line": "Yoddha",
+      "model": "502",
+      "colour": "M.Beige",
+      "opening": 24,
+      "sold": 0,
+      "closing": 24,
+      "produced": 0
+    },
+    {
+      "line": "Yoddha",
+      "model": "502",
+      "colour": "T.Wod/Gold",
+      "opening": 432,
+      "sold": 1692,
+      "closing": 1320,
+      "produced": 2580
+    },
+    {
+      "line": "Yoddha",
+      "model": "502",
+      "colour": "S.Black",
+      "opening": 84,
+      "sold": 84,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Yoddha",
+      "model": "502",
+      "colour": "A.Gold",
+      "opening": 0,
+      "sold": 36,
+      "closing": -36,
+      "produced": 0
+    },
+    {
+      "line": "Yoddha",
+      "model": "502",
+      "colour": "P.Red",
+      "opening": 180,
+      "sold": 12,
+      "closing": 168,
+      "produced": 0
+    },
+    {
+      "line": "Yoddha",
+      "model": "502",
+      "colour": "White",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Yoddha",
+      "model": "502",
+      "colour": "P.Green",
+      "opening": 384,
+      "sold": 36,
+      "closing": 348,
+      "produced": 0
+    },
+    {
+      "line": "Yoddha",
+      "model": "503",
+      "colour": "Brown",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Yoddha",
+      "model": "503",
+      "colour": "B.Gold502",
+      "opening": 1368,
+      "sold": 3096,
+      "closing": 1356,
+      "produced": 3084
+    },
+    {
+      "line": "Yoddha",
+      "model": "503",
+      "colour": "T.Wood",
+      "opening": 336,
+      "sold": 192,
+      "closing": 144,
+      "produced": 0
+    },
+    {
+      "line": "Yoddha",
+      "model": "503",
+      "colour": "P. Green",
+      "opening": 24,
+      "sold": 0,
+      "closing": 24,
+      "produced": 0
+    },
+    {
+      "line": "Yoddha",
+      "model": "503",
+      "colour": "A.Gold",
+      "opening": 264,
+      "sold": 48,
+      "closing": 216,
+      "produced": 0
+    },
+    {
+      "line": "Yoddha",
+      "model": "503",
+      "colour": "Gold",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Yoddha",
+      "model": "503",
+      "colour": "Singham",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Yoddha",
+      "model": "503",
+      "colour": "Blue 502",
+      "opening": 240,
+      "sold": 0,
+      "closing": 240,
+      "produced": 0
+    },
+    {
+      "line": "Yoddha",
+      "model": "503",
+      "colour": "Mix",
+      "opening": 0,
+      "sold": 0,
+      "closing": 6,
+      "produced": 6
+    },
+    {
+      "line": "Yoddha",
+      "model": "503",
+      "colour": "G.R.C.",
+      "opening": 0,
+      "sold": 0,
+      "closing": 177,
+      "produced": 177
+    },
+    {
+      "line": "ClipON Stool",
+      "model": "Stool 1",
+      "colour": "Red F",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "ClipON Stool",
+      "model": "Stool 1",
+      "colour": "P.Pink",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "ClipON Stool",
+      "model": "Stool 1",
+      "colour": "P.Green",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "ClipON Stool",
+      "model": "Stool 1",
+      "colour": "Orange",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "ClipON Stool",
+      "model": "Stool 1",
+      "colour": "M.B",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "ClipON Stool",
+      "model": "Stool 1",
+      "colour": "B.Gold",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "ClipON Stool",
+      "model": "Stool 1",
+      "colour": "White",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "ClipON Stool",
+      "model": "Stool 2",
+      "colour": "M.Beize",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "ClipON Stool",
+      "model": "Stool 2",
+      "colour": "Brown",
+      "opening": 0,
+      "sold": 100,
+      "closing": -100,
+      "produced": 0
+    },
+    {
+      "line": "ClipON Stool",
+      "model": "Stool 2",
+      "colour": "A.Gold",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "ClipON Stool",
+      "model": "Stool 2",
+      "colour": "P.Silver",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "ClipON Stool",
+      "model": "Stool 2",
+      "colour": "Black",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "ClipON Stool",
+      "model": "Stool 2",
+      "colour": "Karara",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "ClipON Stool",
+      "model": "Stool 2",
+      "colour": "T.Wood",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "ClipON Stool",
+      "model": "Stool 2",
+      "colour": "R.Wood",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "ClipON Stool",
+      "model": "Stool 2",
+      "colour": "Brown mix",
+      "opening": 3760,
+      "sold": 1340,
+      "closing": 2420,
+      "produced": 0
+    },
+    {
+      "line": "ClipON Stool",
+      "model": "Stool 2",
+      "colour": "White mix",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "ClipON Stool",
+      "model": "Stool 2",
+      "colour": "Mix",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "ClipON Stool",
+      "model": "Stool 2",
+      "colour": "G.R.C.",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Baby Chair",
+      "model": "Baby Chair 201",
+      "colour": "P.Green",
+      "opening": 640,
+      "sold": 80,
+      "closing": 560,
+      "produced": 0
+    },
+    {
+      "line": "Baby Chair",
+      "model": "Baby Chair 201",
+      "colour": "P.Yellow",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Baby Chair",
+      "model": "Baby Chair 201",
+      "colour": "Red Ist",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Baby Chair",
+      "model": "Baby Chair 201",
+      "colour": "P.Orange",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Baby Chair",
+      "model": "Baby Chair 201",
+      "colour": "P.White",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Baby Chair",
+      "model": "Baby Chair 201",
+      "colour": "P.Pink",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Baby Chair",
+      "model": "Baby Chair 201",
+      "colour": "Blue",
+      "opening": 260,
+      "sold": 100,
+      "closing": 160,
+      "produced": 0
+    },
+    {
+      "line": "Baby Chair",
+      "model": "Baby Chair 2",
+      "colour": "Black",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Baby Chair",
+      "model": "Baby Chair 2",
+      "colour": "A.Gold",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Baby Chair",
+      "model": "Baby Chair 2",
+      "colour": "M.Beige",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Baby Chair",
+      "model": "Baby Chair 2",
+      "colour": "Brown",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Baby Chair",
+      "model": "Baby Chair 2",
+      "colour": "Pink",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Baby Chair",
+      "model": "Baby Chair 2",
+      "colour": "Red",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Baby Chair",
+      "model": "Baby Chair 2",
+      "colour": "Orange",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Baby Chair",
+      "model": "Baby Chair 2",
+      "colour": "Green",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Baby Chair",
+      "model": "Baby Chair 3",
+      "colour": "P.Green Sumo Baby",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Baby Chair",
+      "model": "Baby Chair 3",
+      "colour": "Sumo Baby Chair",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Baby Chair",
+      "model": "Baby Chair 3",
+      "colour": "Mix",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Baby Chair",
+      "model": "Baby Chair 3",
+      "colour": "G.R.C.",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "BABA CHAIR 1",
+      "model": "Baba Chair 1",
+      "colour": "P.Green",
+      "opening": 740,
+      "sold": 720,
+      "closing": 20,
+      "produced": 0
+    },
+    {
+      "line": "BABA CHAIR 1",
+      "model": "Baba Chair 1",
+      "colour": "P.Yellow",
+      "opening": 1340,
+      "sold": 980,
+      "closing": 360,
+      "produced": 0
+    },
+    {
+      "line": "BABA CHAIR 1",
+      "model": "Baba Chair 1",
+      "colour": "Red Ist",
+      "opening": 4200,
+      "sold": 1680,
+      "closing": 2520,
+      "produced": 0
+    },
+    {
+      "line": "BABA CHAIR 1",
+      "model": "Baba Chair 1",
+      "colour": "P.Orange",
+      "opening": 2240,
+      "sold": 1420,
+      "closing": 820,
+      "produced": 0
+    },
+    {
+      "line": "BABA CHAIR 1",
+      "model": "Baba Chair 1",
+      "colour": "P.White",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "BABA CHAIR 1",
+      "model": "Baba Chair 1",
+      "colour": "P.Pink",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "BABA CHAIR 1",
+      "model": "Baba Chair 1",
+      "colour": "Blue",
+      "opening": 620,
+      "sold": 600,
+      "closing": 20,
+      "produced": 0
+    },
+    {
+      "line": "BABA CHAIR 1",
+      "model": "Baba Chair 1",
+      "colour": "Black",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "BABA CHAIR 1",
+      "model": "Baba Chair 1",
+      "colour": "A.Gold",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "BABA CHAIR 1",
+      "model": "Baba Chair 1",
+      "colour": "M.Beige",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "BABA CHAIR 1",
+      "model": "Baba Chair 1",
+      "colour": "Blue",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "BABA CHAIR 1",
+      "model": "Baba Chair 1",
+      "colour": "Pink",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "BABA CHAIR 1",
+      "model": "Baba Chair 1",
+      "colour": "Red",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "BABA CHAIR 1",
+      "model": "Baba Chair 1",
+      "colour": "Orange",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "BABA CHAIR 1",
+      "model": "Baba Chair 1",
+      "colour": "Green",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "BABA CHAIR 1",
+      "model": "Baba Chair 1",
+      "colour": "P.Silver",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "BABA CHAIR 1",
+      "model": "Baba Chair 1",
+      "colour": "Mix",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "BABA CHAIR 1",
+      "model": "Baba Chair 1",
+      "colour": "G.R.C.",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Jordan New",
+      "model": "1001",
+      "colour": "White",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Jordan New",
+      "model": "1001",
+      "colour": "T.W",
+      "opening": 204,
+      "sold": 144,
+      "closing": 60,
+      "produced": 0
+    },
+    {
+      "line": "Jordan New",
+      "model": "1001",
+      "colour": "S.Black",
+      "opening": 24,
+      "sold": 0,
+      "closing": 24,
+      "produced": 0
+    },
+    {
+      "line": "Jordan New",
+      "model": "1001",
+      "colour": "Brown",
+      "opening": 384,
+      "sold": 240,
+      "closing": 144,
+      "produced": 0
+    },
+    {
+      "line": "Jordan New",
+      "model": "1001",
+      "colour": "A.Gold",
+      "opening": 120,
+      "sold": 96,
+      "closing": 24,
+      "produced": 0
+    },
+    {
+      "line": "Jordan New",
+      "model": "1001",
+      "colour": "B.GLD",
+      "opening": 192,
+      "sold": 48,
+      "closing": 144,
+      "produced": 0
+    },
+    {
+      "line": "Jordan New",
+      "model": "1001",
+      "colour": "Orange",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Jordan New",
+      "model": "1002",
+      "colour": "S-W",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Jordan New",
+      "model": "1002",
+      "colour": "C-W",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Jordan New",
+      "model": "1002",
+      "colour": "Silver",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Jordan New",
+      "model": "1002",
+      "colour": "Black",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Jordan New",
+      "model": "1002",
+      "colour": "M.Bz",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Jordan New",
+      "model": "1002",
+      "colour": "Brown",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Jordan New",
+      "model": "1002",
+      "colour": "R-W",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Jordan New",
+      "model": "1002",
+      "colour": "A-Gold",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Jordan New",
+      "model": "1003",
+      "colour": "A.Gold",
+      "opening": 0,
+      "sold": 276,
+      "closing": 708,
+      "produced": 984
+    },
+    {
+      "line": "Jordan New",
+      "model": "1003",
+      "colour": "T.Wood",
+      "opening": 0,
+      "sold": 744,
+      "closing": 576,
+      "produced": 1320
+    },
+    {
+      "line": "Jordan New",
+      "model": "1003",
+      "colour": "Brown",
+      "opening": 648,
+      "sold": 756,
+      "closing": 420,
+      "produced": 528
+    },
+    {
+      "line": "Jordan New",
+      "model": "1003",
+      "colour": "B.G",
+      "opening": 0,
+      "sold": 1068,
+      "closing": 912,
+      "produced": 1980
+    },
+    {
+      "line": "Jordan New",
+      "model": "1003",
+      "colour": "M.Beige",
+      "opening": 444,
+      "sold": 300,
+      "closing": 144,
+      "produced": 0
+    },
+    {
+      "line": "Jordan New",
+      "model": "1003",
+      "colour": "G.B/Br.Black",
+      "opening": 1272,
+      "sold": 564,
+      "closing": 708,
+      "produced": 0
+    },
+    {
+      "line": "Jordan New",
+      "model": "1003",
+      "colour": "S.Black",
+      "opening": 36,
+      "sold": 36,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Jordan New",
+      "model": "1003",
+      "colour": "Gold 1",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Jordan New",
+      "model": "1003",
+      "colour": "Mix",
+      "opening": 0,
+      "sold": 0,
+      "closing": 28,
+      "produced": 28
+    },
+    {
+      "line": "Jordan New",
+      "model": "1003",
+      "colour": "G.R.C.",
+      "opening": 0,
+      "sold": 0,
+      "closing": 103,
+      "produced": 103
+    },
+    {
+      "line": "Jordan Chair",
+      "model": "9002 (Goli)",
+      "colour": "P.Pink",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Jordan Chair",
+      "model": "9002 (Goli)",
+      "colour": "M.Beige",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Jordan Chair",
+      "model": "9002 (Goli)",
+      "colour": "B.Silver",
+      "opening": 180,
+      "sold": 0,
+      "closing": 180,
+      "produced": 0
+    },
+    {
+      "line": "Jordan Chair",
+      "model": "9002 (Goli)",
+      "colour": "Brown",
+      "opening": 636,
+      "sold": 0,
+      "closing": 636,
+      "produced": 0
+    },
+    {
+      "line": "Jordan Chair",
+      "model": "9002 (Goli)",
+      "colour": "P.Green",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Jordan Chair",
+      "model": "9002 (Goli)",
+      "colour": "A.Gold",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Jordan Chair",
+      "model": "9002 (Goli)",
+      "colour": "White",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Jordan Chair",
+      "model": "9002 (Goli)",
+      "colour": "G.B",
+      "opening": 12,
+      "sold": 0,
+      "closing": 12,
+      "produced": 0
+    },
+    {
+      "line": "Jordan Chair",
+      "model": "9003 (Plain)",
+      "colour": "T.W 9002",
+      "opening": 828,
+      "sold": 348,
+      "closing": 480,
+      "produced": 0
+    },
+    {
+      "line": "Jordan Chair",
+      "model": "9003 (Plain)",
+      "colour": "YELLOW",
+      "opening": 12,
+      "sold": 0,
+      "closing": 12,
+      "produced": 0
+    },
+    {
+      "line": "Jordan Chair",
+      "model": "9003 (Plain)",
+      "colour": "S.B",
+      "opening": 108,
+      "sold": 0,
+      "closing": 108,
+      "produced": 0
+    },
+    {
+      "line": "Jordan Chair",
+      "model": "9003 (Plain)",
+      "colour": "B.G",
+      "opening": 0,
+      "sold": 396,
+      "closing": 228,
+      "produced": 624
+    },
+    {
+      "line": "Jordan Chair",
+      "model": "9003 (Plain)",
+      "colour": "Brown",
+      "opening": 672,
+      "sold": 228,
+      "closing": 444,
+      "produced": 0
+    },
+    {
+      "line": "Jordan Chair",
+      "model": "9003 (Plain)",
+      "colour": "Mix",
+      "opening": 0,
+      "sold": 0,
+      "closing": 3,
+      "produced": 3
+    },
+    {
+      "line": "Jordan Chair",
+      "model": "9003 (Plain)",
+      "colour": "G.R.C.",
+      "opening": 0,
+      "sold": 0,
+      "closing": 52,
+      "produced": 52
+    },
+    {
+      "line": "High cros",
+      "model": "601 (High Cros)",
+      "colour": "White",
+      "opening": 740,
+      "sold": 80,
+      "closing": 660,
+      "produced": 0
+    },
+    {
+      "line": "High cros",
+      "model": "601 (High Cros)",
+      "colour": "Green",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "High cros",
+      "model": "601 (High Cros)",
+      "colour": "S. Black",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "High cros",
+      "model": "601 (High Cros)",
+      "colour": "Yellow",
+      "opening": 20,
+      "sold": 40,
+      "closing": -20,
+      "produced": 0
+    },
+    {
+      "line": "High cros",
+      "model": "601 (High Cros)",
+      "colour": "M.Bz First",
+      "opening": 660,
+      "sold": 0,
+      "closing": 660,
+      "produced": 0
+    },
+    {
+      "line": "High cros",
+      "model": "601 (High Cros)",
+      "colour": "Orange",
+      "opening": 400,
+      "sold": 260,
+      "closing": 140,
+      "produced": 0
+    },
+    {
+      "line": "High cros",
+      "model": "601 (High Cros)",
+      "colour": "Red (1)",
+      "opening": 460,
+      "sold": 400,
+      "closing": 60,
+      "produced": 0
+    },
+    {
+      "line": "High cros",
+      "model": "601 (High Cros)",
+      "colour": "BLUE",
+      "opening": 380,
+      "sold": 120,
+      "closing": 260,
+      "produced": 0
+    },
+    {
+      "line": "High cros",
+      "model": "601 (High Cros)",
+      "colour": "S-W",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "High cros",
+      "model": "601 (High Cros)",
+      "colour": "Brown",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "High cros",
+      "model": "601 (High Cros)",
+      "colour": "B .Silver",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "High cros",
+      "model": "601 (High Cros)",
+      "colour": "M.B",
+      "opening": 120,
+      "sold": 0,
+      "closing": 120,
+      "produced": 0
+    },
+    {
+      "line": "High cros",
+      "model": "601 (High Cros)",
+      "colour": "D.Blue",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "High cros",
+      "model": "601 (High Cros)",
+      "colour": "A.Gold",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "High cros",
+      "model": "601 (High Cros)",
+      "colour": "R-W",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "High cros",
+      "model": "601 (High Cros)",
+      "colour": "T.W",
+      "opening": 860,
+      "sold": 800,
+      "closing": 60,
+      "produced": 0
+    },
+    {
+      "line": "High cros",
+      "model": "601 (High Cros)",
+      "colour": "SILVER",
+      "opening": 20,
+      "sold": 0,
+      "closing": 20,
+      "produced": 0
+    },
+    {
+      "line": "High cros",
+      "model": "601 (High Cros)",
+      "colour": "White",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "High cros",
+      "model": "601 (High Cros)",
+      "colour": "#REF!",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "High cros",
+      "model": "601 (High Cros)",
+      "colour": "B. Gold",
+      "opening": 1420,
+      "sold": 1100,
+      "closing": 320,
+      "produced": 0
+    },
+    {
+      "line": "High cros",
+      "model": "601 (High Cros)",
+      "colour": "#REF!",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "High cros",
+      "model": "601 (High Cros)",
+      "colour": "#REF!",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "High cros",
+      "model": "601 (High Cros)",
+      "colour": "#REF!",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "High cros",
+      "model": "601 (High Cros)",
+      "colour": "#REF!",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "High cros",
+      "model": "601 (High Cros)",
+      "colour": "Mix",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "High cros",
+      "model": "601 (High Cros)",
+      "colour": "G.R.C.",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Ring Table",
+      "model": "RING TABLE",
+      "colour": "S-W",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Ring Table",
+      "model": "RING TABLE",
+      "colour": "blue",
+      "opening": 552,
+      "sold": 0,
+      "closing": 552,
+      "produced": 0
+    },
+    {
+      "line": "Ring Table",
+      "model": "RING TABLE",
+      "colour": "Red",
+      "opening": 660,
+      "sold": 0,
+      "closing": 660,
+      "produced": 0
+    },
+    {
+      "line": "Ring Table",
+      "model": "RING TABLE",
+      "colour": "P-Pink",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Ring Table",
+      "model": "RING TABLE",
+      "colour": "B.Gold",
+      "opening": 0,
+      "sold": 228,
+      "closing": 576,
+      "produced": 804
+    },
+    {
+      "line": "Ring Table",
+      "model": "RING TABLE",
+      "colour": "Orange",
+      "opening": 276,
+      "sold": 36,
+      "closing": 240,
+      "produced": 0
+    },
+    {
+      "line": "Ring Table",
+      "model": "RING TABLE",
+      "colour": "P-White",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Ring Table",
+      "model": "RING TABLE",
+      "colour": "Silver.B",
+      "opening": 0,
+      "sold": 36,
+      "closing": 228,
+      "produced": 264
+    },
+    {
+      "line": "Ring Table",
+      "model": "RING TABLE",
+      "colour": "T.W",
+      "opening": 0,
+      "sold": 192,
+      "closing": 504,
+      "produced": 696
+    },
+    {
+      "line": "Ring Table",
+      "model": "RING TABLE",
+      "colour": "A.Gold",
+      "opening": 0,
+      "sold": 48,
+      "closing": 312,
+      "produced": 360
+    },
+    {
+      "line": "Ring Table",
+      "model": "RING TABLE",
+      "colour": "P.Green",
+      "opening": 444,
+      "sold": 36,
+      "closing": 408,
+      "produced": 0
+    },
+    {
+      "line": "Ring Table",
+      "model": "RING TABLE",
+      "colour": "M.Bz",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Ring Table",
+      "model": "RING TABLE",
+      "colour": "Black",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Ring Table",
+      "model": "RING TABLE",
+      "colour": "R-W",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Ring Table",
+      "model": "RING TABLE",
+      "colour": "Brown",
+      "opening": 0,
+      "sold": 204,
+      "closing": 192,
+      "produced": 396
+    },
+    {
+      "line": "ARM LESS SUMO",
+      "model": "ARM LESS SUMO",
+      "colour": "White",
+      "opening": 120,
+      "sold": 0,
+      "closing": 120,
+      "produced": 0
+    },
+    {
+      "line": "ARM LESS SUMO",
+      "model": "ARM LESS SUMO",
+      "colour": "P. Green1",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "ARM LESS SUMO",
+      "model": "ARM LESS SUMO",
+      "colour": "S. Black",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "ARM LESS SUMO",
+      "model": "ARM LESS SUMO",
+      "colour": "Yellow",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "ARM LESS SUMO",
+      "model": "ARM LESS SUMO",
+      "colour": "M.Bz First",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "ARM LESS SUMO",
+      "model": "ARM LESS SUMO",
+      "colour": "Orange",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "ARM LESS SUMO",
+      "model": "ARM LESS SUMO",
+      "colour": "Red (1)",
+      "opening": 1800,
+      "sold": 200,
+      "closing": 1600,
+      "produced": 0
+    },
+    {
+      "line": "ARM LESS SUMO",
+      "model": "ARM LESS SUMO",
+      "colour": "Blue",
+      "opening": 340,
+      "sold": 220,
+      "closing": 120,
+      "produced": 0
+    },
+    {
+      "line": "ARM LESS SUMO",
+      "model": "ARM LESS SUMO",
+      "colour": "S-W",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "ARM LESS SUMO",
+      "model": "ARM LESS SUMO",
+      "colour": "Brown",
+      "opening": 0,
+      "sold": 40,
+      "closing": -40,
+      "produced": 0
+    },
+    {
+      "line": "ARM LESS SUMO",
+      "model": "ARM LESS SUMO",
+      "colour": "S. BLACK SECOND",
+      "opening": 120,
+      "sold": 120,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "ARM LESS SUMO",
+      "model": "ARM LESS SUMO",
+      "colour": "KR",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "ARM LESS SUMO",
+      "model": "ARM LESS SUMO",
+      "colour": "M.Bz",
+      "opening": 1440,
+      "sold": 0,
+      "closing": 1440,
+      "produced": 0
+    },
+    {
+      "line": "ARM LESS SUMO",
+      "model": "ARM LESS SUMO",
+      "colour": "A.Gold",
+      "opening": 0,
+      "sold": 40,
+      "closing": -40,
+      "produced": 0
+    },
+    {
+      "line": "ARM LESS SUMO",
+      "model": "ARM LESS SUMO",
+      "colour": "R-W",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "ARM LESS SUMO",
+      "model": "ARM LESS SUMO",
+      "colour": "Red",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "ARM LESS SUMO",
+      "model": "ARM LESS SUMO",
+      "colour": "T.W",
+      "opening": 100,
+      "sold": 200,
+      "closing": 1560,
+      "produced": 1660
+    },
+    {
+      "line": "ARM LESS SUMO",
+      "model": "ARM LESS SUMO",
+      "colour": "GOLD",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "ARM LESS SUMO",
+      "model": "ARM LESS SUMO",
+      "colour": "#REF!",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "ARM LESS SUMO",
+      "model": "ARM LESS SUMO",
+      "colour": "B. GOLD",
+      "opening": 0,
+      "sold": 740,
+      "closing": 1360,
+      "produced": 2100
+    },
+    {
+      "line": "ARM LESS SUMO",
+      "model": "ARM LESS SUMO",
+      "colour": "#REF!",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "ARM LESS SUMO",
+      "model": "ARM LESS SUMO",
+      "colour": "#REF!",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "ARM LESS SUMO",
+      "model": "ARM LESS SUMO",
+      "colour": "#REF!",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "ARM LESS SUMO",
+      "model": "ARM LESS SUMO",
+      "colour": "#REF!",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "ARM LESS SUMO",
+      "model": "ARM LESS SUMO",
+      "colour": "Mix",
+      "opening": 0,
+      "sold": 0,
+      "closing": 19,
+      "produced": 19
+    },
+    {
+      "line": "ARM LESS SUMO",
+      "model": "ARM LESS SUMO",
+      "colour": "G.R.C.",
+      "opening": 0,
+      "sold": 0,
+      "closing": 131,
+      "produced": 131
+    },
+    {
+      "line": "JIO TABLE",
+      "model": "JIO  - Top",
+      "colour": "B.G",
+      "opening": 478,
+      "sold": 79,
+      "closing": 399,
+      "produced": 0
+    },
+    {
+      "line": "JIO TABLE",
+      "model": "JIO  - Top",
+      "colour": "A.Gold",
+      "opening": 548,
+      "sold": 2,
+      "closing": 546,
+      "produced": 0
+    },
+    {
+      "line": "JIO TABLE",
+      "model": "JIO  - Top",
+      "colour": "Brown",
+      "opening": 1410,
+      "sold": 58,
+      "closing": 1352,
+      "produced": 0
+    },
+    {
+      "line": "JIO TABLE",
+      "model": "JIO  - Top",
+      "colour": "T.Wood",
+      "opening": 788,
+      "sold": 43,
+      "closing": 745,
+      "produced": 0
+    },
+    {
+      "line": "JIO TABLE",
+      "model": "JIO  - Top",
+      "colour": "M.B",
+      "opening": 554,
+      "sold": 0,
+      "closing": 554,
+      "produced": 0
+    },
+    {
+      "line": "JIO TABLE",
+      "model": "JIO  - Top",
+      "colour": "S.Black",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "JIO TABLE",
+      "model": "JIO  - Top",
+      "colour": "R.Wood",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "JIO TABLE",
+      "model": "JIO - Joint and Leg",
+      "colour": "R.Wood",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "JIO TABLE",
+      "model": "JIO - Joint and Leg",
+      "colour": "T.Wood",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "JIO TABLE",
+      "model": "JIO - Joint and Leg",
+      "colour": "White. F",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "JIO TABLE",
+      "model": "JIO - Joint and Leg",
+      "colour": "Brown",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "JIO TABLE",
+      "model": "JIO - Joint and Leg",
+      "colour": "A.Gold",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "JIO TABLE",
+      "model": "JIO - Joint and Leg",
+      "colour": "S.Black",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "JIO TABLE",
+      "model": "JIO - Joint and Leg",
+      "colour": "Red",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "JIO TABLE",
+      "model": "JIO - Joint and Leg",
+      "colour": "BLUE",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "JIO TABLE",
+      "model": "JIO Top - Round",
+      "colour": "BLUE",
+      "opening": 309,
+      "sold": 0,
+      "closing": 309,
+      "produced": 0
+    },
+    {
+      "line": "JIO TABLE",
+      "model": "JIO Top - Round",
+      "colour": "B.Gold",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "JIO TABLE",
+      "model": "JIO Top - Round",
+      "colour": "Green",
+      "opening": 337,
+      "sold": 0,
+      "closing": 337,
+      "produced": 0
+    },
+    {
+      "line": "JIO TABLE",
+      "model": "JIO Top - Round",
+      "colour": "S.Black",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "JIO TABLE",
+      "model": "JIO Top - Round",
+      "colour": "M.Beize F",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "JIO TABLE",
+      "model": "JIO Top - Round",
+      "colour": "White",
+      "opening": 145,
+      "sold": 0,
+      "closing": 145,
+      "produced": 0
+    },
+    {
+      "line": "JIO TABLE",
+      "model": "JIO Top - Round",
+      "colour": "Orange",
+      "opening": 455,
+      "sold": 0,
+      "closing": 455,
+      "produced": 0
+    },
+    {
+      "line": "JIO TABLE",
+      "model": "JIO Top - Round",
+      "colour": "Red",
+      "opening": 692,
+      "sold": 0,
+      "closing": 692,
+      "produced": 0
+    },
+    {
+      "line": "JIO TABLE",
+      "model": "JIO Top - Round",
+      "colour": "Mix",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "JIO TABLE",
+      "model": "JIO Top - Round",
+      "colour": "G.R.C.",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Dining Table",
+      "model": "Dining - Top Square",
+      "colour": "B.G",
+      "opening": 168,
+      "sold": 77,
+      "closing": 91,
+      "produced": 0
+    },
+    {
+      "line": "Dining Table",
+      "model": "Dining - Top Square",
+      "colour": "A.Gold",
+      "opening": 319,
+      "sold": 147,
+      "closing": 172,
+      "produced": 0
+    },
+    {
+      "line": "Dining Table",
+      "model": "Dining - Top Square",
+      "colour": "Brown",
+      "opening": 640,
+      "sold": 148,
+      "closing": 492,
+      "produced": 0
+    },
+    {
+      "line": "Dining Table",
+      "model": "Dining - Top Square",
+      "colour": "T.Wood",
+      "opening": 160,
+      "sold": 90,
+      "closing": 70,
+      "produced": 0
+    },
+    {
+      "line": "Dining Table",
+      "model": "Dining - Top Square",
+      "colour": "P.Silver",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Dining Table",
+      "model": "Dining - Top Square",
+      "colour": "S.Black",
+      "opening": 2,
+      "sold": 2,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Dining Table",
+      "model": "Dining - Top Square",
+      "colour": "R.Wood",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Dining Table",
+      "model": "Dining - Joint and Leg",
+      "colour": "R.Wood",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Dining Table",
+      "model": "Dining - Joint and Leg",
+      "colour": "T.Wood",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Dining Table",
+      "model": "Dining - Joint and Leg",
+      "colour": "White. F",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Dining Table",
+      "model": "Dining - Joint and Leg",
+      "colour": "Brown",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Dining Table",
+      "model": "Dining - Joint and Leg",
+      "colour": "A.Gold",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Dining Table",
+      "model": "Dining - Joint and Leg",
+      "colour": "S.Black",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Dining Table",
+      "model": "Dining - Joint and Leg",
+      "colour": "Red",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Dining Table",
+      "model": "Dining - Joint and Leg",
+      "colour": "BLUE",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Dining Table",
+      "model": "Dining Top - Round",
+      "colour": "BLUE",
+      "opening": 64,
+      "sold": 0,
+      "closing": 64,
+      "produced": 0
+    },
+    {
+      "line": "Dining Table",
+      "model": "Dining Top - Round",
+      "colour": "B.Gold",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Dining Table",
+      "model": "Dining Top - Round",
+      "colour": "Green",
+      "opening": 276,
+      "sold": 10,
+      "closing": 266,
+      "produced": 0
+    },
+    {
+      "line": "Dining Table",
+      "model": "Dining Top - Round",
+      "colour": "S.Black",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Dining Table",
+      "model": "Dining Top - Round",
+      "colour": "M.Beize F",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Dining Table",
+      "model": "Dining Top - Round",
+      "colour": "White",
+      "opening": 1,
+      "sold": 0,
+      "closing": 1,
+      "produced": 0
+    },
+    {
+      "line": "Dining Table",
+      "model": "Dining Top - Round",
+      "colour": "Orange",
+      "opening": 200,
+      "sold": 6,
+      "closing": 194,
+      "produced": 0
+    },
+    {
+      "line": "Dining Table",
+      "model": "Dining Top - Round",
+      "colour": "Red",
+      "opening": 520,
+      "sold": 10,
+      "closing": 510,
+      "produced": 0
+    },
+    {
+      "line": "Dining Table",
+      "model": "Dining Top - Round",
+      "colour": "Mix",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Dining Table",
+      "model": "Dining Top - Round",
+      "colour": "G.R.C.",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Web Chair",
+      "model": "Wap Chair",
+      "colour": "P. Green",
+      "opening": 198,
+      "sold": 72,
+      "closing": 126,
+      "produced": 0
+    },
+    {
+      "line": "Web Chair",
+      "model": "Wap Chair",
+      "colour": "Orange",
+      "opening": 228,
+      "sold": 60,
+      "closing": 168,
+      "produced": 0
+    },
+    {
+      "line": "Web Chair",
+      "model": "Wap Chair",
+      "colour": "Red",
+      "opening": 252,
+      "sold": 72,
+      "closing": 180,
+      "produced": 0
+    },
+    {
+      "line": "Web Chair",
+      "model": "Wap Chair",
+      "colour": "White",
+      "opening": 108,
+      "sold": 0,
+      "closing": 108,
+      "produced": 0
+    },
+    {
+      "line": "Web Chair",
+      "model": "Wap Chair",
+      "colour": "Blue",
+      "opening": 360,
+      "sold": 0,
+      "closing": 360,
+      "produced": 0
+    },
+    {
+      "line": "Web Chair",
+      "model": "Wap Chair",
+      "colour": "Black",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Web Chair",
+      "model": "Wap Chair",
+      "colour": "Brown",
+      "opening": 474,
+      "sold": 54,
+      "closing": 420,
+      "produced": 0
+    },
+    {
+      "line": "Web Chair",
+      "model": "Wap Chair",
+      "colour": "A .G",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Web Chair",
+      "model": "Wap Chair",
+      "colour": "Gold",
+      "opening": 840,
+      "sold": 12,
+      "closing": 828,
+      "produced": 0
+    },
+    {
+      "line": "Web Chair",
+      "model": "Wap Chair",
+      "colour": "D.Green",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Web Chair",
+      "model": "Wap Chair",
+      "colour": "M.B",
+      "opening": 318,
+      "sold": 0,
+      "closing": 318,
+      "produced": 0
+    },
+    {
+      "line": "Web Chair",
+      "model": "Wap Chair",
+      "colour": "B.G",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Web Chair",
+      "model": "Wap Chair",
+      "colour": "Mix",
+      "opening": 12,
+      "sold": 0,
+      "closing": 12,
+      "produced": 0
+    },
+    {
+      "line": "Web Chair",
+      "model": "Wap Chair",
+      "colour": "G.R.C.",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "F.Stand & C Table",
+      "model": "Fridge Stand 1",
+      "colour": "White",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "F.Stand & C Table",
+      "model": "Fridge Stand 1",
+      "colour": "Red First",
+      "opening": 0,
+      "sold": 160,
+      "closing": -160,
+      "produced": 0
+    },
+    {
+      "line": "F.Stand & C Table",
+      "model": "Fridge Stand 1",
+      "colour": "P.Green",
+      "opening": 0,
+      "sold": 20,
+      "closing": -20,
+      "produced": 0
+    },
+    {
+      "line": "F.Stand & C Table",
+      "model": "Fridge Stand 1",
+      "colour": "P.Pink",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "F.Stand & C Table",
+      "model": "Fridge Stand 1",
+      "colour": "Blue",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "F.Stand & C Table",
+      "model": "Fridge Stand 1",
+      "colour": "Yellow",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "F.Stand & C Table",
+      "model": "Fridge Stand 1",
+      "colour": "Orange",
+      "opening": 0,
+      "sold": 140,
+      "closing": -140,
+      "produced": 0
+    },
+    {
+      "line": "F.Stand & C Table",
+      "model": "Coffee - Table",
+      "colour": "M.Beize",
+      "opening": 320,
+      "sold": 32,
+      "closing": 288,
+      "produced": 0
+    },
+    {
+      "line": "F.Stand & C Table",
+      "model": "Coffee - Table",
+      "colour": "Orange",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "F.Stand & C Table",
+      "model": "Coffee - Table",
+      "colour": "White. F",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "F.Stand & C Table",
+      "model": "Coffee - Table",
+      "colour": "Brown",
+      "opening": 720,
+      "sold": 896,
+      "closing": 1696,
+      "produced": 1872
+    },
+    {
+      "line": "F.Stand & C Table",
+      "model": "Coffee - Table",
+      "colour": "A.Gold",
+      "opening": 0,
+      "sold": 544,
+      "closing": 544,
+      "produced": 1088
+    },
+    {
+      "line": "F.Stand & C Table",
+      "model": "Coffee - Table",
+      "colour": "T.W",
+      "opening": 544,
+      "sold": 128,
+      "closing": 416,
+      "produced": 0
+    },
+    {
+      "line": "F.Stand & C Table",
+      "model": "Coffee - Table",
+      "colour": "S . BLACK",
+      "opening": 928,
+      "sold": 48,
+      "closing": 880,
+      "produced": 0
+    },
+    {
+      "line": "F.Stand & C Table",
+      "model": "Coffee - Table",
+      "colour": "P.Green",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "F.Stand & C Table",
+      "model": "Fridge Stand 3",
+      "colour": "Black",
+      "opening": 0,
+      "sold": 580,
+      "closing": -580,
+      "produced": 0
+    },
+    {
+      "line": "F.Stand & C Table",
+      "model": "Fridge Stand 3",
+      "colour": "R.W",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "F.Stand & C Table",
+      "model": "Fridge Stand 3",
+      "colour": "Cherry",
+      "opening": 0,
+      "sold": 520,
+      "closing": -520,
+      "produced": 0
+    },
+    {
+      "line": "F.Stand & C Table",
+      "model": "Fridge Stand 3",
+      "colour": "M.B",
+      "opening": 0,
+      "sold": 60,
+      "closing": -60,
+      "produced": 0
+    },
+    {
+      "line": "F.Stand & C Table",
+      "model": "Fridge Stand 3",
+      "colour": "P.Silver",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "F.Stand & C Table",
+      "model": "Fridge Stand 3",
+      "colour": "Brown",
+      "opening": 0,
+      "sold": 1600,
+      "closing": -1600,
+      "produced": 0
+    },
+    {
+      "line": "F.Stand & C Table",
+      "model": "Fridge Stand 3",
+      "colour": "Mix",
+      "opening": 0,
+      "sold": 0,
+      "closing": 14,
+      "produced": 14
+    },
+    {
+      "line": "F.Stand & C Table",
+      "model": "Fridge Stand 3",
+      "colour": "G.R.C.",
+      "opening": 0,
+      "sold": 0,
+      "closing": 38,
+      "produced": 38
+    },
+    {
+      "line": "Fruit Crate",
+      "model": "Fruit Crate (700)",
+      "colour": "S-W",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Fruit Crate",
+      "model": "Fruit Crate (700)",
+      "colour": "C-W",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Fruit Crate",
+      "model": "Fruit Crate (700)",
+      "colour": "Silver",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Fruit Crate",
+      "model": "Fruit Crate (700)",
+      "colour": "Black",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Fruit Crate",
+      "model": "Fruit Crate (700)",
+      "colour": "M.Bz",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Fruit Crate",
+      "model": "Fruit Crate (700)",
+      "colour": "Brown",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Fruit Crate",
+      "model": "Fruit Crate (700)",
+      "colour": "R-W",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Fruit Crate",
+      "model": "Fruit Crate (700)",
+      "colour": "A-Gold",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Fruit Crate",
+      "model": "Fruit Crate (700)",
+      "colour": "S-W",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Fruit Crate",
+      "model": "Fruit Crate (700)",
+      "colour": "C-W",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Fruit Crate",
+      "model": "Fruit Crate (700)",
+      "colour": "Silver",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Fruit Crate",
+      "model": "Fruit Crate (700)",
+      "colour": "Black",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Fruit Crate",
+      "model": "Fruit Crate (700)",
+      "colour": "M.Bz",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Fruit Crate",
+      "model": "Fruit Crate (700)",
+      "colour": "B-Brown",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Fruit Crate",
+      "model": "Fruit Crate (700)",
+      "colour": "T-W",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Fruit Crate",
+      "model": "Fruit Crate (700)",
+      "colour": "Karara",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Fruit Crate",
+      "model": "Fruit Crate (700)",
+      "colour": "Mix",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    },
+    {
+      "line": "Fruit Crate",
+      "model": "Fruit Crate (700)",
+      "colour": "G.R.C.",
+      "opening": 0,
+      "sold": 0,
+      "closing": 0,
+      "produced": 0
+    }
+  ],
+  "lines": [
+    "BIG CHAIR",
+    "Sumo",
+    "XUV",
+    "Innova",
+    "Garden Table",
+    "Stool",
+    "Activa",
+    "Small Chair",
+    "EV Chair",
+    "Aless",
+    "Tea Table",
+    "Chota Heritage",
+    "M.P.Stool",
+    "Yoddha",
+    "ClipON Stool",
+    "Baby Chair",
+    "BABA CHAIR 1",
+    "Jordan New",
+    "Jordan Chair",
+    "High cros",
+    "Ring Table",
+    "ARM LESS SUMO",
+    "JIO TABLE",
+    "Dining Table",
+    "Web Chair",
+    "F.Stand & C Table",
+    "Fruit Crate"
+  ],
+  "machines": [
+    {
+      "name": "M-1",
+      "fresh": 37992,
+      "activeDays": 41
+    },
+    {
+      "name": "M-2",
+      "fresh": 63384,
+      "activeDays": 48
+    },
+    {
+      "name": "M-3",
+      "fresh": 39270,
+      "activeDays": 49
+    },
+    {
+      "name": "M-4",
+      "fresh": 35424,
+      "activeDays": 31
+    },
+    {
+      "name": "M-5",
+      "fresh": 35208,
+      "activeDays": 31
+    },
+    {
+      "name": "M-6",
+      "fresh": 23490,
+      "activeDays": 28
+    },
+    {
+      "name": "M-7",
+      "fresh": 31320,
+      "activeDays": 20
+    }
+  ]
+}

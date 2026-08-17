@@ -145,4 +145,6 @@ export interface ParsedWorkbook {
   lines: string[];
   machines: Machine[];
   sheetNames: string[];
+  /** Present when SKUs came from consolidating raw product tabs (no Master sheet). */
+  consolidation?: { tabs: number; skipped: string[] };
 }
