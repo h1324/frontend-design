@@ -13,6 +13,8 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PageHeader } from "@/components/ui/page-header";
+import { StateBadge } from "@/components/ui/state-badge";
 import { createDispatchAction } from "./actions";
 
 const selectClass =
@@ -61,20 +63,12 @@ export default async function DispatchPage({
   );
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-5xl flex-col gap-6 px-6 py-12">
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-sm font-medium text-muted-foreground">
-            EPE Foam ERP · Dispatch
-          </p>
-          <h1 className="mt-1 text-2xl font-semibold tracking-tight">
-            Dispatch & invoice
-          </h1>
-        </div>
-        <Button asChild variant="ghost" size="sm">
-          <Link href="/">Home</Link>
-        </Button>
-      </div>
+    <main className="mx-auto flex max-w-5xl flex-col gap-6 px-5 py-8 lg:px-8">
+      <PageHeader
+        eyebrow="Dispatch"
+        title="Dispatch & invoice"
+        description="Pick reserved rolls, raise the tax invoice, and generate the e-way bill & IRN."
+      />
       {error ? <p className="text-sm text-destructive">{error}</p> : null}
 
       {canWrite ? (
@@ -193,16 +187,12 @@ export default async function DispatchPage({
             <tbody>
               {notes.map((n) => (
                 <tr key={n.id} className="border-b last:border-0">
-                  <td className="py-2 pr-4 font-mono text-xs">{n.docNo}</td>
+                  <td className="data py-2 pr-4 text-xs">{n.docNo}</td>
                   <td className="py-2 pr-4">{n.customer.name}</td>
                   <td className="py-2 pr-4">
-                    {n.status === "DISPATCHED" ? (
-                      n.status
-                    ) : (
-                      <span className="text-muted-foreground">{n.status}</span>
-                    )}
+                    <StateBadge value={n.status} />
                   </td>
-                  <td className="py-2 pr-4 font-mono text-xs text-muted-foreground">
+                  <td className="data py-2 pr-4 text-xs text-muted-foreground">
                     {n.invoice?.docNo ?? "—"}
                   </td>
                   <td className="py-2 pr-4 tabular-nums">

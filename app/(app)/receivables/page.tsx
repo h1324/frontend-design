@@ -17,6 +17,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { PageHeader } from "@/components/ui/page-header";
+import { Badge } from "@/components/ui/state-badge";
 
 export default async function ReceivablesPage() {
   const actor = requireActor(await auth());
@@ -52,20 +54,12 @@ export default async function ReceivablesPage() {
   }
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-6xl flex-col gap-6 px-6 py-12">
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-sm font-medium text-muted-foreground">
-            EPE Foam ERP · Receivables
-          </p>
-          <h1 className="mt-1 text-2xl font-semibold tracking-tight">
-            Outstanding &amp; ageing
-          </h1>
-        </div>
-        <Button asChild variant="ghost" size="sm">
-          <Link href="/">Home</Link>
-        </Button>
-      </div>
+    <main className="mx-auto flex max-w-6xl flex-col gap-6 px-5 py-8 lg:px-8">
+      <PageHeader
+        eyebrow="Receivables"
+        title="Outstanding & ageing"
+        description="Credit-control view — outstanding = issued invoices − recorded receipts. Statutory books stay in Tally."
+      />
 
       <Card>
         <CardHeader>
@@ -94,13 +88,22 @@ export default async function ReceivablesPage() {
               {withBalance.map(({ customer, ageing }) => (
                 <tr key={customer.id} className="border-b last:border-0">
                   <td className="py-2 pr-4">{customer.name}</td>
-                  <td className="py-2 pr-4">{customer.tier}</td>
+                  <td className="py-2 pr-4">
+                    <Badge tone="neutral">{customer.tier}</Badge>
+                  </td>
                   {AGEING_BUCKETS.map((b) => (
-                    <td key={b} className="py-2 pr-4 text-right tabular-nums">
+                    <td
+                      key={b}
+                      className={`data py-2 pr-4 text-right ${
+                        b === "d90plus" && ageing.buckets[b] > 0n
+                          ? "text-state-rejected"
+                          : ""
+                      }`}
+                    >
                       {ageing.buckets[b] > 0n ? formatPaise(ageing.buckets[b]) : "—"}
                     </td>
                   ))}
-                  <td className="py-2 pr-4 text-right font-medium tabular-nums">
+                  <td className="data py-2 pr-4 text-right font-medium">
                     {formatPaise(ageing.outstandingPaise)}
                   </td>
                   <td className="py-2 text-right">

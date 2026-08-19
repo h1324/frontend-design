@@ -1,4 +1,3 @@
-import Link from "next/link";
 import type { Prisma } from "@prisma/client";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
@@ -13,6 +12,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { PageHeader } from "@/components/ui/page-header";
 import { inspectGrnLineAction, inspectLotAction } from "../actions";
 
 type PendingRoll = Prisma.RollGetPayload<{ include: { item: true; lot: true } }>;
@@ -43,18 +43,12 @@ export default async function QcQueuePage({
   const lotGroups = [...byLot.entries()].filter(([k]) => k !== "none");
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-5xl flex-col gap-6 px-6 py-12">
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-sm font-medium text-muted-foreground">
-            EPE Foam ERP · Quality
-          </p>
-          <h1 className="mt-1 text-2xl font-semibold tracking-tight">QC queue</h1>
-        </div>
-        <Button asChild variant="ghost" size="sm">
-          <Link href="/">Home</Link>
-        </Button>
-      </div>
+    <main className="mx-auto flex max-w-5xl flex-col gap-6 px-5 py-8 lg:px-8">
+      <PageHeader
+        eyebrow="Quality"
+        title="QC queue"
+        description="Density, thickness and appearance checks — hold, release or reject incoming RM and finished rolls."
+      />
       {error ? <p className="text-sm text-destructive">{error}</p> : null}
 
       <Card>

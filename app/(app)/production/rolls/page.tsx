@@ -15,6 +15,8 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PageHeader } from "@/components/ui/page-header";
+import { StateBadge } from "@/components/ui/state-badge";
 
 const selectClass =
   "h-10 w-full rounded-md border border-input bg-background px-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
@@ -71,23 +73,17 @@ export default async function RollsPage({
   ]);
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-5xl flex-col gap-6 px-6 py-12">
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-sm font-medium text-muted-foreground">
-            EPE Foam ERP · Production
-          </p>
-          <h1 className="mt-1 text-2xl font-semibold tracking-tight">Roll registry</h1>
-        </div>
-        <div className="flex gap-2">
+    <main className="mx-auto flex max-w-5xl flex-col gap-6 px-5 py-8 lg:px-8">
+      <PageHeader
+        eyebrow="Production"
+        title="Roll registry"
+        description="Every numbered unit of output, from curing to dispatch."
+        actions={
           <Button asChild variant="ghost" size="sm">
             <Link href="/production/lots">Lots</Link>
           </Button>
-          <Button asChild variant="ghost" size="sm">
-            <Link href="/">Home</Link>
-          </Button>
-        </div>
-      </div>
+        }
+      />
       {q && q.trim() ? (
         <p className="text-sm text-destructive">
           No roll numbered <span className="font-mono">{q}</span> in this company.
@@ -182,14 +178,16 @@ export default async function RollsPage({
             <tbody>
               {rolls.map((r) => (
                 <tr key={r.id} className="border-b last:border-0">
-                  <td className="py-2 pr-4 font-mono text-xs">{r.rollNo}</td>
+                  <td className="data py-2 pr-4 text-xs">{r.rollNo}</td>
                   <td className="py-2 pr-4">{r.item.code}</td>
-                  <td className="py-2 pr-4 font-mono text-xs text-muted-foreground">
+                  <td className="data py-2 pr-4 text-xs text-muted-foreground">
                     {r.lot?.lotNo ?? "—"}
                   </td>
-                  <td className="py-2 pr-4 tabular-nums">{r.qtyKgActual.toString()}</td>
-                  <td className="py-2 pr-4 tabular-nums">{r.densityKgM3.toString()}</td>
-                  <td className="py-2 pr-4">{r.state}</td>
+                  <td className="data py-2 pr-4">{r.qtyKgActual.toString()}</td>
+                  <td className="data py-2 pr-4">{r.densityKgM3.toString()}</td>
+                  <td className="py-2 pr-4">
+                    <StateBadge value={r.state} />
+                  </td>
                   <td className="py-2">
                     <Button asChild variant="ghost" size="sm">
                       <Link href={`/production/rolls/${r.id}`}>Open</Link>
