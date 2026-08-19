@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
 import { requireActor, requireAccess } from "@/lib/rbac";
@@ -11,19 +10,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { PageHeader } from "@/components/ui/page-header";
+import { StateBadge } from "@/components/ui/state-badge";
 import { syncInvoicesOutAction, importReceiptsAction, retrySyncAction } from "./actions";
 
 function fmtDateTime(d: Date): string {
   return d.toLocaleString("en-GB");
 }
-
-const statusTone: Record<string, string> = {
-  ACK: "text-foreground",
-  SENT: "text-foreground",
-  PENDING: "text-muted-foreground",
-  SKIPPED: "text-muted-foreground",
-  ERROR: "text-destructive",
-};
 
 export default async function TallyIntegrationPage({
   searchParams,
@@ -52,18 +45,12 @@ export default async function TallyIntegrationPage({
   ]);
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-5xl flex-col gap-6 px-6 py-12">
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-sm font-medium text-muted-foreground">
-            EPE Foam ERP · Integrations
-          </p>
-          <h1 className="mt-1 text-2xl font-semibold tracking-tight">Tally sync</h1>
-        </div>
-        <Button asChild variant="ghost" size="sm">
-          <Link href="/">Home</Link>
-        </Button>
-      </div>
+    <main className="mx-auto flex max-w-5xl flex-col gap-6 px-5 py-8 lg:px-8">
+      <PageHeader
+        eyebrow="Integrations"
+        title="Tally sync"
+        description="Invoices export out to Tally sales vouchers; receipts import in. TallyPrime stays the book of record."
+      />
       {error ? <p className="text-sm text-destructive">{error}</p> : null}
 
       <Card>
@@ -128,10 +115,10 @@ export default async function TallyIntegrationPage({
                   </td>
                   <td className="py-2 pr-4">{r.entityType}</td>
                   <td className="py-2 pr-4">{r.direction}</td>
-                  <td className={`py-2 pr-4 ${statusTone[r.status] ?? ""}`}>
-                    {r.status}
+                  <td className="py-2 pr-4">
+                    <StateBadge value={r.status} />
                   </td>
-                  <td className="py-2 pr-4 font-mono text-xs">
+                  <td className="data py-2 pr-4 text-xs">
                     {r.status === "ERROR" ? (r.lastError ?? "—") : (r.externalRef ?? "—")}
                   </td>
                   <td className="py-2">

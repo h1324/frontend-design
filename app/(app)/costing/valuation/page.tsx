@@ -1,10 +1,9 @@
-import Link from "next/link";
+import { PageHeader } from "@/components/ui/page-header";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
 import { requireActor, requireAccess } from "@/lib/rbac";
 import { formatPaise } from "@/lib/gst";
 import { itemStockValue } from "@/lib/landed-cost";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -38,18 +37,12 @@ export default async function ValuationPage() {
   const totalValue = withStock.reduce((s, r) => s + r.value.valuePaise, 0n);
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-4xl flex-col gap-6 px-6 py-12">
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-sm font-medium text-muted-foreground">
-            EPE Foam ERP · Costing
-          </p>
-          <h1 className="mt-1 text-2xl font-semibold tracking-tight">Stock valuation</h1>
-        </div>
-        <Button asChild variant="ghost" size="sm">
-          <Link href="/">Home</Link>
-        </Button>
-      </div>
+    <main className="mx-auto flex max-w-4xl flex-col gap-6 px-5 py-8 lg:px-8">
+      <PageHeader
+        eyebrow="Costing"
+        title="Stock valuation"
+        description="Moving-average landed cost per item — the value carried on the books."
+      />
 
       <Card>
         <CardHeader>

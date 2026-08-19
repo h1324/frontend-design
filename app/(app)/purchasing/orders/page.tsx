@@ -14,19 +14,14 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PageHeader } from "@/components/ui/page-header";
+import { StateBadge } from "@/components/ui/state-badge";
 import { createPOAction } from "../actions";
 
 const selectClass =
   "h-10 w-full rounded-md border border-input bg-background px-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
 
 const LINE_ROWS = 6;
-
-const statusTone: Record<string, string> = {
-  OPEN: "text-foreground",
-  DRAFT: "text-muted-foreground",
-  CLOSED: "text-muted-foreground",
-  CANCELLED: "text-muted-foreground",
-};
 
 export default async function PurchaseOrdersPage({
   searchParams,
@@ -60,18 +55,17 @@ export default async function PurchaseOrdersPage({
   ]);
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-5xl flex-col gap-6 px-6 py-12">
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-sm font-medium text-muted-foreground">
-            EPE Foam ERP · Purchasing
-          </p>
-          <h1 className="mt-1 text-2xl font-semibold tracking-tight">Purchase orders</h1>
-        </div>
-        <Button asChild variant="ghost" size="sm">
-          <Link href="/">Home</Link>
-        </Button>
-      </div>
+    <main className="mx-auto flex max-w-5xl flex-col gap-6 px-5 py-8 lg:px-8">
+      <PageHeader
+        eyebrow="Purchasing"
+        title="Purchase orders"
+        description="Orders to suppliers for resin, butane and additives; received against in the GRN."
+        actions={
+          <Button asChild variant="ghost" size="sm">
+            <Link href="/purchasing/grn">Receiving</Link>
+          </Button>
+        }
+      />
       {error ? <p className="text-sm text-destructive">{error}</p> : null}
 
       {canWrite ? (
@@ -183,8 +177,8 @@ export default async function PurchaseOrdersPage({
                       ),
                     )}
                   </td>
-                  <td className={`py-2 pr-4 ${statusTone[po.status] ?? ""}`}>
-                    {po.status}
+                  <td className="py-2 pr-4">
+                    <StateBadge value={po.status} />
                   </td>
                   <td className="py-2">
                     <Button asChild variant="ghost" size="sm">

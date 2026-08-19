@@ -1,10 +1,9 @@
-import Link from "next/link";
+import { PageHeader } from "@/components/ui/page-header";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
 import { requireActor, requireAccess } from "@/lib/rbac";
 import { formatPaise } from "@/lib/gst";
 import { marginReport } from "@/lib/costing";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -25,20 +24,12 @@ export default async function MarginPage() {
   const report = await marginReport(prisma, actor.companyId);
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-4xl flex-col gap-6 px-6 py-12">
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-sm font-medium text-muted-foreground">
-            EPE Foam ERP · Costing
-          </p>
-          <h1 className="mt-1 text-2xl font-semibold tracking-tight">
-            Margin by customer
-          </h1>
-        </div>
-        <Button asChild variant="ghost" size="sm">
-          <Link href="/">Home</Link>
-        </Button>
-      </div>
+    <main className="mx-auto flex max-w-4xl flex-col gap-6 px-5 py-8 lg:px-8">
+      <PageHeader
+        eyebrow="Costing"
+        title="Margin by customer"
+        description="Net sale value minus the snapshot cost of the dispatched rolls, over issued invoices."
+      />
 
       <Card>
         <CardHeader>

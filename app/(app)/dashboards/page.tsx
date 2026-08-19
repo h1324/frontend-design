@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { PageHeader } from "@/components/ui/page-header";
 import { auth } from "@/auth";
 import { requireActor, can, type Area } from "@/lib/rbac";
 import { Button } from "@/components/ui/button";
@@ -42,16 +43,12 @@ export default async function DashboardsPage() {
   const visible = PANELS.filter((p) => can(actor.role, p.area, "read"));
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-4xl flex-col gap-6 px-6 py-12">
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-sm font-medium text-muted-foreground">EPE Foam ERP</p>
-          <h1 className="mt-1 text-2xl font-semibold tracking-tight">Dashboards</h1>
-        </div>
-        <Button asChild variant="ghost" size="sm">
-          <Link href="/">Home</Link>
-        </Button>
-      </div>
+    <main className="mx-auto flex max-w-4xl flex-col gap-6 px-5 py-8 lg:px-8">
+      <PageHeader
+        eyebrow="Analytics"
+        title="Dashboards"
+        description="OEE, yield, kWh/kg, density variance and receivables — the plant at a glance."
+      />
 
       <div className="grid gap-4 sm:grid-cols-2">
         {visible.map((p) => (

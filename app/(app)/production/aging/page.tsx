@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { PageHeader } from "@/components/ui/page-header";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
 import { requireActor, requireAccess, can } from "@/lib/rbac";
@@ -44,23 +45,17 @@ export default async function AgingPage({
   const dueNow = rows.filter((x) => x.countdown.ready).length;
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-5xl flex-col gap-6 px-6 py-12">
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-sm font-medium text-muted-foreground">
-            EPE Foam ERP · Production
-          </p>
-          <h1 className="mt-1 text-2xl font-semibold tracking-tight">Aging queue</h1>
-        </div>
-        <div className="flex gap-2">
+    <main className="mx-auto flex max-w-5xl flex-col gap-6 px-5 py-8 lg:px-8">
+      <PageHeader
+        eyebrow="Production"
+        title="Aging queue"
+        description="Rolls cure until butane diffuses out; on the ready date they become available to sell."
+        actions={
           <Button asChild variant="ghost" size="sm">
             <Link href="/production/rolls">Rolls</Link>
           </Button>
-          <Button asChild variant="ghost" size="sm">
-            <Link href="/">Home</Link>
-          </Button>
-        </div>
-      </div>
+        }
+      />
 
       {error ? <p className="text-sm text-destructive">{error}</p> : null}
       {swept != null ? (

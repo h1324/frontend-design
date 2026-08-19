@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { PageHeader } from "@/components/ui/page-header";
+import { StateBadge } from "@/components/ui/state-badge";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
 import { requireActor, requireAccess, can } from "@/lib/rbac";
@@ -59,18 +61,12 @@ export default async function ConvertingPage({
   const ready = machines.length && shifts.length && operators.length && items.length;
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-5xl flex-col gap-6 px-6 py-12">
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-sm font-medium text-muted-foreground">
-            EPE Foam ERP · Production
-          </p>
-          <h1 className="mt-1 text-2xl font-semibold tracking-tight">Converting</h1>
-        </div>
-        <Button asChild variant="ghost" size="sm">
-          <Link href="/">Home</Link>
-        </Button>
-      </div>
+    <main className="mx-auto flex max-w-5xl flex-col gap-6 px-5 py-8 lg:px-8">
+      <PageHeader
+        eyebrow="Production"
+        title="Converting"
+        description="Lamination, slitting and bag-making — parent rolls in, child rolls out, full genealogy."
+      />
       {error ? <p className="text-sm text-destructive">{error}</p> : null}
 
       {canWrite ? (
@@ -177,11 +173,7 @@ export default async function ConvertingPage({
                     {o._count.inputs} → {o._count.children}
                   </td>
                   <td className="py-2 pr-4">
-                    {o.status === "OPEN" ? (
-                      o.status
-                    ) : (
-                      <span className="text-muted-foreground">{o.status}</span>
-                    )}
+                    <StateBadge value={o.status} />
                   </td>
                   <td className="py-2">
                     <Button asChild variant="ghost" size="sm">
