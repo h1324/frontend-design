@@ -155,6 +155,24 @@ enum PurchaseOrderStatus {
   CANCELLED
 }
 
+/// How an item participates in predictive reorder (spec S28). AUTO_SUGGEST raises an alert when
+/// available on-hand falls at/below the reorder point; MANUAL is excluded from the scan. Neither
+/// ever auto-buys — a suggestion is advisory and a human confirms the PO.
+enum ReorderPolicy {
+  MANUAL
+  AUTO_SUGGEST
+}
+
+/// Lifecycle of a materialised reorder suggestion (spec S28). OPEN is a live alert; PO_DRAFTED
+/// links the DRAFT PO a buyer generated; DISMISSED carries a reason; EXPIRED is superseded by a
+/// newer scan for the same item.
+enum ReorderSuggestionStatus {
+  OPEN
+  PO_DRAFTED
+  DISMISSED
+  EXPIRED
+}
+
 /// Post-extrusion converting operation (spec S17). Lamination bonds sheets (children re-cure);
 /// slitting/bag-making cut without re-curing (children inherit the parents' aged status).
 enum ConvertingOperation {
@@ -177,44 +195,45 @@ model Company {
   defaultAgingDays Int      @default(7)
   createdAt        DateTime @default(now())
 
-  users             User[]
-  plants            Plant[]
-  auditLogs         AuditLog[]
-  docSeries         DocSeries[]
-  locations         Location[]
-  items             Item[]
-  suppliers         Supplier[]
-  customers         Customer[]
-  machines          Machine[]
-  shifts            Shift[]
-  operators         Operator[]
-  downtimeReasons   DowntimeReason[]
-  materialReceipts  MaterialReceipt[]
-  materialIssues    MaterialIssue[]
-  lots              Lot[]
-  rolls             Roll[]
-  stockLedger       StockLedger[]
-  stockBalances     StockBalance[]
-  dispatchNotes     DispatchNote[]
-  invoices          Invoice[]
-  purchaseOrders    PurchaseOrder[]
-  goodsReceipts     GoodsReceipt[]
-  qcInspections     QcInspection[]
-  convertingOrders  ConvertingOrder[]
-  salesOrders       SalesOrder[]
-  receipts          Receipt[]
-  grnCharges        GrnCharge[]
-  itemCostHistory   ItemCostHistory[]
-  costRates         CostRate[]
-  lotCosts          LotCost[]
-  convertingCosts   ConvertingOrderCost[]
-  einvoiceLogs      EInvoiceLog[]
-  tallySyncs        TallySync[]
-  customerTallyMaps CustomerTallyMap[]
-  quotations        Quotation[]
-  priceContracts    PriceContract[]
-  valueDiscounts    ValueDiscountTier[]
-  mobileSubmissions OrderDraftSubmission[]
+  users              User[]
+  plants             Plant[]
+  auditLogs          AuditLog[]
+  docSeries          DocSeries[]
+  locations          Location[]
+  items              Item[]
+  suppliers          Supplier[]
+  customers          Customer[]
+  machines           Machine[]
+  shifts             Shift[]
+  operators          Operator[]
+  downtimeReasons    DowntimeReason[]
+  materialReceipts   MaterialReceipt[]
+  materialIssues     MaterialIssue[]
+  lots               Lot[]
+  rolls              Roll[]
+  stockLedger        StockLedger[]
+  stockBalances      StockBalance[]
+  dispatchNotes      DispatchNote[]
+  invoices           Invoice[]
+  purchaseOrders     PurchaseOrder[]
+  goodsReceipts      GoodsReceipt[]
+  qcInspections      QcInspection[]
+  convertingOrders   ConvertingOrder[]
+  salesOrders        SalesOrder[]
+  receipts           Receipt[]
+  grnCharges         GrnCharge[]
+  itemCostHistory    ItemCostHistory[]
+  costRates          CostRate[]
+  lotCosts           LotCost[]
+  convertingCosts    ConvertingOrderCost[]
+  einvoiceLogs       EInvoiceLog[]
+  tallySyncs         TallySync[]
+  customerTallyMaps  CustomerTallyMap[]
+  quotations         Quotation[]
+  priceContracts     PriceContract[]
+  valueDiscounts     ValueDiscountTier[]
+  mobileSubmissions  OrderDraftSubmission[]
+  reorderSuggestions ReorderSuggestion[]
 }
 
 model Plant {
@@ -348,7 +367,15 @@ model Item {
 
   // aging: per-item override of Company.defaultAgingDays (decision B4)
   agingDays    Int?
-  reorderLevel Decimal? @db.Decimal(16, 3)
+  reorderLevel Decimal? @db.Decimal(16, 3) // legacy manual level (S5); superseded by the computed reorderPoint (S28)
+
+  // predictive reorder (spec S28). reorderPoint is the computed alert threshold
+  // (avgDailyConsumption × leadTimeDays + safetyStock); the three inputs are stored so a buyer
+  // can see why. Nullable — an item with no reorder policy is skipped by the scan.
+  reorderPoint  Decimal?      @db.Decimal(16, 3)
+  safetyStock   Decimal?      @db.Decimal(16, 3)
+  leadTimeDays  Int?
+  reorderPolicy ReorderPolicy @default(AUTO_SUGGEST)
 
   // landed-cost valuation (spec S20): moving weighted-average landed cost and the quantity it
   // was averaged over. Maintained by lib/landed-cost.ts on each costed receipt; never floats.
@@ -373,6 +400,7 @@ model Item {
   costHistory          ItemCostHistory[]
   quotationLines       QuotationLine[]
   priceContractLines   PriceContractLine[]
+  reorderSuggestions   ReorderSuggestion[]
 
   @@unique([companyId, code])
   @@index([companyId])
@@ -396,9 +424,10 @@ model Supplier {
   isActive     Boolean  @default(true)
   createdAt    DateTime @default(now())
 
-  materialReceipts MaterialReceipt[]
-  purchaseOrders   PurchaseOrder[]
-  goodsReceipts    GoodsReceipt[]
+  materialReceipts   MaterialReceipt[]
+  purchaseOrders     PurchaseOrder[]
+  goodsReceipts      GoodsReceipt[]
+  reorderSuggestions ReorderSuggestion[]
 
   @@unique([companyId, code])
   @@index([companyId])
@@ -1194,8 +1223,9 @@ model PurchaseOrder {
   createdById   String?
   createdAt     DateTime            @default(now())
 
-  lines         PurchaseOrderLine[]
-  goodsReceipts GoodsReceipt[]
+  lines              PurchaseOrderLine[]
+  goodsReceipts      GoodsReceipt[]
+  reorderSuggestions ReorderSuggestion[]
 
   @@unique([companyId, docNo])
   @@index([companyId])
@@ -1696,4 +1726,36 @@ model OrderDraftSubmission {
   @@unique([companyId, clientRequestId])
   @@index([companyId])
   @@index([companyId, status])
+}
+
+/// A materialised snapshot of one reorder-scan result for one item (spec S28). The row preserves
+/// every input the suggestion was computed from — on-hand, reorder point, avg daily consumption,
+/// suggested qty — so the number a buyer acted on stays fixed even as consumption keeps moving
+/// (the same snapshot discipline as quote cost S25 and moving-average valuation S20). A scan
+/// EXPIREs any prior OPEN row for the item before writing a fresh one; a buyer's DRAFT PO links
+/// via resultPoId and flips the row to PO_DRAFTED. Suggestions are advisory — never an auto-buy.
+model ReorderSuggestion {
+  id                  String                  @id @default(cuid())
+  companyId           String
+  company             Company                 @relation(fields: [companyId], references: [id])
+  itemId              String
+  item                Item                    @relation(fields: [itemId], references: [id])
+  asOf                DateTime                @default(now())
+  /// Available on-hand at scan time — excludes QC-hold and reject locations (spec S28 rule 3).
+  onHandQty           Decimal                 @db.Decimal(16, 3)
+  reorderPoint        Decimal                 @db.Decimal(16, 3)
+  avgDailyConsumption Decimal                 @db.Decimal(16, 4)
+  suggestedQty        Decimal                 @db.Decimal(16, 3)
+  preferredSupplierId String?
+  preferredSupplier   Supplier?               @relation(fields: [preferredSupplierId], references: [id])
+  status              ReorderSuggestionStatus @default(OPEN)
+  resultPoId          String?
+  resultPo            PurchaseOrder?          @relation(fields: [resultPoId], references: [id])
+  dismissedReason     String?
+  generatedBy         String?
+  createdAt           DateTime                @default(now())
+
+  @@index([companyId])
+  @@index([companyId, status])
+  @@index([itemId])
 }

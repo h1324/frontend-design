@@ -1,6 +1,8 @@
 # Spec S28 — Predictive Reorder
 
-**Status:** Draft — forecast method is the open decision; a transparent consumption model is the default
+**Status:** Built (2026-08) — trailing 90-day moving average behind a `forecast()` seam; fixed
+per-item safety stock (days-of-cover helper); RM/consumables/packing only (FG off); on-demand scan.
+The four open questions were confirmed to their stated defaults at build time.
 
 ## Purpose
 

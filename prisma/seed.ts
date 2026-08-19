@@ -92,6 +92,27 @@ async function main() {
     });
   }
 
+  // Predictive-reorder thresholds (S28) for the inputs the brief calls out — butane and
+  // masterbatch above all — plus resin and talc. Lead time + safety stock let the scan compute a
+  // reorder point from real consumption; without these an item stays out of the reorder watch.
+  const REORDER_SEED: Record<string, { leadTimeDays: number; safetyStock: string }> = {
+    "RM-BUTANE": { leadTimeDays: 5, safetyStock: "300" }, // imported, tightly held — short cover
+    "RM-MB-WHITE": { leadTimeDays: 21, safetyStock: "150" }, // long lead, colour-critical
+    "RM-LDPE-FILM": { leadTimeDays: 10, safetyStock: "1500" },
+    "RM-LDPE-EXT": { leadTimeDays: 10, safetyStock: "1500" },
+    "RM-TALC": { leadTimeDays: 14, safetyStock: "200" },
+  };
+  for (const [code, cfg] of Object.entries(REORDER_SEED)) {
+    await prisma.item.update({
+      where: { companyId_code: { companyId: company.id, code } },
+      data: {
+        leadTimeDays: cfg.leadTimeDays,
+        safetyStock: cfg.safetyStock,
+        reorderPolicy: "AUTO_SUGGEST",
+      },
+    });
+  }
+
   for (const input of SUPPLIER_SEED) {
     const errors = validateSupplierInput(input);
     if (errors.length)

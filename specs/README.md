@@ -79,7 +79,7 @@ credentials — the real GSP/Tally adapters drop in behind the same interfaces.
 | S23 | [23-einvoice-eway.md](23-einvoice-eway.md)   | E-invoice (IRN) & e-way-bill APIs           | Built  |
 | S24 | [24-tally-sync.md](24-tally-sync.md)         | Tally sync (invoices out, receipts in)      | Built  |
 
-## Phase 4 build order (later) — **S25/S27 built; S28 draft; S26/S29 shelved**
+## Phase 4 build order (later) — **S25/S27/S28 built; S26/S29 shelved**
 
 Beyond the plant floor: the sales-side pre-order layer (quotations/price contracts, deferred from
 S18), the field-sales mobile capture surface, and predictive reorder. The two outward/consolidation
@@ -89,9 +89,9 @@ The decisions are settled (2026-08): **S25** adds order-value discounts on top o
 is internal SALES reps only (rides Auth.js). **S26** (customer portal) is **shelved** — no
 customer-facing surface is wanted; customers are handled directly by Sales/Accounts. **S29**
 (cross-entity view) is **shelved** — no second entity is planned; `company_id` keeps it a cheap
-revival if that changes. **S28** stays Draft: its open questions (forecast method, consumption
-window, safety-stock basis) are tuning defaults, not schema-shaping, and can be confirmed at build
-time — the one Phase 4 module still open to build.
+revival if that changes. **S28** is **built** to its stated defaults (trailing 90-day moving
+average behind a `forecast()` seam, fixed per-item safety stock, RM/consumables first, on-demand
+scan) — closing out the buildable Phase 4 modules.
 
 | #   | Spec                                                   | Module                                      | Status  |
 | --- | ------------------------------------------------------ | ------------------------------------------- | ------- |

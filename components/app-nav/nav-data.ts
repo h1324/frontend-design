@@ -75,6 +75,11 @@ export const NAV_GROUPS: NavGroup[] = [
         href: "/purchasing/grn",
         desc: "Goods receipt & landed cost",
       },
+      {
+        label: "Reorder",
+        href: "/purchasing/reorder",
+        desc: "Consumption-driven buy alerts",
+      },
     ],
   },
   {

@@ -71,6 +71,9 @@ const TONE_BY_VALUE: Record<string, Tone> = {
   LOST: "neutral",
   EXPIRED: "neutral",
   ACTIVE: "available",
+  // predictive reorder (S28)
+  PO_DRAFTED: "available",
+  DISMISSED: "neutral",
   // Tally sync (S24) / mobile (S27)
   ACK: "available",
   APPLIED: "available",
