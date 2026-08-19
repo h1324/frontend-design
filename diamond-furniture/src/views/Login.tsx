@@ -19,14 +19,14 @@ export function Login({ auth }: { auth: FirebaseAuthState }) {
   return (
     <div style={{ minHeight: '100vh', display: 'grid', placeItems: 'center', padding: 20, background: 'var(--color-bg)' }}>
       <Blueprint className="card" style={{ width: 'min(380px,100%)', gap: 16, padding: 28 }}>
-        <div className="nav-brand" style={{ display: 'flex', flexDirection: 'column', lineHeight: 1, gap: 4 }}>
-          <span style={{ fontSize: 22 }}>DIAMOND FURNITURE</span>
+        <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1, gap: 4 }}>
+          <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, fontSize: 24 }}>Diamond Furniture</span>
           <span style={{ fontSize: 10, letterSpacing: '.18em', textTransform: 'uppercase', color: 'var(--color-accent)' }}>Inventory Control</span>
         </div>
 
-        <div style={{ display: 'flex', gap: 2 }}>
-          <button className="nav-btn" aria-current={!isSignup ? 'page' : undefined} onClick={() => setMode('signin')} style={{ flex: 1 }}>Sign in</button>
-          <button className="nav-btn" aria-current={isSignup ? 'page' : undefined} onClick={() => setMode('signup')} style={{ flex: 1 }}>Create account</button>
+        <div style={{ display: 'flex', gap: 6 }}>
+          <button className={`btn ${!isSignup ? 'btn-primary' : 'btn-secondary'}`} onClick={() => setMode('signin')} style={{ flex: 1 }}>Sign in</button>
+          <button className={`btn ${isSignup ? 'btn-primary' : 'btn-secondary'}`} onClick={() => setMode('signup')} style={{ flex: 1 }}>Create account</button>
         </div>
 
         <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>

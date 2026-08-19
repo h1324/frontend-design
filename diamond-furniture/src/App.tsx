@@ -1,4 +1,9 @@
 import { useState } from 'react';
+import {
+  LayoutDashboard, Package, AlertTriangle, ClipboardList, Factory,
+  TrendingUp, FileText, History, Users, Menu, X, Upload,
+  type LucideIcon,
+} from 'lucide-react';
 import { useApp } from './store/store';
 import { useToast } from './components/Toast';
 import type { Role, EffSku } from './domain/types';
@@ -17,56 +22,108 @@ import { EditDialog } from './components/dialogs/EditDialog';
 import { ProductionDialog } from './components/dialogs/ProductionDialog';
 import { ImportDialog } from './components/dialogs/ImportDialog';
 
-const NAV: { id: View; label: string; ownerOnly?: boolean; firebaseOnly?: boolean }[] = [
-  { id: 'dashboard', label: 'Dashboard' },
-  { id: 'inventory', label: 'Inventory' },
-  { id: 'orders', label: 'Orders' },
-  { id: 'production', label: 'Production' },
-  { id: 'trends', label: 'Trends' },
-  { id: 'alerts', label: 'Alerts' },
-  { id: 'reports', label: 'Reports' },
-  { id: 'activity', label: 'Activity', ownerOnly: true },
-  { id: 'team', label: 'Team', ownerOnly: true, firebaseOnly: true },
+interface NavItem { id: View; label: string; icon: LucideIcon; ownerOnly?: boolean; firebaseOnly?: boolean }
+
+const NAV_GROUPS: { label: string; items: NavItem[] }[] = [
+  { label: 'Overview', items: [{ id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard }] },
+  { label: 'Stock', items: [
+    { id: 'inventory', label: 'Inventory', icon: Package },
+    { id: 'alerts', label: 'Alerts', icon: AlertTriangle },
+  ] },
+  { label: 'Sales', items: [{ id: 'orders', label: 'Orders', icon: ClipboardList }] },
+  { label: 'Production', items: [
+    { id: 'production', label: 'Production', icon: Factory },
+    { id: 'trends', label: 'Trends', icon: TrendingUp },
+  ] },
+  { label: 'Reports', items: [{ id: 'reports', label: 'Reports', icon: FileText }] },
+  { label: 'Admin', items: [
+    { id: 'activity', label: 'Activity', icon: History, ownerOnly: true },
+    { id: 'team', label: 'Team', icon: Users, ownerOnly: true, firebaseOnly: true },
+  ] },
 ];
 
 export function App({ onSignOut }: { onSignOut?: () => void }) {
   const app = useApp();
   const flash = useToast();
-  const [view, setView] = useState<View>('dashboard');
+  const [view, setViewRaw] = useState<View>('dashboard');
   const [editing, setEditing] = useState<EffSku | null>(null);
   const [prodOpen, setProdOpen] = useState(false);
   const [importOpen, setImportOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   if (app.loading) {
     return <div style={{ padding: 80, textAlign: 'center', color: 'var(--color-neutral-600)' }}>Loading inventory…</div>;
   }
 
-  const nav = NAV.filter((n) => (!n.ownerOnly || app.isOwner) && (!n.firebaseOnly || app.mode === 'firebase'));
+  const setView = (v: View) => { setViewRaw(v); setMenuOpen(false); };
   const openImport = () => (app.canEdit ? setImportOpen(true) : flash('View-only role cannot import data'));
   const openProd = () => (app.canEdit ? setProdOpen(true) : flash('View-only role cannot log production'));
 
+  const urgent = app.effs.filter((s) => s.status === 'Negative' || s.status === 'Low').length;
+
+  const groups = NAV_GROUPS
+    .map((g) => ({ ...g, items: g.items.filter((n) => (!n.ownerOnly || app.isOwner) && (!n.firebaseOnly || app.mode === 'firebase')) }))
+    .filter((g) => g.items.length);
+
   return (
     <div className="app-shell">
-      <header className="nav app-header no-print">
-        <div className="nav-brand" style={{ display: 'flex', flexDirection: 'column', lineHeight: 1, gap: 2 }}>
-          <span style={{ fontSize: 19, letterSpacing: '.02em' }}>DIAMOND FURNITURE</span>
-          <span style={{ fontSize: 10, letterSpacing: '.18em', textTransform: 'uppercase', color: 'var(--color-accent)' }}>Inventory Control</span>
+      <aside className={`app-sidebar no-print ${menuOpen ? 'open' : ''}`}>
+        <div className="sidebar-brand">
+          <span className="mark">Diamond Furniture</span>
+          <span className="sub">Inventory Control</span>
         </div>
-        <nav style={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-          {nav.map((n) => (
-            <button key={n.id} className="nav-btn" aria-current={view === n.id ? 'page' : undefined} onClick={() => setView(n.id)}>
-              {n.label}
-            </button>
+        <nav className="nav-scroll" aria-label="Sections">
+          {groups.map((g) => (
+            <div key={g.label}>
+              <div className="nav-group-label">{g.label}</div>
+              {g.items.map((n) => {
+                const Icon = n.icon;
+                return (
+                  <button key={n.id} className="nav-link" aria-current={view === n.id ? 'page' : undefined} onClick={() => setView(n.id)}>
+                    <Icon size={18} strokeWidth={2} className="ico" />
+                    <span className="lbl">{n.label}</span>
+                    {n.id === 'alerts' && urgent > 0 && <span className="nav-badge">{urgent}</span>}
+                  </button>
+                );
+              })}
+            </div>
           ))}
         </nav>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginLeft: 'auto' }}>
-          <button className="btn btn-secondary" onClick={openImport} disabled={!app.canEdit} style={{ whiteSpace: 'nowrap' }}>↑ Import Excel</button>
+        <div className="sidebar-foot">
+          {app.mode === 'demo' ? (
+            <div className="field-inline">
+              <label>Signed in as</label>
+              <select className="input" value={app.role} onChange={(e) => app.setDemoRole(e.target.value as Role)}>
+                <option value="owner">Owner — full control</option>
+                <option value="manager">Manager — can edit</option>
+                <option value="viewer">Viewer — view only</option>
+              </select>
+            </div>
+          ) : (
+            <>
+              <span style={{ fontSize: 14, fontWeight: 600 }}>{app.userName}</span>
+              <button className="btn btn-ghost" style={{ fontSize: 12, padding: 0, justifyContent: 'flex-start' }} onClick={onSignOut}>
+                {app.role} · Sign out
+              </button>
+            </>
+          )}
+        </div>
+      </aside>
+
+      {menuOpen && <div className="drawer-backdrop no-print" onClick={() => setMenuOpen(false)} />}
+
+      <div className="app-body">
+        <header className="topbar no-print">
+          <button className="menu-btn" aria-label={menuOpen ? 'Close menu' : 'Open menu'} onClick={() => setMenuOpen((o) => !o)}>
+            {menuOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+          <div className="spacer" />
           {app.periodKeys.length > 0 ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <label style={{ fontSize: 9, letterSpacing: '.12em', textTransform: 'uppercase', color: 'var(--color-accent)' }}>Month</label>
+            <div className="field-inline">
+              <label htmlFor="month-sel">Month</label>
               <select
-                className="input" value={app.currentPeriodKey} onChange={(e) => app.setPeriod(e.target.value)}
-                style={{ minHeight: 32, padding: '2px 8px', fontSize: 13, minWidth: 130 }}
+                id="month-sel" className="input" value={app.currentPeriodKey}
+                onChange={(e) => app.setPeriod(e.target.value)} style={{ minWidth: 132 }}
                 title="Choose which month to view"
               >
                 {app.periodKeys.length > 1 && <option value="__all__">All months (overall)</option>}
@@ -78,40 +135,23 @@ export function App({ onSignOut }: { onSignOut?: () => void }) {
           ) : (
             <span className="tag tag-neutral" style={{ whiteSpace: 'nowrap' }}>No data yet</span>
           )}
-          {app.mode === 'demo' ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <label style={{ fontSize: 9, letterSpacing: '.12em', textTransform: 'uppercase', color: 'var(--color-accent)' }}>Signed in as</label>
-              <select
-                className="input" value={app.role} onChange={(e) => app.setDemoRole(e.target.value as Role)}
-                style={{ minHeight: 32, padding: '2px 8px', fontSize: 13, minWidth: 160 }}
-              >
-                <option value="owner">Owner — full control</option>
-                <option value="manager">Manager — can edit</option>
-                <option value="viewer">Viewer — view only</option>
-              </select>
-            </div>
-          ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 2, alignItems: 'flex-end' }}>
-              <span style={{ fontSize: 13, fontWeight: 600 }}>{app.userName}</span>
-              <button className="btn btn-ghost" style={{ fontSize: 11, padding: 0 }} onClick={onSignOut}>
-                {app.role} · Sign out
-              </button>
-            </div>
-          )}
-        </div>
-      </header>
+          <button className="btn btn-primary" onClick={openImport} disabled={!app.canEdit} style={{ whiteSpace: 'nowrap' }}>
+            <Upload size={16} /> Import
+          </button>
+        </header>
 
-      <main className="app-main">
-        {view === 'dashboard' && <Dashboard setView={setView} />}
-        {view === 'inventory' && <Inventory onEdit={setEditing} />}
-        {view === 'orders' && <Orders />}
-        {view === 'production' && <Production onLog={openProd} />}
-        {view === 'trends' && <Trends />}
-        {view === 'alerts' && <Alerts onEdit={setEditing} />}
-        {view === 'reports' && <Reports />}
-        {view === 'activity' && app.isOwner && <Activity />}
-        {view === 'team' && app.isOwner && app.mode === 'firebase' && <Team />}
-      </main>
+        <main className="app-main">
+          {view === 'dashboard' && <Dashboard setView={setView} />}
+          {view === 'inventory' && <Inventory onEdit={setEditing} />}
+          {view === 'orders' && <Orders />}
+          {view === 'production' && <Production onLog={openProd} />}
+          {view === 'trends' && <Trends />}
+          {view === 'alerts' && <Alerts onEdit={setEditing} />}
+          {view === 'reports' && <Reports />}
+          {view === 'activity' && app.isOwner && <Activity />}
+          {view === 'team' && app.isOwner && app.mode === 'firebase' && <Team />}
+        </main>
+      </div>
 
       {editing && <EditDialog sku={editing} onClose={() => setEditing(null)} />}
       {prodOpen && <ProductionDialog onClose={() => setProdOpen(false)} />}

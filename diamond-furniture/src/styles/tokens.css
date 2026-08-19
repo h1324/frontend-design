@@ -1,159 +1,148 @@
 /*
- * Industry design system — ported verbatim from
- * _ds/industry-3773b3c6-a89f-4a32-9e87-b9b2904c78ef/styles.css
- * Every colour / font / spacing value is a token. Do not hard-code these in components.
+ * Diamond Furniture design system — "shop-floor console".
+ * Warm paper ground, ink text, one locked teal accent. Semantic status colours
+ * live in domain/status.ts. Every value is a token; do not hard-code in components.
  */
 :root {
-  --color-bg: #f2f2f3;
-  --color-surface: #e9e9ea;
-  --color-text: #1d1f20;
-  --color-accent: #5980a6;
-  --color-accent-2: #728fab;
-  --color-divider: color-mix(in srgb, #1d1f20 16%, transparent);
+  --color-bg: #f4f1ea;          /* warm paper */
+  --color-surface: #fbfaf6;     /* card surface (opaque, warm white) */
+  --color-surface-2: #ece8de;   /* inset panels, rails, track backgrounds */
+  --color-text: #211f1b;        /* warm ink */
+  --color-accent: #0f6b5f;      /* deep teal — brand + interactive */
+  --color-accent-2: #2b8377;
+  --color-divider: color-mix(in srgb, #211f1b 13%, transparent);
 
-  /* Distinct chart series colours — blue + warm amber read clearly apart on a
-     line chart (the two accent blues did not). Add more here if a chart needs them. */
-  --series-a: #5980a6;
+  /* Distinct chart series colours (blue-teal + warm amber + slate). */
+  --series-a: #0f6b5f;
   --series-b: #c47a2c;
-  --series-c: #4e8055;
+  --series-c: #5568a6;
 
-  --color-neutral-100: #f5f5f8;
-  --color-neutral-200: #e7e7ea;
-  --color-neutral-300: #d4d4d7;
-  --color-neutral-400: #b7b7ba;
-  --color-neutral-500: #98989b;
-  --color-neutral-600: #7a7a7d;
-  --color-neutral-700: #5d5d60;
-  --color-neutral-800: #424244;
-  --color-neutral-900: #2b2b2d;
+  --color-neutral-100: #f2efe7;
+  --color-neutral-200: #e6e2d8;
+  --color-neutral-300: #d4cfc3;
+  --color-neutral-400: #b6b0a2;
+  --color-neutral-500: #948d7e;
+  --color-neutral-600: #6f695b;
+  --color-neutral-700: #514b40;
+  --color-neutral-800: #39342b;
+  --color-neutral-900: #221f18;
 
-  --color-accent-100: #eef6ff;
-  --color-accent-200: #d6ebff;
-  --color-accent-300: #b5d9fd;
-  --color-accent-400: #94bce3;
-  --color-accent-500: #749dc4;
-  --color-accent-600: #597ea3;
-  --color-accent-700: #416180;
-  --color-accent-800: #2c455d;
-  --color-accent-900: #1d2d3d;
+  --color-accent-100: #e3efec;
+  --color-accent-200: #c8e2db;
+  --color-accent-300: #9fccc1;
+  --color-accent-400: #6fb0a2;
+  --color-accent-500: #3f9284;
+  --color-accent-600: #0c5b51;
+  --color-accent-700: #0a4a42;
+  --color-accent-800: #083c35;
+  --color-accent-900: #06302b;
 
   --font-heading: "Barlow Condensed", system-ui, sans-serif;
   --font-heading-weight: 600;
   --font-body: "Barlow", system-ui, sans-serif;
 
-  --space-1: 3.4px;
-  --space-2: 6.8px;
-  --space-3: 10.2px;
-  --space-4: 13.6px;
-  --space-6: 20.4px;
-  --space-8: 27.2px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 22px;
+  --space-8: 30px;
 
-  --radius-sm: 2px;
-  --radius-md: 4px;
-  --radius-lg: 7px;
+  --radius-sm: 6px;
+  --radius-md: 9px;
+  --radius-lg: 14px;
+  --radius-pill: 999px;
 
-  --shadow-sm: 0 1px 2px color-mix(in srgb, #2b2b2d 14%, transparent);
-  --shadow-md: 0 3px 10px color-mix(in srgb, #2b2b2d 16%, transparent);
-  --shadow-lg: 0 12px 32px color-mix(in srgb, #2b2b2d 22%, transparent);
+  --shadow-sm: 0 1px 2px color-mix(in srgb, #221f18 7%, transparent), 0 1px 3px color-mix(in srgb, #221f18 5%, transparent);
+  --shadow-md: 0 4px 16px color-mix(in srgb, #221f18 10%, transparent);
+  --shadow-lg: 0 18px 46px color-mix(in srgb, #221f18 20%, transparent);
 }
-
-/* — blueprint frame — */
-.blueprint {
-  position: relative;
-  border: 1px solid var(--color-divider);
-  border-radius: 0;
-}
-.blueprint > .corner {
-  position: absolute; width: 11px; height: 11px;
-  color: color-mix(in srgb, var(--color-text) 55%, transparent);
-}
-.blueprint > .corner::before, .blueprint > .corner::after {
-  content: ""; position: absolute; background: currentColor;
-}
-.blueprint > .corner::before { left: 5px; top: 0; width: 1px; height: 100%; }
-.blueprint > .corner::after  { top: 5px; left: 0; width: 100%; height: 1px; }
-.blueprint > .corner.tl { top: -6px; left: -6px; }
-.blueprint > .corner.tr { top: -6px; right: -6px; }
-.blueprint > .corner.bl { bottom: -6px; left: -6px; }
-.blueprint > .corner.br { bottom: -6px; right: -6px; }
 
 *, *::before, *::after { box-sizing: border-box; }
 body {
   margin: 0; font-size: 15px; line-height: 1.55; font-weight: 400;
   font-family: var(--font-body); color: var(--color-text); background: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
 }
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading); font-weight: var(--font-heading-weight);
-  line-height: 1.12; letter-spacing: -0.015em; margin: 0 0 var(--space-2);
+  line-height: 1.1; letter-spacing: -0.005em; margin: 0 0 var(--space-2);
 }
-h1 { font-size: 42px; }
-h2 { font-size: 32px; }
-h3 { font-size: 25px; }
-h4 { font-size: 20px; }
+h1 { font-size: 34px; }
+h2 { font-size: 27px; }
+h3 { font-size: 22px; }
+h4 { font-size: 18px; letter-spacing: 0.01em; }
 h5 { font-size: 16px; }
 h6 { font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; }
 p { margin: 0 0 var(--space-3); }
 a { color: var(--color-accent); text-underline-offset: 3px; }
 img { display: block; max-width: 100%; }
 .text-muted { color: color-mix(in srgb, var(--color-text) 55%, transparent); }
-/* An inline text button that reads as a link (used for drill-through, e.g. SKU history). */
 .linkish {
-  background: none; border: none; padding: 0; font: inherit; color: inherit; cursor: pointer;
-  text-align: left; text-decoration: underline; text-decoration-color: var(--color-accent);
-  text-decoration-thickness: 1px; text-underline-offset: 3px;
+  background: none; border: none; padding: 0; font: inherit; color: var(--color-accent); cursor: pointer;
+  text-align: left; text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--color-accent) 45%, transparent);
+  text-decoration-thickness: 1px; text-underline-offset: 3px; font-weight: 500;
 }
-.linkish:hover { color: var(--color-accent); }
+.linkish:hover { text-decoration-color: var(--color-accent); }
 :focus { outline: none; }
 :focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
-::selection { background: color-mix(in srgb, var(--color-accent) 30%, transparent); }
+::selection { background: color-mix(in srgb, var(--color-accent) 26%, transparent); }
+
+/* — the blueprint frame is retired: keep the class as a neutral positioning
+     context so existing <Blueprint> wrappers still work; the card/dialog classes
+     carry the surface. Corner registration marks are gone. — */
+.blueprint { position: relative; }
+.blueprint > .corner { display: none; }
 
 /* — buttons — */
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 6px;
   cursor: pointer; text-decoration: none;
   font-family: var(--font-heading); font-weight: var(--font-heading-weight);
-  font-size: 14px; line-height: 1.2; color: var(--color-text);
+  font-size: 15px; line-height: 1.2; color: var(--color-text);
   background: transparent; border: 1px solid transparent;
-  padding: var(--space-2) calc(var(--space-3) * 1.2);
-  border-radius: var(--radius-md);
+  padding: 8px 15px; border-radius: var(--radius-md);
+  transition: background .12s ease, border-color .12s ease, color .12s ease;
 }
 .btn svg { display: block; }
 .btn:disabled { opacity: 0.45; cursor: not-allowed; }
-.btn-primary { background: var(--color-accent); color: var(--color-bg); }
-.btn-primary:hover { background: var(--color-accent-600); }
-.btn-primary:active { background: var(--color-accent-700); }
-.btn-secondary { border-color: var(--color-divider); }
-.btn-secondary:hover { background: color-mix(in srgb, var(--color-text) 7%, transparent); }
-.btn-secondary:active { background: color-mix(in srgb, var(--color-text) 14%, transparent); }
-.btn-ghost { color: var(--color-accent); padding-inline: var(--space-1); }
-.btn-ghost:hover { background: color-mix(in srgb, var(--color-accent) 10%, transparent); }
-.btn-ghost:active { background: color-mix(in srgb, var(--color-accent) 18%, transparent); }
+.btn-primary { background: var(--color-accent); color: #fff; border-color: var(--color-accent); }
+.btn-primary:hover:not(:disabled) { background: var(--color-accent-600); border-color: var(--color-accent-600); }
+.btn-primary:active:not(:disabled) { background: var(--color-accent-700); }
+.btn-secondary { border-color: var(--color-divider); background: var(--color-surface); }
+.btn-secondary:hover:not(:disabled) { border-color: color-mix(in srgb, var(--color-text) 35%, transparent); background: var(--color-surface); }
+.btn-ghost { color: var(--color-accent); padding-inline: var(--space-2); }
+.btn-ghost:hover:not(:disabled) { background: color-mix(in srgb, var(--color-accent) 9%, transparent); }
 .btn-block { width: 100%; margin-top: var(--space-2); }
 
 /* — forms — */
 .field > label {
-  display: block; font-size: 12px; margin-bottom: 5px;
-  color: color-mix(in srgb, var(--color-text) 70%, transparent);
+  display: block; font-size: 12px; margin-bottom: 5px; font-weight: 500;
+  color: color-mix(in srgb, var(--color-text) 72%, transparent);
 }
 .input {
-  width: 100%; min-height: 36px; padding: 6px 10px; font: inherit;
+  width: 100%; min-height: 38px; padding: 7px 11px; font: inherit;
   font-size: 14px; color: var(--color-text); caret-color: var(--color-accent);
-  background: var(--color-surface);
+  background: #fff;
   border: 1px solid var(--color-divider); border-radius: var(--radius-md);
+  transition: border-color .12s ease, box-shadow .12s ease;
 }
-.input:hover { border-color: color-mix(in srgb, var(--color-text) 45%, transparent); }
-.input:focus-visible { border-color: var(--color-accent); outline-offset: 0; }
+.input:hover { border-color: color-mix(in srgb, var(--color-text) 32%, transparent); }
+.input:focus-visible { border-color: var(--color-accent); outline: none; box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 16%, transparent); }
 textarea.input { min-height: 90px; resize: vertical; }
 
 /* — cards — */
 .card {
   display: flex; flex-direction: column; gap: var(--space-2);
-  padding: var(--space-3); border-radius: var(--radius-md); background: var(--color-surface);
+  padding: var(--space-4); border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider);
+  box-shadow: var(--shadow-sm);
 }
-.card-kicker { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-accent); }
+.card-kicker { font-size: 11px; letter-spacing: 0.09em; text-transform: uppercase; font-weight: 600; color: color-mix(in srgb, var(--color-text) 52%, transparent); }
 .card-meta {
-  display: flex; align-items: center; gap: 6px; font-size: 11px;
-  color: color-mix(in srgb, var(--color-text) 50%, transparent);
+  display: flex; align-items: center; gap: 6px; font-size: 12px;
+  color: color-mix(in srgb, var(--color-text) 52%, transparent);
 }
 .elev-sm { box-shadow: var(--shadow-sm); }
 .elev-md { box-shadow: var(--shadow-md); }
@@ -161,57 +150,41 @@ textarea.input { min-height: 90px; resize: vertical; }
 
 /* — tags — */
 .tag {
-  display: inline-flex; align-items: center; font-size: 11px;
-  letter-spacing: 0.02em; padding: 3px 10px;
-  border-radius: calc(var(--radius-md) * 0.75);
+  display: inline-flex; align-items: center; font-size: 11.5px; font-weight: 500;
+  letter-spacing: 0.02em; padding: 3px 10px; border-radius: var(--radius-pill);
 }
 .tag-accent { background: var(--color-accent-100); color: var(--color-accent-800); }
-.tag-neutral { background: var(--color-neutral-100); color: var(--color-neutral-800); }
-
-/* — navigation — */
-.nav {
-  display: flex; align-items: center; gap: var(--space-4);
-  padding: var(--space-3) var(--space-4);
-  border-bottom: none;
-}
-.nav-brand {
-  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
-  font-size: 18px; margin-right: auto;
-}
+.tag-neutral { background: var(--color-neutral-200); color: var(--color-neutral-800); }
 
 /* — tables — */
 .table { width: 100%; border-collapse: collapse; font-size: 14px; }
 .table th {
-  text-align: left; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
-  color: color-mix(in srgb, var(--color-text) 60%, transparent);
-  padding: var(--space-2); border-bottom: 1px solid var(--color-divider);
+  text-align: left; font-size: 11px; letter-spacing: 0.07em; text-transform: uppercase; font-weight: 600;
+  color: color-mix(in srgb, var(--color-text) 55%, transparent);
+  padding: 9px var(--space-2); border-bottom: 1px solid var(--color-divider);
+  position: sticky; top: 0; background: var(--color-surface);
 }
 .table td {
-  padding: var(--space-2);
-  border-bottom: 1px solid color-mix(in srgb, var(--color-text) 8%, transparent);
+  padding: 9px var(--space-2);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-text) 7%, transparent);
 }
-.table tbody tr:hover { background: color-mix(in srgb, var(--color-text) 4%, transparent); }
+.table tbody tr:last-child td { border-bottom: none; }
+.table tbody tr:hover { background: color-mix(in srgb, var(--color-accent) 5%, transparent); }
 
 /* — dialog — */
 .dialog-backdrop {
   position: fixed; inset: 0; display: grid; place-items: center;
   padding: var(--space-4); z-index: 30;
-  background: color-mix(in srgb, var(--color-neutral-900) 50%, transparent);
+  background: color-mix(in srgb, var(--color-neutral-900) 46%, transparent);
+  backdrop-filter: blur(2px);
 }
 .dialog {
   width: min(440px, 100%); display: flex; flex-direction: column; gap: var(--space-3);
-  padding: var(--space-4); border-radius: var(--radius-lg);
-  background: var(--color-surface); box-shadow: var(--shadow-lg);
+  padding: var(--space-6); border-radius: var(--radius-lg);
+  background: var(--color-surface); border: 1px solid var(--color-divider); box-shadow: var(--shadow-lg);
 }
 .dialog-title {
   font-family: var(--font-heading); font-weight: var(--font-heading-weight);
-  font-size: 20px;
+  font-size: 22px;
 }
 .dialog-actions { display: flex; justify-content: flex-end; gap: var(--space-2); margin-top: var(--space-2); }
-
-/* — blueprint frame overrides: wireframe objects, square + transparent — */
-.card, .btn, .input, .tag, .dialog { border-radius: 0; }
-.card, .dialog { background: transparent; border: 1px solid var(--color-divider); }
-.btn { border: 1px solid var(--color-divider); }
-.btn-primary { border-color: var(--color-accent); }
-.btn-ghost { border-color: transparent; }
