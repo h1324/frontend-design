@@ -60,8 +60,8 @@ export function Trends() {
                 <YAxis tick={AXIS} axisLine={false} tickLine={false} width={48} tickFormatter={(v) => fmt(v)} />
                 <Tooltip {...tooltip} />
                 <Legend wrapperStyle={{ fontSize: 12 }} />
-                <Line type="monotone" dataKey="sold" name="Sold" stroke="var(--color-accent)" strokeWidth={2} dot={{ r: 3 }} />
-                <Line type="monotone" dataKey="fresh" name="Fresh produced" stroke="var(--color-accent-700)" strokeWidth={2} dot={{ r: 3 }} />
+                <Line type="monotone" dataKey="sold" name="Sold" stroke="var(--series-a)" strokeWidth={2} dot={{ r: 3 }} />
+                <Line type="monotone" dataKey="fresh" name="Fresh produced" stroke="var(--series-b)" strokeWidth={2} dot={{ r: 3 }} />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -100,8 +100,8 @@ export function Trends() {
                 <YAxis tick={AXIS} axisLine={false} tickLine={false} width={48} tickFormatter={(v) => fmt(v)} />
                 <Tooltip {...tooltip} />
                 <Legend wrapperStyle={{ fontSize: 12 }} />
-                <Line type="monotone" dataKey="sold" name="Sold" stroke="var(--color-accent)" strokeWidth={2} dot={{ r: 3 }} />
-                <Line type="monotone" dataKey="stock" name="Stock" stroke="var(--color-accent-700)" strokeWidth={2} dot={{ r: 3 }} />
+                <Line type="monotone" dataKey="sold" name="Sold" stroke="var(--series-a)" strokeWidth={2} dot={{ r: 3 }} />
+                <Line type="monotone" dataKey="stock" name="Stock" stroke="var(--series-b)" strokeWidth={2} dot={{ r: 3 }} />
               </LineChart>
             </ResponsiveContainer>
           </div>

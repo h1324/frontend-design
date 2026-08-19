@@ -321,7 +321,8 @@ export async function parseWorkbook(blob: Blob): Promise<ParsedWorkbook> {
       fresh += rf;
       if (rf > 0) activeDays++;
     }
-    machines.push({ name: s.name.trim().toUpperCase(), fresh: Math.round(fresh), activeDays });
+    // Normalise 'M- 8' (stray space) → 'M-8' for a clean, sortable label.
+    machines.push({ name: s.name.trim().toUpperCase().replace(/\s+/g, ''), fresh: Math.round(fresh), activeDays });
   }
   machines.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
 

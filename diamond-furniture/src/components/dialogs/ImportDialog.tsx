@@ -40,7 +40,7 @@ function monthOf(names: string[], sheetNames: string[]): string | null {
 }
 
 export function ImportDialog({ onClose }: { onClose: () => void }) {
-  const { applyImport, period, periods } = useApp();
+  const { applyImport, setFyOpening, period, periods, financialYearLabel } = useApp();
   const flash = useToast();
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState('');
@@ -49,6 +49,9 @@ export function ImportDialog({ onClose }: { onClose: () => void }) {
   const [merged, setMerged] = useState<ParsedWorkbook | null>(null);
   const [detectedPeriod, setDetectedPeriod] = useState(period);
   const [applying, setApplying] = useState(false);
+  // What this file is: a month's numbers, or the financial-year opening baseline.
+  const [kind, setKind] = useState<'month' | 'opening'>('month');
+  const [fyLabel, setFyLabel] = useState(financialYearLabel || '');
 
   const onFiles = async (e: ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files ?? []);
@@ -103,12 +106,20 @@ export function ImportDialog({ onClose }: { onClose: () => void }) {
   );
   const monthConflict = detectedMonths.length > 1;
 
+  const canApply = merged != null && !applying
+    && (kind === 'opening' ? fyLabel.trim().length > 0 : (!!targetKey && !monthConflict));
+
   const apply = async () => {
-    if (!merged || applying || !targetKey || monthConflict) return;
+    if (!canApply || !merged) return;
     setApplying(true);
     try {
-      await applyImport(merged, detectedPeriod);
-      flash(`Imported ${merged.skus.length} SKUs into ${detectedPeriod} — data refreshed`);
+      if (kind === 'opening') {
+        await setFyOpening(merged, fyLabel.trim());
+        flash(`Opening stock set for FY ${fyLabel.trim()} (${merged.skus.length} SKUs)`);
+      } else {
+        await applyImport(merged, detectedPeriod);
+        flash(`Imported ${merged.skus.length} SKUs into ${detectedPeriod} — data refreshed`);
+      }
       onClose();
     } catch (err) {
       console.error('Import apply failed:', err);
@@ -125,11 +136,10 @@ export function ImportDialog({ onClose }: { onClose: () => void }) {
         <>
           <div className="dialog-title">Import production data (Excel)</div>
           <p className="text-muted" style={{ margin: 0, fontSize: 13, lineHeight: 1.5 }}>
-            Choose <strong>one or more .xlsx files</strong> for the same month — e.g. your{' '}
-            <strong>Master SKU List</strong> file and your <strong>Production</strong> file together.
-            The app reads the Master sheet (Line · Model · Colour · Opening · Sold · Closing) and any
-            machine tabs (<strong>M-1…M-7</strong>) for fresh output, then combines them into that
-            month. Existing reorder points and notes are kept.
+            Upload a <strong>.xlsx production file</strong> — the app reads its product tabs and machine
+            tabs (<strong>M-1…M-8</strong>) and builds every SKU's opening, sold and closing itself. One
+            file per month is enough. After it reads, pick whether it's a <strong>month's data</strong> or
+            your <strong>financial-year opening stock</strong>. Existing reorder points and notes are kept.
           </p>
 
           <label
@@ -178,7 +188,28 @@ export function ImportDialog({ onClose }: { onClose: () => void }) {
             </div>
           )}
 
-          {merged && monthConflict && (
+          {merged && (
+            <div className="field" style={{ margin: 0 }}>
+              <label>What is this file?</label>
+              <select className="input" value={kind} onChange={(e) => setKind(e.target.value as 'month' | 'opening')}>
+                <option value="month">A month's production / stock</option>
+                <option value="opening">Financial-year opening stock (start of year)</option>
+              </select>
+            </div>
+          )}
+
+          {merged && kind === 'opening' && (
+            <div className="field" style={{ margin: 0 }}>
+              <label>Financial year</label>
+              <input className="input" value={fyLabel} onChange={(e) => setFyLabel(e.target.value)} placeholder="e.g. 2026-27" />
+              <p className="text-muted" style={{ margin: '6px 0 0', fontSize: 12, lineHeight: 1.5 }}>
+                Sets the clean opening-stock baseline for the year (April–March). It does <strong>not</strong>
+                change any month's sold or closing numbers — no month needed.
+              </p>
+            </div>
+          )}
+
+          {merged && kind === 'month' && monthConflict && (
             <div style={{ border: `1px solid ${ERR}`, background: `color-mix(in srgb, ${ERR} 10%, transparent)`, padding: '11px 13px', fontSize: 13, lineHeight: 1.5, color: ERR }}>
               <strong>These files look like different months.</strong> An import saves one month at a time, so please import them separately:
               <ul style={{ margin: '6px 0 0', paddingLeft: 18 }}>
@@ -189,7 +220,7 @@ export function ImportDialog({ onClose }: { onClose: () => void }) {
             </div>
           )}
 
-          {merged && !monthConflict && (
+          {merged && kind === 'month' && !monthConflict && (
             <div className="field" style={{ margin: 0 }}>
               <label>Import into month</label>
               <input
@@ -212,8 +243,8 @@ export function ImportDialog({ onClose }: { onClose: () => void }) {
 
           <div className="dialog-actions">
             <button className="btn btn-ghost" onClick={onClose} disabled={applying}>{merged ? 'Cancel' : 'Close'}</button>
-            <button className="btn btn-primary" onClick={apply} disabled={!merged || applying || !targetKey || monthConflict}>
-              {applying ? 'Saving…' : 'Apply to app'}
+            <button className="btn btn-primary" onClick={apply} disabled={!canApply}>
+              {applying ? 'Saving…' : kind === 'opening' ? 'Set opening stock' : 'Apply to app'}
             </button>
           </div>
         </>

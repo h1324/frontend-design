@@ -11,6 +11,12 @@
   --color-accent-2: #728fab;
   --color-divider: color-mix(in srgb, #1d1f20 16%, transparent);
 
+  /* Distinct chart series colours — blue + warm amber read clearly apart on a
+     line chart (the two accent blues did not). Add more here if a chart needs them. */
+  --series-a: #5980a6;
+  --series-b: #c47a2c;
+  --series-c: #4e8055;
+
   --color-neutral-100: #f5f5f8;
   --color-neutral-200: #e7e7ea;
   --color-neutral-300: #d4d4d7;

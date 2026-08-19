@@ -50,8 +50,8 @@ export function SkuHistoryDialog({ sku, onClose }: { sku: EffSku; onClose: () =>
                   <YAxis tick={{ fontSize: 11, fill: 'var(--color-accent)' }} axisLine={false} tickLine={false} width={44} />
                   <Tooltip formatter={(v: number) => fmt(v)} contentStyle={{ fontSize: 12 }} />
                   <Legend wrapperStyle={{ fontSize: 12 }} />
-                  <Line type="monotone" dataKey="Stock" stroke="var(--color-accent)" strokeWidth={2} dot={false} isAnimationActive={false} />
-                  <Line type="monotone" dataKey="Sold" stroke="var(--color-accent-700)" strokeWidth={2} dot={false} isAnimationActive={false} />
+                  <Line type="monotone" dataKey="Stock" stroke="var(--series-a)" strokeWidth={2} dot={false} isAnimationActive={false} />
+                  <Line type="monotone" dataKey="Sold" stroke="var(--series-b)" strokeWidth={2} dot={false} isAnimationActive={false} />
                 </LineChart>
               </ResponsiveContainer>
             </div>
