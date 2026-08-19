@@ -79,24 +79,24 @@ credentials — the real GSP/Tally adapters drop in behind the same interfaces.
 | S23 | [23-einvoice-eway.md](23-einvoice-eway.md)   | E-invoice (IRN) & e-way-bill APIs           | Built  |
 | S24 | [24-tally-sync.md](24-tally-sync.md)         | Tally sync (invoices out, receipts in)      | Built  |
 
-## Phase 4 build order (later) — **S25/S27 built; S26 ready, S28 draft, S29 shelved**
+## Phase 4 build order (later) — **S25/S27 built; S28 draft; S26/S29 shelved**
 
 Beyond the plant floor: the sales-side pre-order layer (quotations/price contracts, deferred from
-S18), then the outward-facing surfaces — customer portal, mobile order-taking — plus predictive
-reorder and the consolidated cross-entity view the day-one `company_id` was put there for.
-Dependency-ordered — pricing first (it feeds portal and mobile), integrations/analytics after.
+S18), the field-sales mobile capture surface, and predictive reorder. The two outward/consolidation
+specs are shelved — the plant is served fine without them for now.
 
-The blocking decisions are settled (2026-08): **S25** adds order-value discounts on top of qty slabs;
-**S26** uses a separate `PortalUser` + password (isolated from internal roles); **S27** is internal
-SALES reps only (rides Auth.js, no S26 dependency, so it can ship first); **S29** is **shelved** — no
-second entity is planned, and `company_id` keeps it a cheap revival if that ever changes. **S28** stays
-Draft: its open questions (forecast method, consumption window, safety-stock basis) are tuning defaults,
-not schema-shaping, and can be confirmed at build time. Suggested build order: **S25 → S27 → S26 → S28**.
+The decisions are settled (2026-08): **S25** adds order-value discounts on top of qty slabs; **S27**
+is internal SALES reps only (rides Auth.js). **S26** (customer portal) is **shelved** — no
+customer-facing surface is wanted; customers are handled directly by Sales/Accounts. **S29**
+(cross-entity view) is **shelved** — no second entity is planned; `company_id` keeps it a cheap
+revival if that changes. **S28** stays Draft: its open questions (forecast method, consumption
+window, safety-stock basis) are tuning defaults, not schema-shaping, and can be confirmed at build
+time — the one Phase 4 module still open to build.
 
 | #   | Spec                                                   | Module                                      | Status  |
 | --- | ------------------------------------------------------ | ------------------------------------------- | ------- |
 | S25 | [25-quotations.md](25-quotations.md)                   | Quotations & price contracts                | Built   |
-| S26 | [26-customer-portal.md](26-customer-portal.md)         | Customer portal (self-service, read-mostly) | Ready   |
+| S26 | [26-customer-portal.md](26-customer-portal.md)         | Customer portal (self-service, read-mostly) | Shelved |
 | S27 | [27-mobile-order-taking.md](27-mobile-order-taking.md) | Mobile order-taking (offline-first PWA)     | Built   |
 | S28 | [28-predictive-reorder.md](28-predictive-reorder.md)   | Predictive reorder (RM/FG suggestions)      | Draft   |
 | S29 | [29-cross-entity-view.md](29-cross-entity-view.md)     | Cross-entity consolidated view (read-only)  | Shelved |

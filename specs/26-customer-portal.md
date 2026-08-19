@@ -1,6 +1,6 @@
 # Spec S26 — Customer Portal
 
-**Status:** Ready — auth decided: separate `PortalUser` + password (invite-based), isolated from internal roles. Read-mostly self-service.
+**Status:** Shelved — not wanted (2026-08). The plant does not need a customer-facing surface; customers are served directly by Sales/Accounts. Spec kept ready-to-revive (auth was decided: separate `PortalUser` + password) if that changes.
 
 ## Purpose
 
