@@ -35,7 +35,10 @@ RUN apt-get update \
 # `migrate deploy`, and the source is present so `db:seed` can run as a one-off bootstrap).
 COPY --from=builder /app ./
 COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh \
+# Strip any CR (\r) so a Windows checkout (CRLF line endings) can't break the shebang inside the
+# Linux container — `/usr/bin/env: 'bash\r'`. Belt-and-braces with .gitattributes (eol=lf).
+RUN sed -i 's/\r$//' /usr/local/bin/entrypoint.sh \
+    && chmod +x /usr/local/bin/entrypoint.sh \
     && useradd --create-home --uid 1001 epe \
     && chown -R epe:epe /app
 USER epe
