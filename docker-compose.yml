@@ -1,16 +1,71 @@
-# Local development database. Production runs Postgres on the plant mini-PC (brief §4).
+# EPE Foam ERP — full stack for the on-premise plant machine (brief §4): Postgres, the Next.js
+# app (migrates on start), and a sweeper that fires the hourly aging sweep (S12).
+#
+# Secrets come from the environment, never this file. Provide them via a local `.env` (see
+# .env.example) — AUTH_SECRET and AGING_SWEEP_TOKEN are required; compose refuses to start
+# without them. First boot of a fresh database: run `RUN_SEED=true docker compose up` once,
+# then start normally so the seed never re-runs.
 services:
   db:
     image: postgres:16
     restart: unless-stopped
     environment:
-      POSTGRES_USER: epe
-      POSTGRES_PASSWORD: epe
-      POSTGRES_DB: epe_erp
-    ports:
-      - "5432:5432"
+      POSTGRES_USER: ${POSTGRES_USER:-epe}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-epe}
+      POSTGRES_DB: ${POSTGRES_DB:-epe_erp}
+    # No host port by default — only the app reaches the DB over the internal network. Uncomment
+    # to expose it for admin tooling on the plant machine.
+    # ports:
+    #   - "5432:5432"
     volumes:
       - epe_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-epe} -d ${POSTGRES_DB:-epe_erp}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    image: epe-erp:local
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-epe}:${POSTGRES_PASSWORD:-epe}@db:5432/${POSTGRES_DB:-epe_erp}?schema=public
+      # Required — no defaults, so a missing secret fails fast instead of shipping a weak one.
+      AUTH_SECRET: ${AUTH_SECRET:?set AUTH_SECRET in your .env (openssl rand -base64 32)}
+      AGING_SWEEP_TOKEN: ${AGING_SWEEP_TOKEN:?set AGING_SWEEP_TOKEN in your .env}
+      NODE_ENV: production
+      # Set to true for the first boot of a fresh database only.
+      RUN_SEED: ${RUN_SEED:-false}
+    ports:
+      - "3000:3000"
+
+  # Fires the aging sweep on a fixed interval — reuses the app image (curl is installed) and
+  # overrides the entrypoint so it never runs migrations, just POSTs to the token-guarded job.
+  sweeper:
+    image: epe-erp:local
+    restart: unless-stopped
+    depends_on:
+      app:
+        condition: service_healthy
+    environment:
+      AGING_SWEEP_TOKEN: ${AGING_SWEEP_TOKEN:?set AGING_SWEEP_TOKEN in your .env}
+      SWEEP_INTERVAL: ${SWEEP_INTERVAL:-3600}
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        echo "[sweeper] aging sweep every ${SWEEP_INTERVAL:-3600}s"
+        while true; do
+          curl -fsS -X POST \
+            -H "Authorization: Bearer $${AGING_SWEEP_TOKEN}" \
+            http://app:3000/api/jobs/aging-sweep \
+            && echo "" || echo "[sweeper] sweep failed at $$(date -Iseconds)"
+          sleep "$${SWEEP_INTERVAL:-3600}"
+        done
 
 volumes:
   epe_pgdata:
