@@ -1,0 +1,19 @@
+{
+  "name": "EPE Foam ERP — Field Orders",
+  "short_name": "EPE Orders",
+  "description": "Field-sales order capture for the EPE Foam ERP. Works offline; syncs when back online.",
+  "start_url": "/m",
+  "scope": "/m",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#0f172a",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

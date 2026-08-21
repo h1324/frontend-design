@@ -11,7 +11,7 @@ requirement changes, change the spec in the same commit as the code.
 - Each spec follows the same template: Status · Purpose · Scope · Dependencies · Data
   model · Rules & invariants · Public API · Acceptance criteria · Open questions.
 - **Status** is one of `Draft` (needs decisions), `Ready` (buildable), `Built`,
-  `Superseded`.
+  `Shelved` (deliberately not built yet — a decision, not a gap), `Superseded`.
 - Open questions marked ⚠️ block the build; the rest have a stated default and can be
   overridden without reworking the schema.
 
@@ -62,9 +62,46 @@ remained (documented in each spec's Status line) — to be refined as requiremen
 | S18 | [18-sales-order-credit.md](18-sales-order-credit.md) | Sales order, credit control, customer tier | Built  |
 | S19 | [19-receivables.md](19-receivables.md)               | Receivables ageing (credit control)        | Built  |
 
-Phase 3 (batch costing, KPI dashboards, Tally sync, e-invoice/e-way-bill APIs) and Phase 4
-(portal, mobile, predictive reorder, cross-entity view) get their specs later. See
-`docs/brief.md` §8.
+## Phase 3 build order (+later) — **complete**
+
+Make the numbers real and cross the external boundaries: cost every batch, show the plant how
+it is running, and connect statutory compliance (e-invoice/e-way-bill) and the book of record
+(Tally). Dependency-ordered — costing first (it feeds margin and dashboards), then the two
+integrations. Built with spec defaults where open questions remained (documented in each spec's
+Status line); a `Mock` provider/connector is the default so nothing is blocked on external
+credentials — the real GSP/Tally adapters drop in behind the same interfaces.
+
+| #   | Spec                                         | Module                                      | Status |
+| --- | -------------------------------------------- | ------------------------------------------- | ------ |
+| S20 | [20-landed-cost.md](20-landed-cost.md)       | Landed-cost valuation (GRN charges → cost)  | Built  |
+| S21 | [21-batch-costing.md](21-batch-costing.md)   | Batch/production costing & margin           | Built  |
+| S22 | [22-kpi-dashboards.md](22-kpi-dashboards.md) | KPI dashboards & analytics (OEE, yield, AR) | Built  |
+| S23 | [23-einvoice-eway.md](23-einvoice-eway.md)   | E-invoice (IRN) & e-way-bill APIs           | Built  |
+| S24 | [24-tally-sync.md](24-tally-sync.md)         | Tally sync (invoices out, receipts in)      | Built  |
+
+## Phase 4 build order (later) — **S25/S27/S28 built; S26/S29 shelved**
+
+Beyond the plant floor: the sales-side pre-order layer (quotations/price contracts, deferred from
+S18), the field-sales mobile capture surface, and predictive reorder. The two outward/consolidation
+specs are shelved — the plant is served fine without them for now.
+
+The decisions are settled (2026-08): **S25** adds order-value discounts on top of qty slabs; **S27**
+is internal SALES reps only (rides Auth.js). **S26** (customer portal) is **shelved** — no
+customer-facing surface is wanted; customers are handled directly by Sales/Accounts. **S29**
+(cross-entity view) is **shelved** — no second entity is planned; `company_id` keeps it a cheap
+revival if that changes. **S28** is **built** to its stated defaults (trailing 90-day moving
+average behind a `forecast()` seam, fixed per-item safety stock, RM/consumables first, on-demand
+scan) — closing out the buildable Phase 4 modules.
+
+| #   | Spec                                                   | Module                                      | Status  |
+| --- | ------------------------------------------------------ | ------------------------------------------- | ------- |
+| S25 | [25-quotations.md](25-quotations.md)                   | Quotations & price contracts                | Built   |
+| S26 | [26-customer-portal.md](26-customer-portal.md)         | Customer portal (self-service, read-mostly) | Shelved |
+| S27 | [27-mobile-order-taking.md](27-mobile-order-taking.md) | Mobile order-taking (offline-first PWA)     | Built   |
+| S28 | [28-predictive-reorder.md](28-predictive-reorder.md)   | Predictive reorder (RM/FG suggestions)      | Draft   |
+| S29 | [29-cross-entity-view.md](29-cross-entity-view.md)     | Cross-entity consolidated view (read-only)  | Shelved |
+
+See `docs/brief.md` §8 (Phase 4 line) for the original framing.
 
 ## Cross-cutting decisions (apply to every spec)
 

@@ -5,6 +5,10 @@
 
 generator client {
   provider = "prisma-client-js"
+  // "native" for local dev; "debian-openssl-3.0.x" for the Docker runtime (Debian bookworm) —
+  // pinned explicitly because Prisma can mis-detect the OpenSSL version inside the slim image
+  // and otherwise ships the wrong query engine ("...generated for debian-openssl-1.1.x").
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
 }
 
 datasource db {
@@ -155,6 +159,24 @@ enum PurchaseOrderStatus {
   CANCELLED
 }
 
+/// How an item participates in predictive reorder (spec S28). AUTO_SUGGEST raises an alert when
+/// available on-hand falls at/below the reorder point; MANUAL is excluded from the scan. Neither
+/// ever auto-buys — a suggestion is advisory and a human confirms the PO.
+enum ReorderPolicy {
+  MANUAL
+  AUTO_SUGGEST
+}
+
+/// Lifecycle of a materialised reorder suggestion (spec S28). OPEN is a live alert; PO_DRAFTED
+/// links the DRAFT PO a buyer generated; DISMISSED carries a reason; EXPIRED is superseded by a
+/// newer scan for the same item.
+enum ReorderSuggestionStatus {
+  OPEN
+  PO_DRAFTED
+  DISMISSED
+  EXPIRED
+}
+
 /// Post-extrusion converting operation (spec S17). Lamination bonds sheets (children re-cure);
 /// slitting/bag-making cut without re-curing (children inherit the parents' aged status).
 enum ConvertingOperation {
@@ -177,32 +199,45 @@ model Company {
   defaultAgingDays Int      @default(7)
   createdAt        DateTime @default(now())
 
-  users            User[]
-  plants           Plant[]
-  auditLogs        AuditLog[]
-  docSeries        DocSeries[]
-  locations        Location[]
-  items            Item[]
-  suppliers        Supplier[]
-  customers        Customer[]
-  machines         Machine[]
-  shifts           Shift[]
-  operators        Operator[]
-  downtimeReasons  DowntimeReason[]
-  materialReceipts MaterialReceipt[]
-  materialIssues   MaterialIssue[]
-  lots             Lot[]
-  rolls            Roll[]
-  stockLedger      StockLedger[]
-  stockBalances    StockBalance[]
-  dispatchNotes    DispatchNote[]
-  invoices         Invoice[]
-  purchaseOrders   PurchaseOrder[]
-  goodsReceipts    GoodsReceipt[]
-  qcInspections    QcInspection[]
-  convertingOrders ConvertingOrder[]
-  salesOrders      SalesOrder[]
-  receipts         Receipt[]
+  users              User[]
+  plants             Plant[]
+  auditLogs          AuditLog[]
+  docSeries          DocSeries[]
+  locations          Location[]
+  items              Item[]
+  suppliers          Supplier[]
+  customers          Customer[]
+  machines           Machine[]
+  shifts             Shift[]
+  operators          Operator[]
+  downtimeReasons    DowntimeReason[]
+  materialReceipts   MaterialReceipt[]
+  materialIssues     MaterialIssue[]
+  lots               Lot[]
+  rolls              Roll[]
+  stockLedger        StockLedger[]
+  stockBalances      StockBalance[]
+  dispatchNotes      DispatchNote[]
+  invoices           Invoice[]
+  purchaseOrders     PurchaseOrder[]
+  goodsReceipts      GoodsReceipt[]
+  qcInspections      QcInspection[]
+  convertingOrders   ConvertingOrder[]
+  salesOrders        SalesOrder[]
+  receipts           Receipt[]
+  grnCharges         GrnCharge[]
+  itemCostHistory    ItemCostHistory[]
+  costRates          CostRate[]
+  lotCosts           LotCost[]
+  convertingCosts    ConvertingOrderCost[]
+  einvoiceLogs       EInvoiceLog[]
+  tallySyncs         TallySync[]
+  customerTallyMaps  CustomerTallyMap[]
+  quotations         Quotation[]
+  priceContracts     PriceContract[]
+  valueDiscounts     ValueDiscountTier[]
+  mobileSubmissions  OrderDraftSubmission[]
+  reorderSuggestions ReorderSuggestion[]
 }
 
 model Plant {
@@ -329,9 +364,27 @@ model Item {
   layerCount       Int?
   surfaceTreatment SurfaceTreatment?
 
+  /// Default/list selling price per billed unit (paise) — the lowest-precedence rate the S25
+  /// price resolver falls back to when no customer/tier price contract applies. Null = no list
+  /// price, so a manual rate is required. Not a cost; the sell side of the item master.
+  listPricePaise BigInt?
+
   // aging: per-item override of Company.defaultAgingDays (decision B4)
   agingDays    Int?
-  reorderLevel Decimal? @db.Decimal(16, 3)
+  reorderLevel Decimal? @db.Decimal(16, 3) // legacy manual level (S5); superseded by the computed reorderPoint (S28)
+
+  // predictive reorder (spec S28). reorderPoint is the computed alert threshold
+  // (avgDailyConsumption × leadTimeDays + safetyStock); the three inputs are stored so a buyer
+  // can see why. Nullable — an item with no reorder policy is skipped by the scan.
+  reorderPoint  Decimal?      @db.Decimal(16, 3)
+  safetyStock   Decimal?      @db.Decimal(16, 3)
+  leadTimeDays  Int?
+  reorderPolicy ReorderPolicy @default(AUTO_SUGGEST)
+
+  // landed-cost valuation (spec S20): moving weighted-average landed cost and the quantity it
+  // was averaged over. Maintained by lib/landed-cost.ts on each costed receipt; never floats.
+  movingAvgCostPaise BigInt  @default(0)
+  costedQtyBase      Decimal @default(0) @db.Decimal(16, 3)
 
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
@@ -348,6 +401,10 @@ model Item {
   qcInspections        QcInspection[]
   convertedInOrders    ConvertingOrder[]
   salesOrderLines      SalesOrderLine[]
+  costHistory          ItemCostHistory[]
+  quotationLines       QuotationLine[]
+  priceContractLines   PriceContractLine[]
+  reorderSuggestions   ReorderSuggestion[]
 
   @@unique([companyId, code])
   @@index([companyId])
@@ -371,9 +428,10 @@ model Supplier {
   isActive     Boolean  @default(true)
   createdAt    DateTime @default(now())
 
-  materialReceipts MaterialReceipt[]
-  purchaseOrders   PurchaseOrder[]
-  goodsReceipts    GoodsReceipt[]
+  materialReceipts   MaterialReceipt[]
+  purchaseOrders     PurchaseOrder[]
+  goodsReceipts      GoodsReceipt[]
+  reorderSuggestions ReorderSuggestion[]
 
   @@unique([companyId, code])
   @@index([companyId])
@@ -399,11 +457,16 @@ model Customer {
   isActive              Boolean      @default(true)
   createdAt             DateTime     @default(now())
 
-  shipTos       ShipToAddress[]
-  dispatchNotes DispatchNote[]
-  invoices      Invoice[]
-  salesOrders   SalesOrder[]
-  receipts      Receipt[]
+  shipTos           ShipToAddress[]
+  dispatchNotes     DispatchNote[]
+  invoices          Invoice[]
+  salesOrders       SalesOrder[]
+  receipts          Receipt[]
+  tallyMap          CustomerTallyMap?
+  quotations        Quotation[]
+  priceContracts    PriceContract[]
+  valueDiscounts    ValueDiscountTier[]
+  mobileSubmissions OrderDraftSubmission[]
 
   @@unique([companyId, code])
   @@index([companyId])
@@ -424,6 +487,7 @@ model ShipToAddress {
   dispatchNotes DispatchNote[]
   invoices      Invoice[]
   salesOrders   SalesOrder[]
+  quotations    Quotation[]
 
   @@index([customerId])
 }
@@ -463,6 +527,7 @@ model Lot {
   rolls          Roll[]
   materialIssues MaterialIssue[]
   downtimeLogs   DowntimeLog[]
+  cost           LotCost?
 
   @@unique([companyId, lotNo])
   @@index([companyId])
@@ -671,6 +736,10 @@ model Roll {
   densityKgM3      Decimal   @db.Decimal(9, 3)
   agingReadyDate   DateTime?
 
+  // Costing snapshot (spec S21): this roll's share of its lot/converting-order cost, allocated
+  // by weight. Null until the lot/order is costed. Money in paise (BigInt).
+  unitCostPaise BigInt?
+
   createdAt DateTime @default(now())
 
   ledgerEntries    StockLedger[]
@@ -849,11 +918,14 @@ model Invoice {
   dueDate            DateTime?
   amountSettledPaise BigInt    @default(0)
 
-  // e-invoice / e-way-bill fields — populated by Phase 3 API calls; null until then.
-  irn          String?
-  signedQr     String?
-  ewbNo        String?
-  ewbValidTill DateTime?
+  // e-invoice / e-way-bill fields — populated by the S23 IRP/GSP calls; null until then.
+  irn            String?
+  signedQr       String?
+  ackNo          String?
+  ackDate        DateTime?
+  ewbNo          String?
+  ewbValidTill   DateTime?
+  einvoiceStatus EInvoiceStatus @default(NONE)
 
   status      InvoiceStatus @default(DRAFT)
   createdById String?
@@ -861,10 +933,55 @@ model Invoice {
 
   lines              InvoiceLine[]
   receiptAllocations ReceiptAllocation[]
+  einvoiceLogs       EInvoiceLog[]
 
   @@unique([companyId, docNo])
   @@index([companyId])
   @@index([companyId, status])
+}
+
+// --- e-invoice (IRN) & e-way bill (spec S23) -----------------------------------------
+
+/// E-invoice lifecycle on an invoice (spec S23). NONE = below threshold or not yet generated.
+enum EInvoiceStatus {
+  NONE
+  GENERATED
+  CANCELLED
+}
+
+/// An IRP/e-way-bill API action (spec S23).
+enum EInvoiceAction {
+  GEN_IRN
+  CANCEL_IRN
+  GEN_EWB
+  CANCEL_EWB
+}
+
+/// Outcome of an IRP/e-way-bill call (spec S23).
+enum EInvoiceLogStatus {
+  OK
+  ERROR
+}
+
+/// An attempt log for every IRP/NIC call (spec S23) — nothing is silently dropped. `provider`
+/// is free text (MOCK now; a real GSP later). Secrets never land here.
+model EInvoiceLog {
+  id           String            @id @default(cuid())
+  companyId    String
+  company      Company           @relation(fields: [companyId], references: [id])
+  invoiceId    String
+  invoice      Invoice           @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  action       EInvoiceAction
+  provider     String
+  status       EInvoiceLogStatus
+  requestHash  String
+  responseRef  String?
+  errorCode    String?
+  errorMessage String?
+  at           DateTime          @default(now())
+
+  @@index([companyId])
+  @@index([invoiceId])
 }
 
 /// One line per SKU on an invoice. Carries both kg and m² (CLAUDE.md 3) and its own HSN + rate.
@@ -953,6 +1070,65 @@ model ReceiptAllocation {
   @@index([invoiceId])
 }
 
+// --- Tally sync (spec S24) -----------------------------------------------------------
+
+/// What a sync row concerns (spec S24). Invoices flow OUT (ERP→Tally); receipts flow IN.
+enum TallyEntityType {
+  INVOICE
+  RECEIPT
+}
+
+enum TallySyncDirection {
+  OUT
+  IN
+}
+
+/// Lifecycle of a Tally sync attempt (spec S24). PENDING queued, SENT dispatched, ACK confirmed
+/// by Tally, ERROR failed (retryable), SKIPPED already synced / not applicable.
+enum TallySyncStatus {
+  PENDING
+  SENT
+  ACK
+  ERROR
+  SKIPPED
+}
+
+/// One marshalling attempt across the Tally boundary (spec S24) — NOT a ledger. Idempotency is
+/// by `payloadHash` (outbound invoices) and `externalRef` (inbound receipts); every attempt is
+/// logged and retryable. Balances live in Tally.
+model TallySync {
+  id          String             @id @default(cuid())
+  companyId   String
+  company     Company            @relation(fields: [companyId], references: [id])
+  entityType  TallyEntityType
+  entityId    String? // Invoice.id / Receipt.id; null for a not-yet-imported inbound voucher
+  direction   TallySyncDirection
+  status      TallySyncStatus    @default(PENDING)
+  externalRef String? // Tally voucher GUID / number
+  payloadHash String?
+  attempts    Int                @default(0)
+  lastError   String?
+  at          DateTime           @default(now())
+
+  @@index([companyId])
+  @@index([companyId, entityType, status])
+  @@index([companyId, externalRef])
+}
+
+/// Maps a customer to its Tally ledger name (spec S24). Falls back to the customer name when
+/// absent. Master data is assumed to already exist in Tally — this only names the party.
+model CustomerTallyMap {
+  id              String   @id @default(cuid())
+  companyId       String
+  company         Company  @relation(fields: [companyId], references: [id])
+  customerId      String   @unique
+  customer        Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  tallyLedgerName String
+  createdAt       DateTime @default(now())
+
+  @@index([companyId])
+}
+
 // --- sales order & credit control (spec S18) -----------------------------------------
 
 /// A customer order layered over direct dispatch (spec S18). Captures the order, reserves
@@ -973,12 +1149,20 @@ model SalesOrder {
   creditStatus         CreditStatus     @default(OK)
   creditOverrideById   String? // user who cleared a credit block (ACCOUNTS/ADMIN)
   creditOverrideReason String?
+  /// Whole-order value discount % (spec S25), applied to the taxable subtotal before GST.
+  /// 0 for orders with no qualifying value tier; seeded on convert-from-quote or direct entry.
+  orderDiscountPct     Decimal          @default(0) @db.Decimal(5, 2)
+  /// How the order was entered (spec S27). DESK is the default desk/web entry; MOBILE marks an
+  /// order captured on the field-sales PWA and synced in, so it is distinguishable downstream.
+  source               SalesOrderSource @default(DESK)
   createdById          String?
   createdAt            DateTime         @default(now())
 
-  lines         SalesOrderLine[]
-  allocations   SalesOrderRoll[]
-  dispatchNotes DispatchNote[]
+  lines            SalesOrderLine[]
+  allocations      SalesOrderRoll[]
+  dispatchNotes    DispatchNote[]
+  fromQuotation    Quotation?            @relation("QuotationConversion")
+  mobileSubmission OrderDraftSubmission? @relation("MobileSubmissionSO")
 
   @@unique([companyId, docNo])
   @@index([companyId])
@@ -1043,8 +1227,9 @@ model PurchaseOrder {
   createdById   String?
   createdAt     DateTime            @default(now())
 
-  lines         PurchaseOrderLine[]
-  goodsReceipts GoodsReceipt[]
+  lines              PurchaseOrderLine[]
+  goodsReceipts      GoodsReceipt[]
+  reorderSuggestions ReorderSuggestion[]
 
   @@unique([companyId, docNo])
   @@index([companyId])
@@ -1095,7 +1280,8 @@ model GoodsReceipt {
   createdById String?
   createdAt   DateTime          @default(now())
 
-  lines GoodsReceiptLine[]
+  lines   GoodsReceiptLine[]
+  charges GrnCharge[]
 
   @@unique([companyId, docNo])
   @@index([companyId])
@@ -1106,24 +1292,158 @@ model GoodsReceipt {
 /// One received line. Posts a BULK IN (reason GRN) to a QC-hold location; `qcStatus` starts
 /// PENDING and S16 sets `qtyAccepted` + disposition. `ledgerId` is the posting for reversal.
 model GoodsReceiptLine {
-  id          String             @id @default(cuid())
-  grnId       String
-  grn         GoodsReceipt       @relation(fields: [grnId], references: [id], onDelete: Cascade)
-  poLineId    String?
-  poLine      PurchaseOrderLine? @relation(fields: [poLineId], references: [id])
-  itemId      String
-  item        Item               @relation(fields: [itemId], references: [id])
-  locationId  String
-  location    Location           @relation(fields: [locationId], references: [id])
-  qtyReceived Decimal            @db.Decimal(14, 3)
-  qtyAccepted Decimal            @default(0) @db.Decimal(14, 3)
-  ratePaise   BigInt?
-  qcStatus    QcLineStatus       @default(PENDING)
-  ledgerId    String?
+  id                  String             @id @default(cuid())
+  grnId               String
+  grn                 GoodsReceipt       @relation(fields: [grnId], references: [id], onDelete: Cascade)
+  poLineId            String?
+  poLine              PurchaseOrderLine? @relation(fields: [poLineId], references: [id])
+  itemId              String
+  item                Item               @relation(fields: [itemId], references: [id])
+  locationId          String
+  location            Location           @relation(fields: [locationId], references: [id])
+  qtyReceived         Decimal            @db.Decimal(14, 3)
+  qtyAccepted         Decimal            @default(0) @db.Decimal(14, 3)
+  ratePaise           BigInt?
+  // Per-unit landed cost (supplier rate + apportioned charges), set by S20 when the receipt is
+  // costed. Null until then. Money in paise (BigInt).
+  landedUnitCostPaise BigInt?
+  qcStatus            QcLineStatus       @default(PENDING)
+  ledgerId            String?
 
   @@index([grnId])
   @@index([poLineId])
   @@index([itemId])
+}
+
+// --- landed-cost valuation (spec S20) ------------------------------------------------
+
+/// Inbound charge categories loaded onto landed cost. Recoverable GST is never a charge here
+/// (it is input tax credit, not a cost).
+enum ChargeType {
+  FREIGHT
+  DUTY
+  INSURANCE
+  CLEARING
+  OTHER
+}
+
+/// How a charge is spread across a GRN's lines (spec S20).
+enum ApportionBasis {
+  VALUE
+  QTY
+  WEIGHT
+}
+
+/// A charge on a goods receipt (freight/duty/…) apportioned across its lines to build landed
+/// cost (spec S20). Money in paise (BigInt).
+model GrnCharge {
+  id             String         @id @default(cuid())
+  companyId      String
+  company        Company        @relation(fields: [companyId], references: [id])
+  grnId          String
+  grn            GoodsReceipt   @relation(fields: [grnId], references: [id], onDelete: Cascade)
+  chargeType     ChargeType
+  amountPaise    BigInt
+  apportionBasis ApportionBasis @default(VALUE)
+  note           String?
+  createdAt      DateTime       @default(now())
+
+  @@index([companyId])
+  @@index([grnId])
+}
+
+/// Append-only audit of an item's moving-average landed cost — one row per costed receipt or
+/// its reversal (spec S20). `qtyIn` is negative on a reversal. Never updated or deleted.
+model ItemCostHistory {
+  id                String   @id @default(cuid())
+  companyId         String
+  company           Company  @relation(fields: [companyId], references: [id])
+  itemId            String
+  item              Item     @relation(fields: [itemId], references: [id])
+  grnLineId         String?
+  asOf              DateTime @default(now())
+  qtyIn             Decimal  @db.Decimal(16, 3)
+  unitCostPaise     BigInt
+  newMovingAvgPaise BigInt
+
+  @@index([companyId, itemId])
+  @@index([grnLineId])
+}
+
+// --- batch / production costing (spec S21) -------------------------------------------
+
+/// A costing rate category (spec S21). Energy, labour and a single overhead pool.
+enum CostRateKind {
+  LABOUR
+  OVERHEAD
+  ENERGY
+}
+
+/// What a costing rate is charged against (spec S21).
+enum CostRateBasis {
+  PER_KG
+  PER_HOUR
+  PER_KWH
+  PER_ROLL
+}
+
+/// An effective-dated conversion-cost rate (spec S21), so historical lots cost at the rate in
+/// force on their production date. Money in paise (BigInt).
+model CostRate {
+  id            String        @id @default(cuid())
+  companyId     String
+  company       Company       @relation(fields: [companyId], references: [id])
+  kind          CostRateKind
+  ratePaise     BigInt
+  basis         CostRateBasis @default(PER_KG)
+  effectiveFrom DateTime
+  effectiveTo   DateTime?
+  createdById   String?
+  createdAt     DateTime      @default(now())
+
+  @@index([companyId, kind])
+}
+
+/// The costed roll-up of an extrusion lot (spec S21): RM at landed cost (+ regrind memo) plus
+/// energy/labour/overhead → cost per kg and per m². Recomputed on demand and on lot close;
+/// a read model over actuals, never touching the stock ledger. Money in paise (BigInt).
+model LotCost {
+  id                 String   @id @default(cuid())
+  companyId          String
+  company            Company  @relation(fields: [companyId], references: [id])
+  lotId              String   @unique
+  lot                Lot      @relation(fields: [lotId], references: [id], onDelete: Cascade)
+  rmCostPaise        BigInt   @default(0)
+  regrindCreditPaise BigInt   @default(0)
+  energyCostPaise    BigInt   @default(0)
+  labourCostPaise    BigInt   @default(0)
+  overheadCostPaise  BigInt   @default(0)
+  totalCostPaise     BigInt   @default(0)
+  outputKg           Decimal  @default(0) @db.Decimal(14, 3)
+  outputM2           Decimal  @default(0) @db.Decimal(14, 4)
+  costPerKgPaise     BigInt   @default(0)
+  costPerM2Paise     BigInt   @default(0)
+  computedAt         DateTime @default(now())
+
+  @@index([companyId])
+}
+
+/// The costed roll-up of a converting order (spec S21): consumed parent-roll cost + the order's
+/// conversion cost, allocated to the child rolls by weight. Money in paise (BigInt).
+model ConvertingOrderCost {
+  id                  String          @id @default(cuid())
+  companyId           String
+  company             Company         @relation(fields: [companyId], references: [id])
+  orderId             String          @unique
+  order               ConvertingOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  inputCostPaise      BigInt          @default(0)
+  conversionCostPaise BigInt          @default(0)
+  totalCostPaise      BigInt          @default(0)
+  outputKg            Decimal         @default(0) @db.Decimal(14, 3)
+  costPerKgPaise      BigInt          @default(0)
+  computedAt          DateTime        @default(now())
+
+  @@index([companyId])
 }
 
 // --- Quality control (spec S16) ------------------------------------------------------
@@ -1198,7 +1518,8 @@ model ConvertingOrder {
   createdAt    DateTime            @default(now())
 
   inputs   ConvertingInput[]
-  children Roll[]            @relation("ConvertingChildren")
+  children Roll[]               @relation("ConvertingChildren")
+  cost     ConvertingOrderCost?
 
   @@unique([companyId, docNo])
   @@index([companyId])
@@ -1216,4 +1537,229 @@ model ConvertingInput {
   @@unique([orderId, rollId])
   @@index([orderId])
   @@index([rollId])
+}
+
+// --- Quotations & price contracts (spec S25) -----------------------------------------
+
+/// Lifecycle of a quotation. WON converts to a sales order (once); LOST/EXPIRED close it;
+/// CANCELLED voids it keeping the number (S2). A quote never moves stock or money.
+enum QuotationStatus {
+  DRAFT
+  SENT
+  WON
+  LOST
+  EXPIRED
+  CANCELLED
+}
+
+/// Lifecycle of a price contract / value-discount tier. ACTIVE within its validity window;
+/// EXPIRED past it; CANCELLED voided. A rate change is a new row, never an in-place edit.
+enum PriceContractStatus {
+  ACTIVE
+  EXPIRED
+  CANCELLED
+}
+
+/// Who a price rule applies to. CUSTOMER is the most specific; TIER covers a customer grade.
+/// The item list price (Item.listPricePaise) is the implicit third, least-specific tier.
+enum PriceScope {
+  CUSTOMER
+  TIER
+}
+
+/// A quotation: the pre-order document that captures an agreed price before a sales order
+/// exists (spec S25). It reads S21 cost for a margin badge but touches no stock, credit, or
+/// receivables — those begin only at the SO it converts into.
+model Quotation {
+  id                   String          @id @default(cuid())
+  companyId            String
+  company              Company         @relation(fields: [companyId], references: [id])
+  docNo                String // QT/FY/seq
+  customerId           String
+  customer             Customer        @relation(fields: [customerId], references: [id])
+  shipToId             String?
+  shipTo               ShipToAddress?  @relation(fields: [shipToId], references: [id])
+  enquiryDate          DateTime        @default(now())
+  validUntil           DateTime
+  status               QuotationStatus @default(DRAFT)
+  /// Resolved whole-order value discount % at quote time (spec S25 rule 3), applied to the
+  /// taxable subtotal before GST. Snapshotted so a later tier change never rewrites the quote.
+  orderDiscountPct     Decimal         @default(0) @db.Decimal(5, 2)
+  lostReason           String?
+  /// Set once when the quote is converted to a sales order — re-conversion is refused.
+  convertedSoId        String?         @unique
+  convertedSo          SalesOrder?     @relation("QuotationConversion", fields: [convertedSoId], references: [id])
+  marginOverrideById   String? // ADMIN/ACCOUNTS who cleared a below-floor margin warning
+  marginOverrideReason String?
+  createdById          String?
+  createdAt            DateTime        @default(now())
+
+  lines QuotationLine[]
+
+  @@unique([companyId, docNo])
+  @@index([companyId])
+  @@index([companyId, status])
+  @@index([customerId])
+}
+
+/// One quoted line. `ratePaise` is the agreed price per billed unit; `unitCostPaise` is a
+/// snapshot of the item's cost at quote time (S21) so the margin shown is stable.
+model QuotationLine {
+  id            String    @id @default(cuid())
+  quotationId   String
+  quotation     Quotation @relation(fields: [quotationId], references: [id], onDelete: Cascade)
+  itemId        String
+  item          Item      @relation(fields: [itemId], references: [id])
+  qtyQuoted     Decimal   @db.Decimal(14, 4)
+  uom           String
+  ratePaise     BigInt
+  gstRatePct    Decimal   @db.Decimal(5, 2)
+  unitCostPaise BigInt    @default(0)
+
+  @@index([quotationId])
+  @@index([itemId])
+}
+
+/// A customer- or tier-scoped agreed price list, valid over a window (spec S25). Resolution
+/// precedence is CUSTOMER > TIER > item list price; within a contract the highest qty slab the
+/// order clears wins. Cancel-not-supersede: a rate change is a new contract.
+model PriceContract {
+  id          String              @id @default(cuid())
+  companyId   String
+  company     Company             @relation(fields: [companyId], references: [id])
+  docNo       String // PC/FY/seq
+  scope       PriceScope
+  customerId  String? // set when scope = CUSTOMER
+  customer    Customer?           @relation(fields: [customerId], references: [id])
+  tier        CustomerTier? // set when scope = TIER
+  validFrom   DateTime            @default(now())
+  validUntil  DateTime?
+  status      PriceContractStatus @default(ACTIVE)
+  createdById String?
+  createdAt   DateTime            @default(now())
+
+  lines PriceContractLine[]
+
+  @@unique([companyId, docNo])
+  @@index([companyId])
+  @@index([companyId, scope, status])
+  @@index([customerId])
+}
+
+/// One agreed rate for an item, from `minQty` upward (a quantity slab). The resolver picks the
+/// highest `minQty` band the order quantity clears.
+model PriceContractLine {
+  id              String        @id @default(cuid())
+  priceContractId String
+  priceContract   PriceContract @relation(fields: [priceContractId], references: [id], onDelete: Cascade)
+  itemId          String
+  item            Item          @relation(fields: [itemId], references: [id])
+  minQty          Decimal       @default(0) @db.Decimal(14, 4)
+  ratePaise       BigInt
+  gstRatePct      Decimal       @db.Decimal(5, 2)
+
+  @@index([priceContractId])
+  @@index([itemId])
+}
+
+/// A whole-order value discount tier (spec S25 rule 3) — the second, orthogonal pricing axis.
+/// Above `minOrderValuePaise` (pre-tax subtotal), `discountPct` comes off the taxable subtotal
+/// before GST. Same specificity order as contracts: CUSTOMER before TIER.
+model ValueDiscountTier {
+  id                 String              @id @default(cuid())
+  companyId          String
+  company            Company             @relation(fields: [companyId], references: [id])
+  scope              PriceScope
+  customerId         String? // set when scope = CUSTOMER
+  customer           Customer?           @relation(fields: [customerId], references: [id])
+  tier               CustomerTier? // set when scope = TIER
+  minOrderValuePaise BigInt
+  discountPct        Decimal             @db.Decimal(5, 2)
+  validFrom          DateTime            @default(now())
+  validUntil         DateTime?
+  status             PriceContractStatus @default(ACTIVE)
+  createdById        String?
+  createdAt          DateTime            @default(now())
+
+  @@index([companyId])
+  @@index([companyId, scope, status])
+  @@index([customerId])
+}
+
+// --- Mobile order-taking (spec S27) --------------------------------------------------
+
+/// How a sales order was entered. MOBILE marks an order captured on the field-sales PWA.
+enum SalesOrderSource {
+  DESK
+  MOBILE
+}
+
+/// Lifecycle of a mobile order submission. RECEIVED when uploaded; APPLIED once it has created
+/// a sales order; REJECTED when it could not be applied (kept, never dropped); SUPERSEDED if
+/// replaced. Idempotency is by `clientRequestId`.
+enum MobileSubmissionStatus {
+  RECEIVED
+  APPLIED
+  REJECTED
+  SUPERSEDED
+}
+
+/// The server-side record of one field-sales PWA order submission (spec S27). The device is a
+/// proposal; the server re-prices via S25 `resolvePrice` and runs the S18 credit check at apply,
+/// so a submission's `payloadJson` (what the device thought) may differ from the created SO
+/// (`priceDeltaJson` records where). `clientRequestId` is the dedupe key — re-submitting it never
+/// creates a second order. Device queue state lives in IndexedDB, not here.
+model OrderDraftSubmission {
+  id              String                 @id @default(cuid())
+  companyId       String
+  company         Company                @relation(fields: [companyId], references: [id])
+  clientRequestId String // device-generated idempotency key, unique per company
+  submittedById   String? // the SALES rep (scalar, mirrors createdById elsewhere)
+  customerId      String
+  customer        Customer               @relation(fields: [customerId], references: [id])
+  shipToId        String
+  payloadJson     Json // { lines: [{ itemId, qtyOrdered, uom, devicePricePaise }], pricedAsOf }
+  status          MobileSubmissionStatus @default(RECEIVED)
+  resultSoId      String?                @unique
+  resultSo        SalesOrder?            @relation("MobileSubmissionSO", fields: [resultSoId], references: [id])
+  priceDeltaJson  Json? // [{ itemId, devicePricePaise, serverPricePaise }] where they differed
+  rejectionReason String?
+  capturedAt      DateTime? // when the rep captured it on the device (may predate `at`)
+  at              DateTime               @default(now())
+
+  @@unique([companyId, clientRequestId])
+  @@index([companyId])
+  @@index([companyId, status])
+}
+
+/// A materialised snapshot of one reorder-scan result for one item (spec S28). The row preserves
+/// every input the suggestion was computed from — on-hand, reorder point, avg daily consumption,
+/// suggested qty — so the number a buyer acted on stays fixed even as consumption keeps moving
+/// (the same snapshot discipline as quote cost S25 and moving-average valuation S20). A scan
+/// EXPIREs any prior OPEN row for the item before writing a fresh one; a buyer's DRAFT PO links
+/// via resultPoId and flips the row to PO_DRAFTED. Suggestions are advisory — never an auto-buy.
+model ReorderSuggestion {
+  id                  String                  @id @default(cuid())
+  companyId           String
+  company             Company                 @relation(fields: [companyId], references: [id])
+  itemId              String
+  item                Item                    @relation(fields: [itemId], references: [id])
+  asOf                DateTime                @default(now())
+  /// Available on-hand at scan time — excludes QC-hold and reject locations (spec S28 rule 3).
+  onHandQty           Decimal                 @db.Decimal(16, 3)
+  reorderPoint        Decimal                 @db.Decimal(16, 3)
+  avgDailyConsumption Decimal                 @db.Decimal(16, 4)
+  suggestedQty        Decimal                 @db.Decimal(16, 3)
+  preferredSupplierId String?
+  preferredSupplier   Supplier?               @relation(fields: [preferredSupplierId], references: [id])
+  status              ReorderSuggestionStatus @default(OPEN)
+  resultPoId          String?
+  resultPo            PurchaseOrder?          @relation(fields: [resultPoId], references: [id])
+  dismissedReason     String?
+  generatedBy         String?
+  createdAt           DateTime                @default(now())
+
+  @@index([companyId])
+  @@index([companyId, status])
+  @@index([itemId])
 }

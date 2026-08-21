@@ -2,46 +2,58 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+  EPE Foam ERP — visual language.
+  Concept: an instrument panel for a foam plant. Cool "engineering paper" ground (never cream),
+  deep slate-teal ink, one calibrated spearmint-green brand accent. Stock state is encoded as
+  temperature (curing = warm amber → available = cool teal → allocated → dispatched); those state
+  colours live in tailwind.config and are used consistently across every module.
+*/
+
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222 47% 11%;
+    --background: 190 24% 97%; /* cool engineering paper */
+    --foreground: 196 34% 13%; /* deep slate-teal ink */
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
-    --primary: 222 47% 11%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96%;
-    --secondary-foreground: 222 47% 11%;
-    --muted: 210 40% 96%;
-    --muted-foreground: 215 16% 47%;
-    --accent: 210 40% 96%;
-    --accent-foreground: 222 47% 11%;
-    --destructive: 0 72% 51%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 222 47% 11%;
-    --radius: 0.5rem;
+    --card-foreground: 196 34% 13%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 196 34% 13%;
+    --primary: 168 64% 30%; /* calibrated spearmint-green — the brand accent */
+    --primary-foreground: 160 44% 97%;
+    --secondary: 192 20% 93%;
+    --secondary-foreground: 196 34% 18%;
+    --muted: 192 22% 95%;
+    --muted-foreground: 196 12% 41%;
+    --accent: 168 52% 93%; /* faint brand tint for hovers/selection */
+    --accent-foreground: 168 66% 20%;
+    --destructive: 2 74% 50%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 196 20% 88%;
+    --input: 196 22% 85%;
+    --ring: 168 64% 30%;
+    --radius: 0.625rem;
   }
 
   .dark {
-    --background: 222 47% 11%;
-    --foreground: 210 40% 98%;
-    --card: 222 47% 11%;
-    --card-foreground: 210 40% 98%;
-    --primary: 210 40% 98%;
-    --primary-foreground: 222 47% 11%;
-    --secondary: 217 33% 17%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217 33% 17%;
-    --muted-foreground: 215 20% 65%;
-    --accent: 217 33% 17%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217 33% 17%;
-    --input: 217 33% 17%;
-    --ring: 213 27% 84%;
+    --background: 197 34% 8%;
+    --foreground: 190 22% 92%;
+    --card: 197 30% 11%;
+    --card-foreground: 190 22% 92%;
+    --popover: 197 30% 11%;
+    --popover-foreground: 190 22% 92%;
+    --primary: 168 56% 46%;
+    --primary-foreground: 197 40% 8%;
+    --secondary: 197 22% 17%;
+    --secondary-foreground: 190 22% 92%;
+    --muted: 197 22% 16%;
+    --muted-foreground: 195 14% 62%;
+    --accent: 197 26% 18%;
+    --accent-foreground: 168 56% 66%;
+    --destructive: 2 66% 54%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 197 22% 20%;
+    --input: 197 22% 22%;
+    --ring: 168 56% 46%;
   }
 }
 
@@ -52,13 +64,34 @@
   body {
     @apply bg-background text-foreground;
     font-family:
+      var(--font-sans),
       ui-sans-serif,
       system-ui,
       -apple-system,
-      "Segoe UI",
-      Roboto,
-      "Helvetica Neue",
-      Arial,
       sans-serif;
+    /* faint grid texture — engineering paper, never loud */
+    background-image:
+      linear-gradient(hsl(196 24% 50% / 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(196 24% 50% / 0.04) 1px, transparent 1px);
+    background-size: 28px 28px;
+    background-position: -1px -1px;
+  }
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+  }
+}
+
+@layer components {
+  /* Instrument label: the small tracked mono eyebrow that titles a section or names a datum. */
+  .eyebrow {
+    font-family: var(--font-mono), ui-monospace, monospace;
+    @apply text-[0.6875rem] font-medium uppercase tracking-[0.14em] text-muted-foreground;
+  }
+  /* Tabular data — doc numbers, quantities, codes — set in mono with lined figures. */
+  .data {
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
   }
 }

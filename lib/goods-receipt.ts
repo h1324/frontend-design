@@ -9,6 +9,7 @@ import { Decimal, type DecimalInput } from "./decimal.js";
 import { requireAccess, AuthzError, type Actor } from "./rbac.js";
 import { nextDocNumber } from "./doc-number.js";
 import { post, reverse } from "./stock-ledger.js";
+import { reverseLandedCost } from "./landed-cost.js";
 import { writeAudit } from "./audit.js";
 
 type Tx = Prisma.TransactionClient;
@@ -256,6 +257,9 @@ export async function cancelGRN(
       "QC has already actioned this receipt — cannot cancel",
     ]);
   }
+
+  // Unwind any landed-cost / moving-average effect this receipt applied (S20).
+  await reverseLandedCost(tx, actor.companyId, actor.userId, grn.id);
 
   for (const line of grn.lines) {
     if (line.ledgerId) {

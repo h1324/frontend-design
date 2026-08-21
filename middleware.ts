@@ -5,6 +5,10 @@ import { authConfig } from "@/auth.config";
 export default NextAuth(authConfig).auth;
 
 export const config = {
-  // Skip Next internals and the auth API routes; protect everything else.
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+  // Skip Next internals, the auth API routes, and the public PWA assets (manifest, service
+  // worker, icon — spec S27) so installability and SW registration are never redirected to
+  // login; protect everything else.
+  matcher: [
+    "/((?!api|_next/static|_next/image|favicon.ico|manifest.webmanifest|sw.js|icon.svg).*)",
+  ],
 };

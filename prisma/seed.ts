@@ -92,6 +92,27 @@ async function main() {
     });
   }
 
+  // Predictive-reorder thresholds (S28) for the inputs the brief calls out — butane and
+  // masterbatch above all — plus resin and talc. Lead time + safety stock let the scan compute a
+  // reorder point from real consumption; without these an item stays out of the reorder watch.
+  const REORDER_SEED: Record<string, { leadTimeDays: number; safetyStock: string }> = {
+    "RM-BUTANE": { leadTimeDays: 5, safetyStock: "300" }, // imported, tightly held — short cover
+    "RM-MB-WHITE": { leadTimeDays: 21, safetyStock: "150" }, // long lead, colour-critical
+    "RM-LDPE-FILM": { leadTimeDays: 10, safetyStock: "1500" },
+    "RM-LDPE-EXT": { leadTimeDays: 10, safetyStock: "1500" },
+    "RM-TALC": { leadTimeDays: 14, safetyStock: "200" },
+  };
+  for (const [code, cfg] of Object.entries(REORDER_SEED)) {
+    await prisma.item.update({
+      where: { companyId_code: { companyId: company.id, code } },
+      data: {
+        leadTimeDays: cfg.leadTimeDays,
+        safetyStock: cfg.safetyStock,
+        reorderPolicy: "AUTO_SUGGEST",
+      },
+    });
+  }
+
   for (const input of SUPPLIER_SEED) {
     const errors = validateSupplierInput(input);
     if (errors.length)
@@ -188,8 +209,62 @@ async function main() {
     });
   }
 
+  // --- S25 sell-side: list prices + an illustrative price contract & value tier ---------
+  // Give finished goods a default list price so quotations can auto-price out of the box
+  // (the lowest-precedence tier the S25 resolver falls back to). Idempotent per item code.
+  const fgItems = await prisma.item.findMany({
+    where: { companyId: company.id, type: "FINISHED_GOOD" },
+    orderBy: { code: "asc" },
+    take: 3,
+  });
+  const listPrices = [12000n, 9000n, 15000n]; // ₹/m² in paise, illustrative
+  for (let i = 0; i < fgItems.length; i++) {
+    const it = fgItems[i];
+    if (!it) continue;
+    await prisma.item.update({
+      where: { id: it.id },
+      data: { listPricePaise: listPrices[i % listPrices.length] ?? 12000n },
+    });
+  }
+  // A tier-A price contract (customer-grade rate, quantity-slab-banded) beating the list price,
+  // plus a whole-order value discount tier — the second, orthogonal pricing axis. Fixed ids keep
+  // the seed idempotent; the doc number is illustrative (real ones are gapless per FY).
+  const anchor = fgItems[0];
+  if (anchor) {
+    const gst = anchor.gstRatePct?.toString() ?? "18";
+    await prisma.priceContract.upsert({
+      where: { id: "seed-pc-tier-a" },
+      update: {},
+      create: {
+        id: "seed-pc-tier-a",
+        companyId: company.id,
+        docNo: "PC/SEED/000001",
+        scope: "TIER",
+        tier: "A",
+        lines: {
+          create: [
+            { itemId: anchor.id, minQty: "0", ratePaise: 11500n, gstRatePct: gst },
+            { itemId: anchor.id, minQty: "1000", ratePaise: 11000n, gstRatePct: gst },
+          ],
+        },
+      },
+    });
+  }
+  await prisma.valueDiscountTier.upsert({
+    where: { id: "seed-vdt-tier-a" },
+    update: {},
+    create: {
+      id: "seed-vdt-tier-a",
+      companyId: company.id,
+      scope: "TIER",
+      tier: "A",
+      minOrderValuePaise: 20_000_000n, // ₹2,00,000 pre-tax
+      discountPct: "2.5",
+    },
+  });
+
   console.log(
-    `Seeded company + admin (admin@epe.local / admin1234) + ${LAUNCH_CATALOGUE.length} items + ${SUPPLIER_SEED.length} suppliers + ${CUSTOMER_SEED.length} customers + production masters`,
+    `Seeded company + admin (admin@epe.local / admin1234) + ${LAUNCH_CATALOGUE.length} items + ${SUPPLIER_SEED.length} suppliers + ${CUSTOMER_SEED.length} customers + production masters + S25 list prices/price contract`,
   );
 }
 
