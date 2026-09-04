@@ -78,18 +78,20 @@ export function allocateToRolls(rollKgs: DecimalInput[], totalPaise: bigint): bi
 
 export interface LotCostComponents {
   rmCostPaise: bigint;
-  regrindCreditPaise: bigint;
+  /** Recovered regrind consumed as an input, valued at landed cost — ADDED to the total. */
+  regrindCostPaise: bigint;
   energyCostPaise: bigint;
   labourCostPaise: bigint;
   overheadCostPaise: bigint;
 }
 
-/** Sum a lot's cost components into its total (paise). Regrind is valued, not written off
- *  (CLAUDE.md) — it is part of the total. Pure. */
+/** Sum a lot's cost components into its total (paise). Regrind is trim reprocessed back into
+ *  granules and blended into the input mix — a valued INPUT consumed by the lot, never a
+ *  write-off or by-product credit (CLAUDE.md glossary), so it is ADDED to the total. Pure. */
 export function lotTotalCost(c: LotCostComponents): bigint {
   return (
     c.rmCostPaise +
-    c.regrindCreditPaise +
+    c.regrindCostPaise +
     c.energyCostPaise +
     c.labourCostPaise +
     c.overheadCostPaise
@@ -179,9 +181,10 @@ export async function computeLotCost(
   });
   if (!lot) throw new AuthzError("lot not found");
 
-  // RM cost from posted issues, split virgin vs regrind, at moving-average landed cost.
+  // RM cost from posted issues, split virgin vs regrind, at moving-average landed cost. Both are
+  // consumed inputs valued the same way; the split is a memo — regrind is still ADDED to the total.
   let rmCost = 0n;
-  let regrindCredit = 0n;
+  let regrindCost = 0n;
   for (const iss of lot.materialIssues) {
     if (iss.status !== "POSTED") continue;
     for (const line of iss.lines) {
@@ -191,7 +194,7 @@ export async function computeLotCost(
           .toDecimalPlaces(0)
           .toFixed(0),
       );
-      if (line.isRegrind) regrindCredit += value;
+      if (line.isRegrind) regrindCost += value;
       else rmCost += value;
     }
   }
@@ -235,7 +238,7 @@ export async function computeLotCost(
 
   const components: LotCostComponents = {
     rmCostPaise: rmCost,
-    regrindCreditPaise: regrindCredit,
+    regrindCostPaise: regrindCost,
     energyCostPaise: energyCost,
     labourCostPaise: labourCost,
     overheadCostPaise: overheadCost,

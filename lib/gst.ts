@@ -74,23 +74,25 @@ export interface InvoiceTotals {
 }
 
 /** Sum line amounts and round the grand total to the nearest rupee, capturing the signed
- *  round-off (GST invoices round the payable total; the adjustment is disclosed). Pure. */
+ *  round-off (GST invoices round the payable total; the adjustment is disclosed). Accumulation
+ *  and rounding go through Decimal — never JS float arithmetic — to honour the money guardrail
+ *  (CLAUDE.md rule 2). Paise are exact integers; the boundary cast to `number` is loss-free. Pure. */
 export function sumInvoiceTotals(lines: InvoiceLineAmounts[]): InvoiceTotals {
-  const acc = lines.reduce(
-    (s, l) => ({
-      taxableValuePaise: s.taxableValuePaise + l.taxableValuePaise,
-      cgstPaise: s.cgstPaise + l.cgstPaise,
-      sgstPaise: s.sgstPaise + l.sgstPaise,
-      igstPaise: s.igstPaise + l.igstPaise,
-    }),
-    { taxableValuePaise: 0, cgstPaise: 0, sgstPaise: 0, igstPaise: 0 },
-  );
-  const preRound = acc.taxableValuePaise + acc.cgstPaise + acc.sgstPaise + acc.igstPaise;
-  const rounded = Math.round(preRound / 100) * 100; // nearest rupee, in paise
+  const zero = new Decimal(0);
+  const taxable = lines.reduce((s, l) => s.plus(l.taxableValuePaise), zero);
+  const cgst = lines.reduce((s, l) => s.plus(l.cgstPaise), zero);
+  const sgst = lines.reduce((s, l) => s.plus(l.sgstPaise), zero);
+  const igst = lines.reduce((s, l) => s.plus(l.igstPaise), zero);
+  const preRound = taxable.plus(cgst).plus(sgst).plus(igst);
+  // Nearest rupee, expressed back in paise: round to whole rupees (÷100, half-up) then ×100.
+  const rounded = preRound.div(100).toDecimalPlaces(0, HALF_UP).times(100);
   return {
-    ...acc,
-    roundOffPaise: rounded - preRound,
-    totalPaise: rounded,
+    taxableValuePaise: Number(taxable.toString()),
+    cgstPaise: Number(cgst.toString()),
+    sgstPaise: Number(sgst.toString()),
+    igstPaise: Number(igst.toString()),
+    roundOffPaise: Number(rounded.minus(preRound).toString()),
+    totalPaise: Number(rounded.toString()),
   };
 }
 

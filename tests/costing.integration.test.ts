@@ -200,10 +200,11 @@ suite("batch costing (integration)", () => {
     // rm 100×9500=9,50,000 ; regrind 20×9500=1,90,000 ; energy 250×1200=3,00,000 ;
     // labour 92×300=27,600 (the ₹3 rate, not the ₹9 that starts in July) ; overhead 92×200=18,400
     expect(cost.rmCostPaise).toBe(950000n);
-    expect(cost.regrindCreditPaise).toBe(190000n);
+    expect(cost.regrindCostPaise).toBe(190000n);
     expect(cost.energyCostPaise).toBe(300000n);
     expect(cost.labourCostPaise).toBe(27600n);
     expect(cost.overheadCostPaise).toBe(18400n);
+    // total INCLUDES regrind as an input: 950000+190000+300000+27600+18400 = 1,486,000.
     expect(cost.totalCostPaise).toBe(1486000n);
     expect(cost.outputKg.toString()).toBe("92");
 

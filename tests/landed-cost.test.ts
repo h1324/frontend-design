@@ -45,6 +45,17 @@ describe("landed cost (pure)", () => {
     expect(reverseMovingAverage("100", 5000n, "100", 5000n)).toBe(0n);
   });
 
+  it("reversing stacked receipts in LIFO order returns to the original average (no issues)", () => {
+    // 0 → +100@5000 (avg 5000) → +300@7000 (avg 6500) → +200@8000.
+    const a1 = movingAverage("0", 0n, "100", 5000n); // 5000, qty 100
+    const a2 = movingAverage("100", a1, "300", 7000n); // 6500, qty 400
+    const a3 = movingAverage("400", a2, "200", 8000n); // qty 600
+    // Cancel them newest-first — each reversal is exact, landing back on the prior average.
+    expect(reverseMovingAverage("600", a3, "200", 8000n)).toBe(a2); // back to 6500
+    expect(reverseMovingAverage("400", a2, "300", 7000n)).toBe(a1); // back to 5000
+    expect(reverseMovingAverage("100", a1, "100", 5000n)).toBe(0n); // empty
+  });
+
   it("landed unit cost = rate + apportioned charge per unit", () => {
     // rate 5000p, 500p of charge over 100 units → +5p/unit = 5005
     expect(landedUnitCost(5000n, 500n, "100")).toBe(5005n);

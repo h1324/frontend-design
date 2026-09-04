@@ -23,24 +23,30 @@ export class EInvoiceError extends Error {
 // --- pure --------------------------------------------------------------------------
 
 export interface Thresholds {
-  /** Minimum invoice total (paise) that requires an IRN. Default 0 = always eligible. */
-  einvoiceMinPaise: bigint;
   /** Minimum consignment value (paise) that requires an e-way bill. Default ₹50,000. */
   ewbMinPaise: bigint;
 }
 export const DEFAULT_THRESHOLDS: Thresholds = {
-  einvoiceMinPaise: 0n,
   ewbMinPaise: 5_000_000n,
 };
 
 export const DEFAULT_CANCEL_WINDOW_HOURS = 24;
 
-/** Is this invoice at/above the e-invoice threshold? Pure. */
-export function isEInvoiceRequired(
-  totalPaise: bigint,
-  t: Thresholds = DEFAULT_THRESHOLDS,
+/** Is e-invoicing (IRN) applicable to this invoice? Under GST law it is NOT a per-invoice value
+ *  test: it applies only when (a) the company's turnover makes it mandatory — `companyApplicable`,
+ *  set once AATO crosses ₹5 cr — AND (b) the sale is **B2B**, i.e. the buyer has a GSTIN. A B2C
+ *  invoice (no buyer GSTIN) is never e-invoiced, whatever its value. Pure. */
+export function isEInvoiceApplicable(
+  companyApplicable: boolean,
+  buyerGstin: string | null | undefined,
 ): boolean {
-  return totalPaise >= t.einvoiceMinPaise;
+  return companyApplicable && typeof buyerGstin === "string" && buyerGstin.trim() !== "";
+}
+
+/** A GST HSN valid on an e-invoice — 6 or 8 digits (the minimum for AATO ≥ ₹5 cr; 2/4-digit codes
+ *  are accepted on the item master for smaller businesses but not on an IRP submission). Pure. */
+export function isValidEInvoiceHsn(hsn: string | null | undefined): boolean {
+  return typeof hsn === "string" && /^\d{6}(?:\d{2})?$/.test(hsn.trim());
 }
 
 /** Is this consignment at/above the e-way-bill threshold? Pure. */
@@ -116,14 +122,14 @@ async function loadInvoice(tx: Tx, actor: Actor, invoiceId: string) {
 
 export interface GenerateIrnOptions {
   provider?: EInvoiceProvider;
-  thresholds?: Thresholds;
   now?: Date;
 }
 
 /**
  * Generate an IRN for an issued invoice via the IRP (MOCK default). Idempotent — an invoice
- * already carrying an IRN returns unchanged. Below the e-invoice threshold it is left NONE, not
- * submitted. Every attempt writes an `EInvoiceLog`. DISPATCH-write.
+ * already carrying an IRN returns unchanged. When e-invoicing does not apply (company below the
+ * AATO threshold, or a B2C sale) it is left NONE, not submitted. Every attempt writes an
+ * `EInvoiceLog`. DISPATCH-write.
  */
 export async function generateIrn(
   tx: Tx,
@@ -143,12 +149,21 @@ export async function generateIrn(
   }
   if (invoice.irn) return invoice; // idempotent no-op
 
-  if (!isEInvoiceRequired(invoice.totalPaise, opts.thresholds)) {
-    return invoice; // below threshold — stays einvoiceStatus NONE, not submitted
+  // Applicability is turnover + B2B, never invoice value (GST law): skip when the company is below
+  // the AATO threshold, or the sale is B2C (no buyer GSTIN). Left NONE, not submitted.
+  if (!isEInvoiceApplicable(invoice.company.einvoiceApplicable, invoice.customer.gstin)) {
+    return invoice;
   }
 
   const sellerGstin = invoice.company.gstin ?? "";
   if (!sellerGstin) throw new EInvoiceError(["company GSTIN is not set"]);
+  // The IRP requires a 6- or 8-digit HSN on every line for AATO ≥ ₹5 cr.
+  const badHsn = invoice.lines.find((l) => !isValidEInvoiceHsn(l.hsnCode));
+  if (badHsn) {
+    throw new EInvoiceError([
+      `line "${badHsn.description}" needs a 6- or 8-digit HSN code for e-invoicing`,
+    ]);
+  }
   const payload = buildIrpPayload(invoice, sellerGstin);
   const requestHash = payloadHash(payload);
 
@@ -189,6 +204,8 @@ export async function generateIrn(
 }
 
 export interface GenerateEwbOptions extends GenerateIrnOptions {
+  /** E-way-bill value threshold (paise). E-way bills ARE value-based (unlike the IRN). */
+  thresholds?: Thresholds;
   distanceKm?: number;
 }
 

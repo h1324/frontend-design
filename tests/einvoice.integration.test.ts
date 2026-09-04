@@ -23,7 +23,12 @@ suite("e-invoice (integration)", () => {
   beforeAll(async () => {
     prisma = new PrismaClient();
     const company = await prisma.company.create({
-      data: { name: `EI Co ${Date.now()}`, gstin: "27AABCE1234F1Z5" },
+      // Turnover over the AATO threshold → e-invoicing applies (to B2B invoices).
+      data: {
+        name: `EI Co ${Date.now()}`,
+        gstin: "27AABCE1234F1Z5",
+        einvoiceApplicable: true,
+      },
     });
     companyId = company.id;
     const dp = await prisma.user.create({
@@ -109,7 +114,7 @@ suite("e-invoice (integration)", () => {
             {
               itemId,
               description: "EPE",
-              hsnCode: "3921",
+              hsnCode: "39211900",
               qtyKg: "100",
               qtyM2: "400",
               ratePaise: 1250n,
@@ -140,13 +145,51 @@ suite("e-invoice (integration)", () => {
     ).toBe(1);
   });
 
-  it("leaves a below-threshold invoice as NONE, not submitted", async () => {
-    const inv = await issuedInvoice(100000n, 118000n);
-    const out = await prisma.$transaction((tx) =>
-      generateIrn(tx, dispatch, inv.id, {
-        thresholds: { einvoiceMinPaise: 1_000_000n, ewbMinPaise: 5_000_000n },
-      }),
-    );
+  it("leaves a B2C invoice (no buyer GSTIN) as NONE, not submitted", async () => {
+    // A consumer with no GSTIN — e-invoicing never applies to B2C, whatever the value.
+    const b2c = await prisma.customer.create({
+      data: { companyId, code: `B2C-${Date.now()}`, name: "Walk-in", gstin: null },
+    });
+    const b2cShipTo = await prisma.shipToAddress.create({
+      data: { customerId: b2c.id, label: "M", gstStateCode: "27", isDefault: true },
+    });
+    const dn = await prisma.dispatchNote.create({
+      data: {
+        companyId,
+        docNo: `DN/B2C-${Date.now()}`,
+        customerId: b2c.id,
+        shipToId: b2cShipTo.id,
+        status: "DISPATCHED",
+      },
+    });
+    const inv = await prisma.invoice.create({
+      data: {
+        companyId,
+        docNo: `INV/B2C-${Date.now()}`,
+        dispatchNoteId: dn.id,
+        customerId: b2c.id,
+        shipToId: b2cShipTo.id,
+        placeOfSupplyStateCode: "27",
+        taxableValuePaise: 6_000_000n, // a large value — still not e-invoiced, because B2C
+        totalPaise: 7_080_000n,
+        status: "ISSUED",
+        lines: {
+          create: [
+            {
+              itemId,
+              description: "EPE",
+              hsnCode: "39211900",
+              qtyKg: "100",
+              qtyM2: "400",
+              ratePaise: 1250n,
+              gstRatePct: "18",
+              taxableValuePaise: 6_000_000n,
+            },
+          ],
+        },
+      },
+    });
+    const out = await prisma.$transaction((tx) => generateIrn(tx, dispatch, inv.id));
     expect(out.irn).toBeNull();
     expect(out.einvoiceStatus).toBe("NONE");
   });

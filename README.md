@@ -25,8 +25,8 @@ npm install
 cp .env.example .env
 npx auth secret            # writes/updates AUTH_SECRET, or set it by hand
 
-# 3. Start PostgreSQL
-docker compose up -d
+# 3. Start PostgreSQL only (docker-compose.override.yml publishes it on localhost:5432)
+docker compose up -d db
 
 # 4. Apply migrations and seed the first company + admin user
 npm run db:migrate
@@ -35,6 +35,11 @@ npm run db:seed
 # 5. Run the app
 npm run dev                # http://localhost:3000
 ```
+
+> This is the **host-development** path: Postgres in Docker, the app on your machine. To run the
+> whole stack in containers instead (app + hourly aging sweeper + DB), see
+> [`docs/deploy.md`](docs/deploy.md) — that path needs `AUTH_SECRET` and `AGING_SWEEP_TOKEN` set
+> and doesn't use the host `DATABASE_URL`.
 
 Sign in with the seeded admin: **admin@epe.local** / **admin1234**
 (change this immediately outside local development).
