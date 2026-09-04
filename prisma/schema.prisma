@@ -4,7 +4,7 @@
 // and the append-only StockLedger journal.
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   // "native" for local dev; "debian-openssl-3.0.x" for the Docker runtime (Debian bookworm) —
   // pinned explicitly because Prisma can mis-detect the OpenSSL version inside the slim image
   // and otherwise ships the wrong query engine ("...generated for debian-openssl-1.1.x").
@@ -190,14 +190,19 @@ enum ConvertingOperation {
 /// The operating entity. Single company at launch, but every table carries companyId
 /// from day one to avoid a painful multi-entity retrofit (specs/README cross-cutting #3).
 model Company {
-  id               String   @id @default(cuid())
-  name             String
-  legalName        String?
-  gstin            String?
+  id                 String   @id @default(cuid())
+  name               String
+  legalName          String?
+  gstin              String?
+  /// E-invoicing (IRN) becomes mandatory only when the company's aggregate annual turnover (AATO)
+  /// crosses the GST threshold (₹5 cr as of 2025). Set true once it does; off by default — a new
+  /// or sub-threshold plant is not required to generate IRNs (spec S23). Applicability is keyed on
+  /// this flag + a B2B buyer (buyerGstin present), never on invoice value; B2C is never e-invoiced.
+  einvoiceApplicable Boolean  @default(false)
   /// Plant-wide default aging/curing period (days). An item may override via agingDays;
   /// resolution is Item.agingDays ?? Company.defaultAgingDays (spec S5, decision B4).
-  defaultAgingDays Int      @default(7)
-  createdAt        DateTime @default(now())
+  defaultAgingDays   Int      @default(7)
+  createdAt          DateTime @default(now())
 
   users              User[]
   plants             Plant[]
@@ -1408,24 +1413,24 @@ model CostRate {
 /// energy/labour/overhead → cost per kg and per m². Recomputed on demand and on lot close;
 /// a read model over actuals, never touching the stock ledger. Money in paise (BigInt).
 model LotCost {
-  id                 String   @id @default(cuid())
-  companyId          String
-  company            Company  @relation(fields: [companyId], references: [id])
-  lotId              String   @unique
-  lot                Lot      @relation(fields: [lotId], references: [id], onDelete: Cascade)
-  rmCostPaise        BigInt   @default(0)
+  id                String   @id @default(cuid())
+  companyId         String
+  company           Company  @relation(fields: [companyId], references: [id])
+  lotId             String   @unique
+  lot               Lot      @relation(fields: [lotId], references: [id], onDelete: Cascade)
+  rmCostPaise       BigInt   @default(0)
   /// Recovered regrind (trim reprocessed into granules) consumed by this lot, valued at landed
   /// cost as an INPUT — added to the lot total, never a write-off/credit (CLAUDE.md glossary).
-  regrindCostPaise   BigInt   @default(0)
-  energyCostPaise    BigInt   @default(0)
-  labourCostPaise    BigInt   @default(0)
-  overheadCostPaise  BigInt   @default(0)
-  totalCostPaise     BigInt   @default(0)
-  outputKg           Decimal  @default(0) @db.Decimal(14, 3)
-  outputM2           Decimal  @default(0) @db.Decimal(14, 4)
-  costPerKgPaise     BigInt   @default(0)
-  costPerM2Paise     BigInt   @default(0)
-  computedAt         DateTime @default(now())
+  regrindCostPaise  BigInt   @default(0)
+  energyCostPaise   BigInt   @default(0)
+  labourCostPaise   BigInt   @default(0)
+  overheadCostPaise BigInt   @default(0)
+  totalCostPaise    BigInt   @default(0)
+  outputKg          Decimal  @default(0) @db.Decimal(14, 3)
+  outputM2          Decimal  @default(0) @db.Decimal(14, 4)
+  costPerKgPaise    BigInt   @default(0)
+  costPerM2Paise    BigInt   @default(0)
+  computedAt        DateTime @default(now())
 
   @@index([companyId])
 }

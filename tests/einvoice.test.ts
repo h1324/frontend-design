@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
-  isEInvoiceRequired,
+  isEInvoiceApplicable,
+  isValidEInvoiceHsn,
   isEwayBillRequired,
   withinCancelWindow,
   buildIrpPayload,
@@ -34,12 +35,22 @@ function invoice(overrides: Partial<Record<string, unknown>> = {}) {
 }
 
 describe("e-invoice (pure)", () => {
-  it("thresholds gate e-invoice and e-way bill", () => {
-    expect(isEInvoiceRequired(590000n)).toBe(true); // default min 0
-    expect(
-      isEInvoiceRequired(0n, { einvoiceMinPaise: 100000n, ewbMinPaise: 5_000_000n }),
-    ).toBe(false);
-    // e-way bill default ₹50,000 = 50,00,000 paise
+  it("e-invoice applicability is turnover + B2B, never invoice value", () => {
+    // Applicable only when the company is over the AATO threshold AND the buyer is B2B (has GSTIN).
+    expect(isEInvoiceApplicable(true, "27AAAAA0000A1Z5")).toBe(true);
+    expect(isEInvoiceApplicable(true, null)).toBe(false); // B2C — never e-invoiced
+    expect(isEInvoiceApplicable(true, "")).toBe(false);
+    expect(isEInvoiceApplicable(false, "27AAAAA0000A1Z5")).toBe(false); // below AATO threshold
+  });
+
+  it("e-invoice HSN must be 6 or 8 digits", () => {
+    expect(isValidEInvoiceHsn("39211900")).toBe(true); // 8
+    expect(isValidEInvoiceHsn("392119")).toBe(true); // 6
+    expect(isValidEInvoiceHsn("3921")).toBe(false); // 4 — fine on the item master, not the IRP
+    expect(isValidEInvoiceHsn(null)).toBe(false);
+  });
+
+  it("e-way bill is value-gated at ₹50,000", () => {
     expect(isEwayBillRequired(4_000_000n)).toBe(false);
     expect(isEwayBillRequired(5_000_000n)).toBe(true);
     expect(DEFAULT_THRESHOLDS.ewbMinPaise).toBe(5_000_000n);

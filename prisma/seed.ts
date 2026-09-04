@@ -19,13 +19,16 @@ async function main() {
   const company = await prisma.company.upsert({
     where: { id: "seed-company" },
     // Backfill the GSTIN on an already-seeded company so dispatch can determine GST.
-    update: { gstin: "27AABCE1234F1Z5" },
+    update: { gstin: "27AABCE1234F1Z5", einvoiceApplicable: true },
     create: {
       id: "seed-company",
       name: "EPE Foam Unit",
       legalName: "EPE Foam Unit Pvt Ltd",
       // Placeholder GSTIN — Maharashtra (state 27). Replace with the real GSTIN before go-live.
       gstin: "27AABCE1234F1Z5",
+      // An operating foam plant is over the ₹5 cr AATO threshold, so e-invoicing applies to its
+      // B2B sales. Flip false if a sub-threshold unit uses this seed.
+      einvoiceApplicable: true,
     },
   });
 
