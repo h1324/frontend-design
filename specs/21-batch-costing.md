@@ -5,8 +5,8 @@
 ## Purpose
 
 Roll cost up from an extrusion lot (and converting order) to a **cost per kg and per m²** of
-output: raw material consumed at landed cost (S20), less a regrind credit, plus energy, labour
-and overhead. Then compare against the sale price to surface **margin**. This is what makes
+output: raw material consumed at landed cost (S20) — **including recovered regrind valued as an
+input, not a write-off** — plus energy, labour and overhead. Then compare against the sale price to surface **margin**. This is what makes
 density variance and yield financially legible, and it is the reason the COSTING role exists.
 
 ## Scope
@@ -31,7 +31,7 @@ costing — see open questions), budgeting, cash-flow forecasting (Phase 4).
 ```
 CostRate   id, companyId, kind (LABOUR|OVERHEAD|ENERGY), ratePaise (BigInt),
            basis (PER_KG|PER_HOUR|PER_KWH|PER_ROLL), effectiveFrom, effectiveTo (nullable)
-LotCost    id, companyId, lotId (unique), rmCostPaise, regrindCreditPaise, energyCostPaise,
+LotCost    id, companyId, lotId (unique), rmCostPaise, regrindCostPaise, energyCostPaise,
            labourCostPaise, overheadCostPaise, outputKg (Decimal), outputM2 (Decimal),
            costPerKgPaise, costPerM2Paise, computedAt
 Roll       += unitCostPaise (BigInt, snapshot at lot/converting close)
@@ -46,7 +46,9 @@ per-roll `unitCostPaise` is the allocation of lot cost across its output rolls b
 ## Rules & invariants
 
 1. **RM cost = Σ (issued qty × item moving-avg cost at issue)** (S20); regrind is an input
-   attribute, credited at its blended cost — never a write-off (CLAUDE.md glossary).
+   attribute, **valued at its blended landed cost and added like any other RM** — never a
+   write-off or a by-product credit (CLAUDE.md glossary). Stored split out as `regrindCostPaise`
+   for visibility, but part of the lot total.
 2. **Conversion cost = energy (kWh × rate) + labour + overhead**, each from the effective-dated
    `CostRate`; overhead absorbed on the default basis (see open questions).
 3. **Cost is allocated to output by actual weight** — `roll.unitCost = lotCost × (rollKg / Σ
@@ -80,7 +82,8 @@ outputKg)`. Converting children inherit consumed parents' cost + the order's con
 - ⚠️ **Overhead absorption basis** — per output kg, per machine-hour, or per kWh? **Default:
   per output kg** via a single overhead `CostRate`. Confirm the plant's basis.
 - **Scrap/trim treatment** — cost stays on good output (implicit yield loss) or a separate scrap
-  value? **Default: absorbed into good output** (scrap valued at zero); a regrind credit already
-  captures reusable trim. Confirm.
+  value? **Default: absorbed into good output** (scrap valued at zero); reusable trim re-enters
+  cost later as **regrind input** to a subsequent lot, not as a credit on the producing lot.
+  Confirm.
 - **Energy source** — metered kWh per lot (S10 `energyKwh`) or an allocation when unmetered?
   **Default: use `energyKwh` when present, else a per-kg energy rate.**

@@ -7,6 +7,7 @@
 
 import type { Prisma } from "@prisma/client";
 import { Decimal, type DecimalInput } from "./decimal.js";
+import { gsm as uomGsm } from "./uom.js";
 import { requireAccess, type Actor } from "./rbac.js";
 import { writeAudit } from "./audit.js";
 
@@ -77,7 +78,13 @@ export function buildLabelModel(src: LabelSource): LabelModel {
     widthM: new Decimal(src.width_m).toString(),
     thicknessMm: thickness.toString(),
     densityKgM3: density.toString(),
-    gsm: thickness.times(density).toString(),
+    // GSM is derived only in lib/uom.ts (CLAUDE.md rule 1). A label is a single-layer view of
+    // the roll, so pass one layer; length/width are unused by gsm() but required as valid dims.
+    gsm: uomGsm({
+      length_m: new Decimal(src.length_m).toString(),
+      width_m: new Decimal(src.width_m).toString(),
+      layers: [{ thickness_mm: thickness.toString(), density_kg_m3: density.toString() }],
+    }).toString(),
     productionDate: ddmmyyyy(src.productionDate),
     agingReadyDate: ddmmyyyy(src.agingReadyDate),
   };

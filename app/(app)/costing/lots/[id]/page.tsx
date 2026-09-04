@@ -78,7 +78,7 @@ export default async function LotCostPage({
           {c ? (
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
               <Metric label="RM cost" value={formatPaise(c.rmCostPaise)} />
-              <Metric label="Regrind (memo)" value={formatPaise(c.regrindCreditPaise)} />
+              <Metric label="Regrind input" value={formatPaise(c.regrindCostPaise)} />
               <Metric label="Energy" value={formatPaise(c.energyCostPaise)} />
               <Metric label="Labour" value={formatPaise(c.labourCostPaise)} />
               <Metric label="Overhead" value={formatPaise(c.overheadCostPaise)} />

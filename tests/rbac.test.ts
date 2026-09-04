@@ -112,3 +112,40 @@ describe("requireActor()", () => {
     expect(a).toEqual({ userId: "u9", companyId: "c9", role: "PRODUCTION" });
   });
 });
+
+// S22 acceptance criterion: KPI dashboard panels are role-gated. The index filters PANELS by
+// `can(role, area, "read")` (app/(app)/dashboards/page.tsx) and each detail page calls
+// requireAccess(actor, <area>, "read"). This pins the intended visibility so a matrix change
+// that silently hides or exposes a panel is caught, and proves the gate actually blocks.
+describe("dashboard panel gating (S22)", () => {
+  // area behind each dashboard panel, mirroring the PANELS list on the index page.
+  const DASHBOARD_AREAS = ["PRODUCTION", "SALES", "RECEIVABLES", "QC"] as const;
+
+  it("every role can currently see all four operational dashboards (read granted on each area)", () => {
+    for (const role of ALL_ROLES) {
+      const visible = DASHBOARD_AREAS.filter((area) => can(role, area, "read"));
+      expect(visible).toEqual([...DASHBOARD_AREAS]);
+    }
+  });
+
+  it("the gate really blocks — a role without read on an area is refused it", () => {
+    // No standard role has read on USER_ADMIN except ADMIN, so it exercises the deny path.
+    for (const role of ALL_ROLES) {
+      const isAdmin = role === "ADMIN";
+      expect(can(role, "USER_ADMIN", "read")).toBe(isAdmin);
+      const actor: Actor = { userId: "u", companyId: "c", role };
+      if (isAdmin) {
+        expect(() => requireAccess(actor, "USER_ADMIN", "read")).not.toThrow();
+      } else {
+        expect(() => requireAccess(actor, "USER_ADMIN", "read")).toThrow(AuthzError);
+      }
+    }
+  });
+
+  it("each dashboard page's required area read is honoured for a Viewer", () => {
+    const viewer: Actor = { userId: "u", companyId: "c", role: "VIEWER" };
+    for (const area of DASHBOARD_AREAS) {
+      expect(() => requireAccess(viewer, area, "read")).not.toThrow();
+    }
+  });
+});

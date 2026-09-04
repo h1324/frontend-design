@@ -16,11 +16,13 @@ describe("costing (pure)", () => {
     expect(costPerUnit(1000000n, "0")).toBe(0n);
   });
 
-  it("sums lot components into the total (regrind included, not written off)", () => {
+  it("adds regrind as a valued input (recovered RM), never a credit/write-off", () => {
+    // rm 500000 + regrind 50000 + energy 30000 + labour 20000 + overhead 10000 = 610000.
+    // Regrind is ADDED: a "credit" (subtract) would give 510000, which would be wrong.
     expect(
       lotTotalCost({
         rmCostPaise: 500000n,
-        regrindCreditPaise: 50000n,
+        regrindCostPaise: 50000n,
         energyCostPaise: 30000n,
         labourCostPaise: 20000n,
         overheadCostPaise: 10000n,

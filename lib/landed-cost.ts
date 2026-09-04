@@ -83,8 +83,11 @@ export function movingAverage(
 }
 
 /** Inverse of `movingAverage` — the average after removing `qtyOut` at `unitCostPaise` (used to
- *  unwind a cancelled receipt). Exact for the most recent receipt; a reasonable approximation
- *  otherwise. Drops to 0 when nothing remains. Pure. */
+ *  unwind a cancelled receipt). Exact when reversing receipts in LIFO order with no consumption in
+ *  between (it removes that receipt's exact value contribution). It DRIFTS when a non-latest GRN is
+ *  cancelled after later issues/dispatches have consumed part of that stock — the removed quantity
+ *  no longer matches what remains. For that out-of-order case, recost from history rather than
+ *  trusting a single reversal. Drops to 0 when nothing remains. Pure. */
 export function reverseMovingAverage(
   qtyOnHand: DecimalInput,
   oldAvgPaise: bigint,

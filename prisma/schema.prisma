@@ -1414,7 +1414,9 @@ model LotCost {
   lotId              String   @unique
   lot                Lot      @relation(fields: [lotId], references: [id], onDelete: Cascade)
   rmCostPaise        BigInt   @default(0)
-  regrindCreditPaise BigInt   @default(0)
+  /// Recovered regrind (trim reprocessed into granules) consumed by this lot, valued at landed
+  /// cost as an INPUT — added to the lot total, never a write-off/credit (CLAUDE.md glossary).
+  regrindCostPaise   BigInt   @default(0)
   energyCostPaise    BigInt   @default(0)
   labourCostPaise    BigInt   @default(0)
   overheadCostPaise  BigInt   @default(0)

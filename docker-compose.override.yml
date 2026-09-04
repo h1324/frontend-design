@@ -1,0 +1,12 @@
+# Local-development conveniences, auto-merged by `docker compose` on top of docker-compose.yml.
+# Its only job is to publish the Postgres port to the host so host-side tools — `npm run
+# db:migrate`, `npm run db:seed`, `npm run dev` — can reach the database at localhost:5432.
+#
+# Production DOES NOT want this (the DB should stay on the internal network), so the plant deploy
+# runs the base file explicitly and ignores this override:
+#     docker compose -f docker-compose.yml up -d --build
+# (see docs/deploy.md). Delete this file if you never develop against the DB from the host.
+services:
+  db:
+    ports:
+      - "5432:5432"
